@@ -175,22 +175,17 @@ list = [1, 2, 3]
 element = 2
 if element in list:
     print("there")
-
-
 A = [1, 2, 3]
 B = A       # reference
 B = list(A) # copy
 B = copy.copy(A)
 B = copy.deepcopy(A)
-
-
 A.reverse()     # in-place
 reverse(A)      # returns an iterator
 A.sort()        # sort in place
 sorted(A)       # returns a copy
 del A[i]        # deleted the ith element
 del[i:j]        # deletes the slice
-
 to rotate a list
 A[k:] + A[:k]
 """
@@ -306,6 +301,47 @@ def multiply(num1, num2):
     return [sign * result[0]] + result[1:]
 
 
+def canReachEnd(A):
+    """
+    idea is to iteratively compute the furthest reach 
+    and update that one when we find a further reach
+    """
+    furthest_reach = 0
+    last_index = len(A) - 1
+    i = 0
+    while i <= furthest_reach and furthest_reach < last_index:
+        furthest_reach = max(furthest_reach, A[i] + i)
+        i += 1
+    return furthest_reach >= last_index
+
+def deleteDuplicates(A):
+    """
+    incrementally write values to the left and skip over others
+    """
+    if not A:
+        return 0
+
+    write_index = 1
+    for i in range(1, len(A)):
+        if A[write_index - 1] != A[i]:
+            A[write_index] = A[i]
+            write_index += 1
+    return write_index
+
+def buyAndSellStockOnce(P):
+    """
+    input is prices over time, want to buy and sell one time for max profit, backtest
+    iteratively update running min and max profit as we go
+    """
+    min_price_so_far, max_profit = float('inf'), 0.0
+    for price in P:
+        max_profit_sell_today = price - min_price_so_far
+        max_profit = max(max_profit, max_profit_sell_today)
+        min_price_so_far = min(min_price_so_far, price)
+    return max_profit
+
+
+
 ####################################################################################################
 #                                           STRINGS                                                #
 ####################################################################################################
@@ -329,5 +365,3 @@ if __name__ == "__main__":
     print(multiply([1,2,9], [1,1]))
 
     # STRINGS
-
-    
