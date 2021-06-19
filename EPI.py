@@ -340,6 +340,111 @@ def buyAndSellStockOnce(P):
         min_price_so_far = min(min_price_so_far, price)
     return max_profit
 
+def buyAndSellStockTwice(prices):
+    max_total_profit = 0.0
+    min_price_thus_far = float('inf')
+    first_buy_and_sell_profits = [0.0] * len(prices)
+    # for each day, we record maximum profit if we sell on that day
+
+    for i, price in enumerate(prices):
+        min_price_thus_far = min(min_price_thus_far, price)
+        max_total_profit = max(max_total_profit, price - min_price_thus_far)
+        first_buy_and_sell_profits[i] = max_total_profit
+
+    # backward phase, for each day, find the max profit if we make
+    # the second buy on that day
+    max_price_so_far = float('-inf')
+    for i, price in reversed(list(enumerate(prices[1:], 1))):
+        max_price_so_far = max(max_price_so_far, price)
+        max_total_profit = max(
+            max_total_profit,
+            max_price_so_far - price + first_buy_and_sell_profits[i]
+        )
+    
+    return max_total_profit
+
+
+def rearrange(A):
+    """
+    computing an alteration of max, min, max, in s.t. A[0] >= A[1] <= A[2] >= A[3] ...
+    could sort and then choose every other, but easiest is
+    rearrange around the median, then perform the interleaving, median finding is O(n)
+    """
+    for i in range(len(A)):
+        A[i:i + 2] = sorted(A[i:i + 2], reverse=bool(i % 2))
+
+def enumeratePrimes(n):
+    """
+    given n, include all primes up to and including n
+    """
+    primes = []
+    #is_prime[p] represents if p is prime or not, initially all set to trye, then use sieving to eliminate
+    is_prime = [False, False] + [True] * (n - 1)
+    for p in range(2, n + 1):
+        if is_prime[p]:
+            primes.append(p)
+            # sieve p's multiples
+            for i in range(p * 2, n + 1, p):
+                is_prime[i] = False 
+    return primes
+
+
+def generatePrimes(n):
+    """
+    improve on previous by seiving p's multiples from p^2 instead of p,
+    since all numbers form kp, where k < p have already been seived out
+    """
+    if n < 2:
+        return []
+    size = (n - 3) // 2 + 1
+    primes = [2] #stores primes from 1 to n
+    #is_prime[i] represents (2i + 3) is prime or not
+    #for example, is_prime[0] represents 3 is prime or not, is_price[1] represents 5, is_prime[2] represents 7, etc
+    #initially set each to true, then use seiving to elikminate nonprimes
+    is_prime = [True] * size 
+    for i in range(size):
+        if is_prime[i]:
+            p = i * 2 + 3
+            primes.append(p)
+        #sieving from p^2, where p^2 = (4i^2 + 12i + 9). The index in is_prime is 
+        # (2i^2 + 6i + 3) bc is_prime[i] represents 2i + 3
+        #
+        # note that we need to use long for j because p^2 might overflow
+        for j in range(2 * i**2 + 6*i + 3, size, p):
+            is_prime[j] = False 
+    return primes
+
+def applyPermutation(perm, A):
+    """
+    move one element at a time to its correct location, but we need to move the existing elements somehwere
+    the natural place to move the existing element is to the recently vacated place, with a swap,
+    but then we need to update the permutation array
+    # once P[i] == i, we are done with the sequence of swaps
+    """
+    for i in range(len(A)):
+        while perm[i] != i:
+            A[perm[i]], A[i] = A[i], A[perm[i]]
+            perm[perm[i]], perm[i] = perm[i], perm[perm[i]]
+
+
+def nextPermutation(perm):
+    # start from the end and look for largest decresing sequence, then grab the min from the left and replce it, 
+    # then reverse the sort on the right seuqence
+    inversion = len(perm) - 2
+    while inversion >= 0 and perm[inversion] >= perm[inversion + 1]:
+        inversion -= 1
+    if inversion == -1:
+        return []
+    for i in reversed(range(inversion + 1, len(perm))):
+        if perm[i] > perm[inversion]:
+            perm[inversion], perm[i] = perm[i], perm[inversion]
+            break 
+    # reverse the ordered sequence to get next perm
+    perm[inversion + 1:] = reversed(perm[inversion + 1:])
+    return perm
+
+
+
 
 
 ####################################################################################################
