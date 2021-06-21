@@ -444,6 +444,21 @@ def nextPermutation(perm):
     return perm
 
 
+def generateSubsetBySampling(k, A):
+    for i in range(k):
+        r = random.randint(1, len(A) - 1)
+        A[i], A[r] = A[r], A[i]
+    # return A[:k + 1] 
+
+def reservoirSampling(k, A):
+    result = A[:k]
+    for i in range(k, len(A)):
+        r = random.randrange(i + 1)
+        if r < k:
+            result[r] = A[i]
+    print(result)
+    return result
+    
 
 
 
@@ -467,6 +482,8 @@ if __name__ == "__main__":
     # print(is_rectangle(Point(0, 0), Point(100, 0), Point(0, 200), Point(100, 200)))
     # TwoDcomp()
     # dutch_flag_partition(4, [1, 4, 2, 8, 3, 7, 2, 5, 1, 7])
-    print(multiply([1,2,9], [1,1]))
+    # print(multiply([1,2,9], [1,1]))
+
+    reservoirSampling(3, [1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
 
     # STRINGS
