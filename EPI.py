@@ -458,10 +458,73 @@ def reservoirSampling(k, A):
             result[r] = A[i]
     print(result)
     return result
+
+
+########################### LISTS ###############################33
+
+class ListNode:
+    def __init__(self, data=0, next=None):
+        self.data = data
+        self.next = next 
+        
+def listPivoting(l: ListNode, x: int):
+    less_head = less_iter = ListNode()
+    equal_head = equal_iter = ListNode()
+    greater_head = greater_iter = ListNode()
+    # populates the three lists
+    while l:
+        if l.data < x:
+            less_iter.next = l
+            less_iter = less_iter.next
+        elif l.data == x:
+            equal_iter.next = l
+            equal_iter = equal_iter.next
+        else:
+            greater_iter.next = l
+            greater_iter = greater_iter.next
+        l = l.next
+    # combine lists 
+    greater_iter.next = None 
+    equal_iter.next = greater_head.next
+    less_iter.next = equal_head.next 
+    return less_head.next
+
+def isLinkedListAPalindrome(L: ListNode):
+    # find second hald of L
+    slow = fast = L
+    while fast and fast.next:
+        fast, slow = fast.next.next, slow.next
+        
+    # compares the first hald to the reversedsecond half
+    first_iter, second_iter = L, reverse_list(slow)
+    while second_iter and first_iter:
+        if second_iter.data != first_iter.data:
+            return False 
+        first_iter = first_iter.next
+        second_iter = second_iter.next
+    return True
     
+    
+def evenOddListMerge(L: ListNode):
+    if L is None:
+        return L
 
+    even_head_dummy, odd_head_dummy = ListNode(), ListNode()
+    tails, turn = [even_head_dummy, odd_head_dummy], 0
+    while L:
+        tails[turn].next = L
+        L = L.next
+        tails[turn] = tails[turn].next
+        turn ^= 1
+    tails[1].next = None 
+    tails[0].next = odd_head_dummy.next
+    return even_head_dummy.next
 
+def cyclicallyRightShiftList(L: ListNode, k: int):
+    pass 
 
+def removeDuplicates(L: ListNode):
+    pass 
 ####################################################################################################
 #                                           STRINGS                                                #
 ####################################################################################################
