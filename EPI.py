@@ -2,6 +2,7 @@ import math
 import collections
 import random
 import copy
+from typing import List
 
 def count_bits(x):
     n = 0
@@ -466,7 +467,45 @@ class ListNode:
     def __init__(self, data=0, next=None):
         self.data = data
         self.next = next 
-        
+    
+def searchList(L: ListNode, key: int):
+    while L and L.data != key:
+        L = L.next
+    return L
+
+def insertAfter(node: ListNode, new_node: ListNode):
+    new_node.next = node.next
+    node.next = new_node
+
+def deleteNode(node: ListNode):
+    node.next = node.next.next
+
+def mergeTwoSortedLists(L1, L2):
+    dummy_head = tail = ListNode()
+    while L1 and L2:
+        if L1.data <= L2.data:
+            tail.next = L1 
+            L1 = L1.next
+        else:
+            tail.next = L2 
+            L2 = L2.next
+        tail = tail.next
+    return dummy_head.next
+
+def reverseSublist(L: ListNode, start: int, finish: int):
+    dummy_head = sublist_head = ListNode(0, L)
+    for _ in range(1, start):
+        sublist_head = sublist_head.next
+    # reverse sublist
+    sublist_iter = sublist_head.next
+    for _ in range(finish - start):
+        temp = sublist_iter.next
+        sublist_iter.next = temp.next
+        temp.next = sublist_head.next 
+        sublist_head.next = temp
+
+    return dummy_head.next
+
 def listPivoting(l: ListNode, x: int):
     less_head = less_iter = ListNode()
     equal_head = equal_iter = ListNode()
@@ -519,6 +558,21 @@ def evenOddListMerge(L: ListNode):
     tails[1].next = None 
     tails[0].next = odd_head_dummy.next
     return even_head_dummy.next
+
+def hasCycle():
+    pass
+
+def overlappingNoCycle():
+    pass
+
+def overlappingLists():
+    pass
+
+def deletionFromList():
+    pass
+
+def removeKthLast():
+    pass 
 
 def cyclicallyRightShiftList(L: ListNode, k: int):
     pass 
