@@ -605,7 +605,7 @@ def hasCycle(head: ListNode):
         slow = slow.next
         fast = fast.next.next
         # cycle detected
-        if slow if fast:
+        if slow is fast:
             slow = head
             # advance both pointers
             while slow is not fast:
@@ -663,11 +663,23 @@ def overlappingLists(l0: ListNode, l1: ListNode):
     return root1 if temp is root0 else None 
     
 
-def deletionFromList():
-    pass
+def deletionFromList(node_to_delete: ListNode):
+    node_to_delete.data = node_to_delete.next.data
+    node_to_delete.next = node_to_delete.next.next
 
-def removeKthLast():
-    pass 
+
+def removeKthLast(L: ListNode, k: int):
+    dummy_head = ListNode(0, L)
+    first = dummy_head
+    for _ in range(k):
+        first = first.next
+    second = dummy_head
+    while first:
+        first, second = first.next, second.next
+    # second points to the (k+1)th last node, deltes its successor
+    # advance in tandem, when first reaches tail, second is at (k+1)th node and we can remove it
+    second.next = second.next.next 
+    return dummy_head.next
 
 def cyclicallyRightShiftList(L: ListNode, k: int):
     pass 
