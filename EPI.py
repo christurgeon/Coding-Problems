@@ -4,6 +4,7 @@ import random
 import copy
 from typing import List
 
+
 def count_bits(x):
     n = 0
     while x:
@@ -12,6 +13,7 @@ def count_bits(x):
         x >>= 1
     return n
 
+
 def parity(x):
     result = 0
     while x:
@@ -19,11 +21,13 @@ def parity(x):
         x &= x - 1  # drops lowest set bit of x
     return result
 
+
 def extract_lowest_set_bit(x):
     print(bin(x))
     l = x & ~(x - 1)
     print(bin(l))
     return l
+
 
 def swap_bits(x, i, j):
     print("Before:", bin(x), x)
@@ -34,8 +38,10 @@ def swap_bits(x, i, j):
     print("After:", bin(x), x)
     return x
 
+
 def lonely_one(i):
     return 1 << i
+
 
 def reverse_bits(x):
     # brute force, no caching reverses
@@ -47,6 +53,7 @@ def reverse_bits(x):
         print(bin(result), bin(x))
     return result
 
+
 def closes_int_same_bit_count(x):
     num_unsigned_bits = 64
     for i in range(num_unsigned_bits - 1):
@@ -55,6 +62,7 @@ def closes_int_same_bit_count(x):
             return x
     raise ValueError("All bits are 0 or 1")
 
+    
 def multiply(a, b):
     def add(a, b):
         print(bin(a), bin(b))
@@ -70,6 +78,7 @@ def multiply(a, b):
         a, b = a >> 1, b << 1
     return current_sum
 
+
 def power(x: float, y: int):
     result, power = 1.0, y 
     if y < 0: 
@@ -83,12 +92,14 @@ def power(x: float, y: int):
     print(result)
     return result
 
+
 def reverse(x: int):
     result, remaining = 0, abs(x)
     while remaining:
         result = result * 10 + remaining % 10
         remaining //= 10
     return -result if x < 0 else result
+
 
 def is_palindrome(x: int) -> bool:
     if x <= 0:
@@ -106,6 +117,7 @@ def is_palindrome(x: int) -> bool:
             print(x, most_significant)
         return True
 
+    
 # inclusive of lower, and upper
 def uniform_random(lower: int, upper: int) -> int:
     total_outcomes = upper - lower + 1 
@@ -159,6 +171,7 @@ def is_rectangle(p1: Point, p2: Point, p3: Point, p4: Point) -> Point:
     d4 = (cx - p4.x)**2 + (cy - p4.y)**2
     return d1 == d2 and d2 == d3 and d3 == d4 
 
+
 #  list[int]
 def even_odd(L) -> None:
     even, odd = 0, len(L)-1 # partition the even to front, odd to back
@@ -170,6 +183,7 @@ def even_odd(L) -> None:
             odd -= 1
             # could increment even here too
 
+            
 # O(n) to check if element is in an array
 """
 list = [1, 2, 3]
@@ -196,6 +210,7 @@ def TwoDcomp():
     print( [x for row in M for x in row] )
     return
 
+
 def dutch_flag_partition(pivot_index, L):
     def swap(i, j):
         L[i], L[j] = L[j], L[i]
@@ -220,6 +235,7 @@ def dutch_flag_partition(pivot_index, L):
     # Time O(n^2)
     # Space O(1)
 
+    
 # two iterations
 def dutch_flag_partition_OofN_time(pivot_index, L):
     def swap(i, j):
@@ -238,6 +254,7 @@ def dutch_flag_partition_OofN_time(pivot_index, L):
             swap(i, larger)
             larger -= 1
     print(L)
+       
         
 def dutch_flag_partition_single_pass(pivot_index, L):
     def swap(i, j):
@@ -261,6 +278,7 @@ def dutch_flag_partition_single_pass(pivot_index, L):
             larger -= 1
             swap(larger)
 
+            
 # [1,2,9] + 1
 #   ==> [1,3,0]
 # [9,9,9] + 1
@@ -278,6 +296,7 @@ def plus_one(L):
     return L
         
 ################################################################################################### REVIEW THIS ONE
+
 
 # num1: list[int], num2: list[int]) -> list[int]:
 def multiply(num1, num2):
@@ -315,6 +334,7 @@ def canReachEnd(A):
         i += 1
     return furthest_reach >= last_index
 
+
 def deleteDuplicates(A):
     """
     incrementally write values to the left and skip over others
@@ -329,6 +349,7 @@ def deleteDuplicates(A):
             write_index += 1
     return write_index
 
+
 def buyAndSellStockOnce(P):
     """
     input is prices over time, want to buy and sell one time for max profit, backtest
@@ -340,6 +361,7 @@ def buyAndSellStockOnce(P):
         max_profit = max(max_profit, max_profit_sell_today)
         min_price_so_far = min(min_price_so_far, price)
     return max_profit
+
 
 def buyAndSellStockTwice(prices):
     max_total_profit = 0.0
@@ -374,6 +396,7 @@ def rearrange(A):
     for i in range(len(A)):
         A[i:i + 2] = sorted(A[i:i + 2], reverse=bool(i % 2))
 
+        
 def enumeratePrimes(n):
     """
     given n, include all primes up to and including n
@@ -415,6 +438,7 @@ def generatePrimes(n):
             is_prime[j] = False 
     return primes
 
+
 def applyPermutation(perm, A):
     """
     move one element at a time to its correct location, but we need to move the existing elements somehwere
@@ -451,6 +475,7 @@ def generateSubsetBySampling(k, A):
         A[i], A[r] = A[r], A[i]
     # return A[:k + 1] 
 
+    
 def reservoirSampling(k, A):
     result = A[:k]
     for i in range(k, len(A)):
@@ -461,25 +486,32 @@ def reservoirSampling(k, A):
     return result
 
 
-########################### LISTS ###############################33
+####################################################################################################
+#                                        LINKED LIST                                               #
+####################################################################################################
+
 
 class ListNode:
     def __init__(self, data=0, next=None):
         self.data = data
         self.next = next 
-    
+
+        
 def searchList(L: ListNode, key: int):
     while L and L.data != key:
         L = L.next
     return L
 
+
 def insertAfter(node: ListNode, new_node: ListNode):
     new_node.next = node.next
     node.next = new_node
 
+    
 def deleteNode(node: ListNode):
     node.next = node.next.next
 
+    
 def mergeTwoSortedLists(L1, L2):
     dummy_head = tail = ListNode()
     while L1 and L2:
@@ -491,6 +523,7 @@ def mergeTwoSortedLists(L1, L2):
             L2 = L2.next
         tail = tail.next
     return dummy_head.next
+
 
 def reverseSublist(L: ListNode, start: int, finish: int):
     dummy_head = sublist_head = ListNode(0, L)
@@ -505,6 +538,7 @@ def reverseSublist(L: ListNode, start: int, finish: int):
         sublist_head.next = temp
 
     return dummy_head.next
+
 
 def listPivoting(l: ListNode, x: int):
     less_head = less_iter = ListNode()
@@ -527,6 +561,7 @@ def listPivoting(l: ListNode, x: int):
     equal_iter.next = greater_head.next
     less_iter.next = equal_head.next 
     return less_head.next
+
 
 def isLinkedListAPalindrome(L: ListNode):
     # find second hald of L
@@ -559,14 +594,74 @@ def evenOddListMerge(L: ListNode):
     tails[0].next = odd_head_dummy.next
     return even_head_dummy.next
 
-def hasCycle():
-    pass
 
-def overlappingNoCycle():
-    pass
+def hasCycle(head: ListNode):
+    """
+    use a slow and fast iteration, if fast passes slow
+    then a cycle is detected
+    """
+    fast = slow = head 
+    while fast and fast.next and fast.next.next:
+        slow = slow.next
+        fast = fast.next.next
+        # cycle detected
+        if slow if fast:
+            slow = head
+            # advance both pointers
+            while slow is not fast:
+                slow = slow.next
+                fast = fast.next
+            return slow # start of the cycle
+    return None
 
-def overlappingLists():
-    pass
+
+def overlappingNoCycle(l0: ListNode, l1: ListNode):
+    # compute size of both lists, advance longer head to where overlap would start
+    # go node by node comparing each one
+    
+    def length(L):
+        length = 0
+        while L:
+            L = L.next
+            length += 1
+        return length
+    
+    l0_len = length(l0)
+    l1_len = length(l1)
+    if l0_len > l1_len:
+        l0, l1 = l1, l0 # arrange so l1 is the longer one
+    # advance the longer list to get equal length lists
+    for _ in range(abs(l0_len - l1_len)):
+        l1 = l1.next
+    
+    while l0 and l1 and l0 is not l1:
+        l0 = l0.next 
+        l1 = l1.next
+    return l0
+    
+
+def overlappingLists(l0: ListNode, l1: ListNode):
+    # store the start of the cycle if any
+    root0 = hasCycle(l0)
+    root1 = hasCycle(l1)
+    
+    if not root0 and not root1:
+        # both lists dont have cycles
+        return overlappingNoCycle(l0, l1)
+   
+    elif (root0 and not root1) or (not root0 and root1):
+        # one list has a cycle, no overlapping
+        return None
+    
+    # both lists have cycles
+    temp = root1
+    while temp:
+        temp = temp.next
+        if temp is root0 or temp is root1:
+            break
+            
+    return root1 if temp is root0 else None 
+    
 
 def deletionFromList():
     pass
@@ -584,23 +679,6 @@ def removeDuplicates(L: ListNode):
 ####################################################################################################
 
 
-if __name__ == "__main__":
 
-    # ARRAYS
 
-    # count_bits(5)
-    # parity(10)
-    # extract_lowest_set_bit(20)
-    # swap_bits(17, 2, 4)
-    # reverse_bits(20)
-    # multiply(5, 10)
-    # power(2.0, -2)
-    # print(is_palindrome(1000021))
-    # print(is_rectangle(Point(0, 0), Point(100, 0), Point(0, 200), Point(100, 200)))
-    # TwoDcomp()
-    # dutch_flag_partition(4, [1, 4, 2, 8, 3, 7, 2, 5, 1, 7])
-    # print(multiply([1,2,9], [1,1]))
 
-    reservoirSampling(3, [1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
-
-    # STRINGS
