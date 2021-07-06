@@ -681,8 +681,44 @@ def removeKthLast(L: ListNode, k: int):
     second.next = second.next.next 
     return dummy_head.next
 
+
+def removeDuplicates(L: ListNode):
+    it = L
+    while it:
+        # uses next_distinct to find the next distinct value
+        next_distinct = it.next
+        while next_distinct and next_distinct.data == it.data:
+            next_distinct = next_distinct.next
+        it.next = next_distinct
+        it = next_distinct
+    return L
+
+
 def cyclicallyRightShiftList(L: ListNode, k: int):
-    pass 
+    if L is None:
+        return L 
+    # compute the length of L and the tail
+    tail = L
+    n = 1
+    while tail.next:
+        n += 1
+        tail = tail.next
+    
+    k %= n
+    if k == 0:
+        return L
+    
+    tail.next = L # makes a cycle by connecting tail to head
+    steps_to_new_head = n - k
+    new_tail = tail 
+    while steps_to_new_head:
+        steps_to_new_head -= 1
+        new_tail = new_tail.next
+    
+    new_head = new_tail.next
+    new_tail.next = None
+    return new_head
+
 
 def removeDuplicates(L: ListNode):
     pass 
