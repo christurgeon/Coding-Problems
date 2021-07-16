@@ -49,3 +49,20 @@ def searchEntryEqualToItsIndex(A: List[int]):
         else: # diff < 0
             left = mid + 1
     return -1
+
+
+def searchSmallest(A: List[int]):
+    """
+    find the smallest entry in a cicular sorted array
+    use divide and conquer
+    """
+    left, right = 0, len(A) - 1
+    while left < right:
+        mid = (left + right) // 2
+        if A[mid] > A[right]:
+            # minimum must be A[mid + 1:right + 1]
+            left = mid + 1
+        else: # A[mid] <= A[right]
+            # minimum cannot be in A[mid + 1: right + 1] so it must be in A[left:mid + 1]
+            right = mid
+    return left
