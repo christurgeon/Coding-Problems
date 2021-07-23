@@ -486,6 +486,32 @@ def reservoirSampling(k, A):
     return result
 
 
+def onlineRandomSampling(stream: Iterator(int), k: int):
+    """
+    keep track of a sampling out of a data stream
+    """
+    running_sample = list(itertools.islice(stream, k)) # first k elements
+    num_seen = k
+    for x in stream:
+        num_seen += 1
+        idx_for_replace = random.randrange(num_seen)
+        if idx_for_replace < k:
+            running_sample[idx_for_replace] = x 
+    return running_sample
+
+
+def computePascalTriangle(n: int):
+    """
+    initialize 2d list then look through the rows and across columns summing
+    the two above to create the new value
+    """
+    result = [[1] * (i + 1) for i in range(n)]
+    for i in range(n):
+        for j in range(1, i):
+            result[i][j] = result[i-1][j-1] + result[i-1][j]
+    return result
+
+
 ####################################################################################################
 #                                        LINKED LIST                                               #
 ####################################################################################################
