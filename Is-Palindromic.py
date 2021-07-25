@@ -1,5 +1,5 @@
 class Solution:
-  def isPalindromic(s: str): 
+  def isPalindromic(self, s: str): 
     half = len(s) // 2
     for i in range(half):
       if s[i] != s[~i]:
