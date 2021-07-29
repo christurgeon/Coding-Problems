@@ -1,5 +1,3 @@
-
-
 def binarySearch(t: int, A: List[int]):
     L, R = 0, len(A)-1
     while L <= R:
@@ -13,6 +11,18 @@ def binarySearch(t: int, A: List[int]):
     return -1
 
 
+def binSearchRecursive(target, array, left, right):
+    if left > right:
+        return -1
+    mid = left + (right - left) // 2   
+    if array[mid] < target:
+        return binSearchRecursive(target, array, mid + 1, right)
+    elif array[mid] == target:
+        return mid      
+    else: # array[mid] > target 
+        return binSearchRecursive(target, array, mid, right - 1)
+
+    
 def searchFirstOfK(A: List[int], k: int):
     """
     search for the first instance of k in A, where there can be repeats
