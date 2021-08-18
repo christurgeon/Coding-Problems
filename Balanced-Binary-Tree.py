@@ -28,7 +28,7 @@ def isBalancedBinaryTree(tree: BinaryTreeNode) -> bool:
         height = max(left_result.height, right_result.height) + 1
         return BalancedStatusWithHeight(is_balanced, height)
 
-    return checkBalanced(tree)
+    return checkBalanced(tree).balanced
 
 # preorder traversal: O(n)
 # space bounded by height: O(h)
