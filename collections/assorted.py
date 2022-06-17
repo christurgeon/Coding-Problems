@@ -9,12 +9,34 @@
         if you want all solutions, backtracking is used
 """
 
+from asyncio import QueueEmpty
+from email.base64mime import header_length
+import heapq
+import collections
+from typing import *
+from functools import lru_cache
+
+class ListNode:
+    def __init__(self, val=0, next=None):
+        self.val = val
+        self.next = next
+
+class TreeNode:
+    def __init__(self, val=0, left=None, right=None):
+        self.val = val
+        self.left = left 
+        self.right = right
+
+class Node:
+    def __init__(self, val):
+        self.val = val
+
 ##############################################################################################
 ###   ARRAYS
 ##############################################################################################
 
 
-def ConcatenateTwoLists(self, nums: List[int]) -> List[int]:
+def ConcatenateTwoLists(nums: List[int]) -> List[int]:
     return nums + nums
 
 
@@ -41,7 +63,7 @@ def TwoSumII(numbers: List[int], target: int) -> List[int]:
     return [-1, -1]
 
 
-def LongestConsecutiveInAnArray(self, nums: List[int]) -> int:
+def LongestConsecutiveInAnArray(nums: List[int]) -> int:
     if not nums:
         return 0
     
@@ -179,13 +201,6 @@ def RotateArrayBykSteps(A, k):
     return A[len(A) - k:] + A[:len(A) - k]
 
 
-def printM(M):
-    for i in M:
-        for j in i:
-            print(j, end=" ")
-        print()
-
-
 def CountDecreasingSubArrays(A):
     count = 0
     subarray_length = 1
@@ -214,7 +229,18 @@ def RotateMatrix(M):
         for y in range(x, N-x-1):
             # top left, bottom left, top right, bottom right | walking upward 
             M[x][y], M[N-y-1][x], M[N-x-1][N-y-1], M[y][N-x-1] = M[y][N-x-1], M[x][y], M[N-y-1][x], M[N-x-1][N-y-1]
-    printM(M)
+  
+
+# https://leetcode.com/problems/rotate-image/
+def RotatImageLeetcode(matrix: List[List[int]]) -> None:
+    """
+    Do not return anything, modify matrix in-place instead.
+    """
+    n = len(matrix)
+    for i in range(n // 2):
+        for j in range(i, n - i - 1):
+            #   TOP          RIGHT          BOTTOM          LEFT
+            matrix[i][j], matrix[j][~i], matrix[~i][~j], matrix[~j][i] = matrix[~j][i], matrix[i][j], matrix[j][~i], matrix[~i][~j] 
 
 
 # 1-D RangeSumQuery, prefixing strategy
@@ -274,7 +300,7 @@ amount of palindromes you can remove to make it empty
     solution: since its two chars if s is not palindrome, 
               then it takes 2 removals only
 """
-def RemovePalindromicString(self, s: str) -> int:
+def RemovePalindromicString(s: str) -> int:
     if s == s[::-1]:
         return 1
     return 2
@@ -331,7 +357,7 @@ def LongestSubstringWithoutRepeatingCharacters(S):
     return max(size, len(cache))
 
 
-def FirstUniqueChar(self, s: str) -> int:
+def FirstUniqueChar(s: str) -> int:
     d = {}
     for char in s:
         d[char] = 1 if char not in d else d[char] + 1
@@ -371,7 +397,7 @@ def LongestPalindromicSubstring(s):
     return s[l:r+1]
 
 
-def MinimumWindowSubstring(S, target):
+def MinimumWindowSubstring(s, target):
     counts = {}
     for t in target:
         counts[t] = 1 if t not in counts else counts[t] + 1
@@ -431,13 +457,6 @@ def WildCardMatching(S):
 ##############################################################################################
 
 
-# Definition for singly-linked list.
-class ListNode:
-    def __init__(self, val=0, next=None):
-        self.val = val
-        self.next = next
-
-
 def DeleteDuplicates(head: Optional[ListNode]) -> Optional[ListNode]:
     current = head
     while current:
@@ -458,6 +477,25 @@ def RemoveElements(head: Optional[ListNode], val: int) -> Optional[ListNode]:
             current_node = current_node.next
     return dummy_head.next
         
+
+# https://leetcode.com/problems/reverse-linked-list/
+def ReverseLinkedList(head: Optional[ListNode]) -> Optional[ListNode]:
+    previous = None
+    current = head
+    while current:
+        temp = current.next
+        current.next = previous
+        previous, current = current, temp
+    return previous
+
+def ReverseLinkedListRecursive(head: Optional[ListNode]) -> Optional[ListNode]:
+    def helper(previous, current):
+        if not current:
+            return previous
+        temp = current.next
+        current.next = previous
+        return helper(current, temp)
+    return helper(None, head)
 
 
 # take the spot of the next node
@@ -534,7 +572,7 @@ def GetIntersectionNodeOptimal(headA: ListNode, headB: ListNode):
     return a_iter
 
 
-def MergeKSortedLists(self, lists: List[Optional[ListNode]]) -> Optional[ListNode]:
+def MergeKSortedLists(lists: List[Optional[ListNode]]) -> Optional[ListNode]:
     q = []
     dummy_head = ListNode(None)
     current = dummy_head 
@@ -585,7 +623,7 @@ def PolishNotation(S):
 
 
 # LeetCode Version
-def evalRPN(self, tokens: List[str]) -> int:
+def evalRPN(tokens: List[str]) -> int:
     results = []
     operations = {
         '+': lambda x, y: x + y, 
@@ -618,16 +656,16 @@ class MinStack:
     def __init__(self):
         # tuple (value, curr_min)
         self.__stack = []
-    def push(val):
+    def push(self, val):
         minimum = self.getMin()
         self.__stack.append( (val, min(val, minimum)) )
-    def pop(val):
+    def pop(self):
         return self.__stack.pop()
-    def top():
+    def top(self):
         if (len(self.__stack) > 0):
             return self.__stack[-1][0]
         return None
-    def getMin():
+    def getMin(self):
         if len(self.__stack):
             return self.__stack[-1][1]
         return 2**31 - 1
@@ -695,17 +733,76 @@ def BinaryTreeInOrderTraversal(root):
     else:
         return []
 
-def BinaryTreePrerderTraversal():
+def BinaryTreePrerderTraversal(root):
     if root:
         return  [root.val] + BinaryTreePrerderTraversal(root.left) + BinaryTreePrerderTraversal(root.right)
     else:
         return []
 
-def BinaryTreePostOrderTraversal():
+def BinaryTreePostOrderTraversal(root):
     if root:
         return BinaryTreePostOrderTraversal(root.left) + BinaryTreePostOrderTraversal(root.right) + [root.val]
     else:
         return []
+
+
+def SearchBinarySearchTree(node, search_value):
+    if not node or node.val == search_value:
+        return node
+    elif node.val > search_value:
+        return SearchBinarySearchTree(node.left, search_value)
+    else: # node.val < search_value
+        return SearchBinarySearchTree(node.right, search_value)
+
+
+"""
+    Search for BST violations in a BFS manner, store upper and lower bound
+    on the keys stored at the subtree rooted at that node.
+"""
+def IsBinaryTreeABinarySearchTree(tree):
+    queue = deque((tree, float('-inf'), float('inf')))
+    while queue:
+        node, lower, upper = queue.popleft()
+        if node:
+            if not (lower <= node.val <= upper):
+                return False 
+            queue.append( (node.left, lower, node.val) )
+            queue.append( (node.right, node.val, upper) )
+    return True
+
+
+"""
+    Write a program that takes as input a BST and a value k and returns the first key 
+    that would appear in an inorder traversal which is greater than the input value k
+        inorder is left, root, right (so we are looking for k's root essentially)
+
+    basically in sorted order take the one to the right of k
+"""
+def FindFirstNodeGreaterThanK(tree, k):
+    current, greater_than_k = tree, None
+    while current:
+        if current.data > k:
+            greater_than_k = current
+            current = current.left
+        else: # root and all keys in subtree are <= k so skip them
+            current = current.right
+    return greater_than_k
+
+
+"""
+    Traverse down the right subtree and whenever end is reached, we know that is the greatest value
+"""
+def FindKLargestElementsInABST(tree, k):
+    def helper(tree):
+        if tree and len(result) < k:
+            helper(tree.right)
+            if len(result) < k:
+                result.append(tree.val)
+                helper(tree.left)
+
+    result = []
+    helper(tree)
+    return result            
 
 
 def SymmetricTree(root):
@@ -716,7 +813,7 @@ def SymmetricTree(root):
             return left.val == right.val and isSym(left.left, right.right) and isSym(left.right, right.left)
         else:
             return False
-    return not root or isdigit(root.left, root.right) 
+    return not root or str.isdigit(root.left, root.right) 
     
 
 def MaximumDepthOfBinaryTree(root):
@@ -728,7 +825,7 @@ def MaximumDepthOfBinaryTree(root):
 
 
 # iterative example from leetcode discussion board, for reference 
-def maxDepth(self, root):
+def maxDepth(root):
     depth = 0
     level = [root] if root else []
     while level:
@@ -815,7 +912,7 @@ class Solution:
         return self.max_path_sum    
 
 
-def sortedArrayToBST(self, nums: List[int]) -> Optional[TreeNode]:
+def SortedArrayToBST(nums: List[int]) -> Optional[TreeNode]:
     
     def build(nums, lower, upper):
         if lower == upper:
@@ -849,7 +946,7 @@ def LowestCommonAncestor(root: 'TreeNode', p: 'TreeNode', q: 'TreeNode') -> 'Tre
         p = parent[p]
     while q not in ancestors:
         q = parent[q]
-return q
+    return q
 
 
 def LowestCommonAncestorBST(root: 'TreeNode', p: 'TreeNode', q: 'TreeNode') -> 'TreeNode':
@@ -876,6 +973,14 @@ def LowestCommonAncestorBSTQuicker(root: 'TreeNode', p: 'TreeNode', q: 'TreeNode
             root = root.left
     return root
 
+# assumes s < b
+def ComputeLCA_EPI_Version(tree, s, b):
+    while tree.val < s.val or tree.val > b.val: #[s, b] check if within range
+        while tree.val < s.val:
+            tree = tree.right 
+        while tree.val > b.val:
+            tree = tree.left 
+    return tree
 
 def maxAncestorDiff(root: Optional[TreeNode]) -> int:
     max_difference_so_far = float('-inf')
@@ -894,6 +999,34 @@ def maxAncestorDiff(root: Optional[TreeNode]) -> int:
     return max_difference_so_far
 
 
+# https://leetcode.com/problems/flatten-binary-tree-to-linked-list/
+@lru_cache(None)
+def flatten(root: Optional[TreeNode]) -> None:
+    current = root
+    while current:
+        if current.left:
+            p = current.left
+            while p.right:
+                p = p.right
+            p.right = current.right
+            current.right = current.left
+            current.left = None 
+        current = current.right 
+        
+
+# EPI
+def RebuildBSTFromPreorder(preorder_sequence: List[int]):
+    def helper(lower, upper):
+        pass 
+    pass
+def FindClosestElementsInSortedArrays(sorted_arrays: List[List[int]]):
+    pass 
+def BuildMinHeightBSTFromSortedArray(array: List[int]):
+    pass 
+def PairIncludesAncestorAndDescendantOf_M(possible_anc_or_desc_0, possible_anc_or_desc_0, middle):
+    pass
+def RangeLookupInBST(tree, interval):
+    pass
 def SerializeAndDeserializeBinaryTree():
     pass 
 def BinaryTreeCameras():
@@ -973,12 +1106,12 @@ def CenterOfStarGraph(edges: List[List[int]]) -> int:
 
 
 def LargestConnectedComponent(graph) -> int:
-    if not edges:
+    if not graph:
         return 0
     
     largest = 0
     visited = set()
-    for node, neighbors in edges.items():
+    for node, neighbors in graph.items():
         stack = [node]
         component_size = 1
         while stack:
@@ -1042,6 +1175,22 @@ def GetAllAncestorsOfAllNodes(n: int, edges: List[List[int]]) -> List[List[int]]
         dfs(i, i)
     return results
 
+
+# https://leetcode.com/problems/all-paths-from-source-to-target/submissions/
+def AllPathsFromFirstNodeToLast(graph: List[List[int]]) -> List[List[int]]:
+    target = len(graph) - 1
+    paths = []
+    queue = deque([ [0, [0]] ])
+    while queue:
+        current, path_so_far = queue.popleft()
+        if current == target:
+            paths.append(path_so_far)
+        else:
+            for neighbor in graph[current]:
+                queue.append([neighbor, path_so_far + [neighbor]])
+    return paths
+
+
 ##############################################################################################
 ###   MAPS
 ##############################################################################################
@@ -1088,7 +1237,7 @@ def MajorityElement1(self, nums: List[int]) -> int:
 def MajorityElement2(nums):
     d = dict()
     for n in nums:
-        d[n] = d[n] += 1 if n in d else 1
+        d[n] = d[n] + 1 if n in d else 1
         if d[n] > len(nums) // 2:
             return n
 
@@ -1175,10 +1324,8 @@ def GroupAnagrams(strs):
 
 def MinimumWindowSubstringMap():
     pass 
-
 def WordLadder():
     pass 
-
 def WordBreak():
     pass
 
@@ -1190,14 +1337,14 @@ def WordBreak():
 # remember that heapq only applies minheap functionality
 # negate all values to get maxheap functionality
 
-def KthLargestElementInAStream(k, nums):
+def KthLargestElementInAStream(self, k, nums):
     self.k = k
     self.running = nums[:k]
     heapq.heapify(self.running)
     for i in range(k, len(nums)):
         heapq.heappushpop(self.running, nums[i])
 
-def add(val):
+def add(self, val):
     heapq.heappush(self.running, val)
     if len(self.running) > self.k:
         heapq.heappop(self.running)
@@ -1631,6 +1778,33 @@ def CanInterleaveString(self, s1: str, s2: str, s3: str) -> bool:
     return dfs_sp(0, 0)
 
 
+# https://leetcode.com/problems/count-number-of-teams/
+def CountNumberOfTeams(rating: List[int]) -> int:
+    # O(n^2)
+    # create a list of all that are greater / less than element at rating[i]
+    # basically treating each number (i in range(n)) as the lower
+    
+    n = len(rating)
+    greater, less = {}, {}
+    for i in range(n):
+        for j in range(i+1, n):
+            if rating[j] > rating[i]:
+                greater[i] = greater.get(i, 0) + 1
+            else: # rating[j] < rating[i]
+                less[i] = less.get(i, 0) + 1
+
+    # basically take i then take j then all others that are less than j or greater than j get added
+    result = 0
+    for i in range(n - 2):
+        for j in range(i+1, n):
+            if rating[j] > rating[i]:
+                result += greater.get(j, 0)
+            else:
+                result += less.get(j, 0)
+    
+    return result
+
+
 ##############################################################################################
 ###   MISC
 ##############################################################################################
@@ -1831,7 +2005,7 @@ def FindAmpleCity(gallons: List[int], distances: List[int]):
     cities_count = len(gallons)
     for i in range(1, cities_count):
         # fueled up - fuel used to go to next city
-        remaining_gallons += gallons[i-1] - (distance[i-1] // mpg)
+        remaining_gallons += gallons[i-1] - (distances[i-1] // mpg)
         if remaining_gallons < city_remaining_gallons_tuple[1]:
             city_remaining_gallons_tuple = (i, remaining_gallons)
     return city_remaining_gallons_tuple[0] # return city
@@ -1842,7 +2016,7 @@ def FindAmpleCity(gallons: List[int], distances: List[int]):
  moving the pointer located at the smaller side O(n)
 """
 def MostWaterFilled(heights: List[int]):
-    l, r, max_area = 0, len(neights) - 1, 0
+    l, r, max_area = 0, len(heights) - 1, 0
     while l < r:
         width = r - l
         height = min(heights[l], heights[r])
@@ -1856,38 +2030,3 @@ def MostWaterFilled(heights: List[int]):
 
 def LargestRectangleUnderTheSkyline():  
     pass
-
-
-##############################################################################################
-##############################################################################################
-
-
-if __name__ == "__main__":
-    L1 = [1, 3, 4, 3, 4, 4, 1]
-    L2 = [0]
-
-    # print(MergeTwoSortedLists(L1, L2))
-    # print(RemoveDuplicatesFromAnArray([1, 1, 2, 3, 3, 4, 5, 6, 6, 7, 8, 8, 8]))
-    # print(CountTheFrequencyOfAnElementInAnArray([1, 1, 2, 3,7,8,4, 3, 4, 5, 6, 6, 7, 8, 8, 8]))
-    # print(MoveAllZerosToBeginningOfArray([1, 0, 2, 3, 4, 0, 6, 0, 6, 8, 8, 0]))
-    # print(MoveAllZerosToEndOfArray([0, 0, 2, 0, 3, 4, 0, 6, 6, 0, 8, 8, 0]))
-    # print(BinarySearchAnArray([-1, 1, 2, 3, 4, 6, 8, 8], 6))
-    # print(RotateArrayBykSteps([-1, 1, 2, 3, 4, 6, 8, 8], 9))
-
-    """
-    mat1 = [[1, 2, 3, 4],
-        [5, 6, 7, 8],
-        [9, 10, 11, 12],
-        [13, 14, 15, 16]]
-    
-    mat2 = [ [1, 2, 3 ],
-            [4, 5, 6 ],
-            [7, 8, 9 ] ]
- 
-    mat3 = [ [1, 2 ],
-            [4, 5 ] ]
-
-    print(RotateMatrix(mat2))
-    """
-
-    print(StringToInteger("-1862"))
