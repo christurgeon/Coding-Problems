@@ -272,6 +272,56 @@ class NumMatrix:
         return large_rectangle - upper_rectangle - left_rectangle + intersection
 
 
+# https://leetcode.com/problems/next-permutation/
+def NextPermutation(nums: List[int]) -> None:
+    
+    def reverse(a, l, r):
+        while l < r:
+            a[l], a[r] = a[r], a[l]
+            l += 1
+            r -= 1
+        
+    # find longest non-increasing suffix
+    i = len(nums) - 1
+    while i-1 >= 0 and nums[i-1] >= nums[i]:
+        i -= 1
+    
+    # whole thing is non-increasing, so answer is reversed array
+    if i == 0:
+        return reverse(nums, 0, len(nums)-1)
+    
+    # indentify the pivot and find the rightmost successor to the pivot
+    pivot = i - 1
+    successor = 0
+    for i in range(len(nums)-1, pivot, -1):
+        if nums[i] > nums[pivot]:
+            successor = i
+            break
+            
+    # swap with pivot then reverse the suffix
+    nums[pivot], nums[successor] = nums[successor], nums[pivot]
+    reverse(nums, pivot+1, len(nums)-1)
+
+
+def totalFruit(fruits: List[int]) -> int:
+    count = {}
+    unique = result = end = start = 0
+    while end < len(fruits):
+        # adjust the count and increment the number of unique if we encounter a new one
+        count[fruits[end]] = count.get(fruits[end], 0) + 1
+        if count[fruits[end]] == 1: 
+            unique += 1
+        # while we have 3 unique, adjust the start to catch up
+        while unique == 3:
+            count[fruits[start]] -= 1
+            if not count[fruits[start]]: 
+                unique -= 1
+            start += 1
+        result = max(result, end - start + 1)
+        end += 1
+    return result
+
+
 def CreateChangeWithCoinsDP(A):
     pass 
 def SlidingWindowMaximum(A):
@@ -1322,6 +1372,20 @@ def GroupAnagrams(strs):
     return result.values()
 
 
+def FindRepeatedDnaSequences(s: str) -> List[str]:
+    lookup = {}
+    result = []
+    for i in range(len(s)-9):
+        substr = s[i:i+10]
+        if substr in lookup:
+            if not lookup[substr]:
+                lookup[substr] = True
+                result.append(substr)
+        else:
+            lookup[substr] = False
+    return result
+
+
 def MinimumWindowSubstringMap():
     pass 
 def WordLadder():
@@ -1333,6 +1397,8 @@ def WordBreak():
 ##############################################################################################
 ###   HEAPS
 ##############################################################################################
+
+# heapify operation is actually O(n)
 
 # remember that heapq only applies minheap functionality
 # negate all values to get maxheap functionality
@@ -1371,6 +1437,32 @@ def LastStoneWeight(stones: List[int]) -> int:
             value = y - x
         heapq.heappush(stones, value)
     return -stones[0] if stones else 0
+
+
+def ReorganizeString(self, s: str) -> str:
+    result, counts = [], Counter(s)
+    heap = [(-value, char) for char, value in counts.items()]
+    heapq.heapify(heap)
+    
+    next_candidate = None
+    if heap:
+        next_candidate = heapq.heappop(heap)
+        
+    while heap or next_candidate:
+        candidate = next_candidate
+        count, char = -candidate[0], candidate[1]
+        result.append(char)
+        
+        if not heap:
+            if count - 1 == 0:
+                return ''.join(result)
+            else:
+                return ""
+        
+        next_candidate = heapq.heappop(heap)
+        if count - 1 > 0:
+            heapq.heappush(heap, (-(count - 1), char))
+    return ''.join(result)
 
 
 ##############################################################################################
@@ -1805,6 +1897,68 @@ def CountNumberOfTeams(rating: List[int]) -> int:
     return result
 
 
+# https://leetcode.com/problems/house-robber/
+def HouseRobber(nums: List[int]) -> int:
+    if len(nums) == 1:
+        return nums[0]
+    
+    array = [nums[0], max(nums[0], nums[1])]
+    for i in range(2, len(nums)):
+        num = nums[i]
+        array.append(max(array[i-2] + num, array[i-1]))
+    return array[-1]
+
+
+# https://leetcode.com/problems/house-robber-ii/
+def HouseRobberII(nums: List[int]) -> int:
+    if len(nums) == 1:
+        return nums[0]
+    if len(nums) == 2:
+        return max(nums[0], nums[1])
+
+    def helper(offset):
+        offset_add =  0 if not offset else 1
+        offset_sub = -1 if not offset else 0
+        rob_one, rob_two = nums[offset_add], max(nums[offset_add], nums[offset_add+1])
+        for i in range(offset_add + 2, len(nums) + offset_sub):
+            temp_rob = max(nums[i] + rob_one, rob_two)
+            rob_one, rob_two = rob_two, temp_rob
+        return rob_two
+    
+    return max(helper(True), helper(False))
+
+
+# https://leetcode.com/problems/maximum-alternating-subsequence-sum/
+def MaxAlternatingSum(nums: List[int]) -> int:
+    # add first, subtract second, add third, etc
+    # sum even is if first subsequence added, sum odd is if it's subtracted
+    sum_even, sum_odd = 0, 0
+    
+    for num in nums:
+        temp_even = max(sum_odd + num, sum_even)
+        temp_odd = max(sum_even - num, sum_odd)
+        sum_even, sum_odd = temp_even, temp_odd
+                        
+    # first value we are adding is always added
+    return sum_even
+
+
+# https://leetcode.com/problems/target-sum/
+def FindTargetSumWays(self, nums: List[int], target: int) -> int:
+    dp = {} # (index, total) -> number of ways to get to target value
+    
+    def backtracking(i, current_total):
+        if i == len(nums):
+            return 1 if current_total == target else 0
+        if (i, current_total) in dp:
+            return dp[(i, current_total)]
+        
+        dp[(i, current_total)] = backtracking(i+1, current_total + nums[i]) + backtracking(i+1, current_total - nums[i])
+        return dp[(i, current_total)]
+    
+    return backtracking(0, 0)
+
+
 ##############################################################################################
 ###   MISC
 ##############################################################################################
@@ -2030,3 +2184,54 @@ def MostWaterFilled(heights: List[int]):
 
 def LargestRectangleUnderTheSkyline():  
     pass
+
+
+##############################################################################################
+###   SORTING
+##############################################################################################
+
+
+# https://leetcode.com/problems/sort-colors/
+# this solution uses quicksort
+def SortColors(nums: List[int]) -> None:
+    
+    def partition(lo, hi):
+        # set pivot to the last value, and j to the first
+        pivot, j = nums[hi], lo
+        for i in range(lo, hi):
+            if nums[i] <= pivot:
+                nums[i], nums[j] = nums[j], nums[i]
+                j += 1
+        # swap the pivot with the j location
+        nums[j], nums[hi] = nums[hi], nums[j]
+        return j
+    
+    def quicksort(lo, hi):
+        if len(nums) == 1:
+            return nums
+        
+        if lo < hi:
+            j = partition(lo, hi)
+            quicksort(lo, j - 1)
+            quicksort(j + 1, hi)
+        
+    quicksort(0, len(nums) - 1)
+
+
+# takes advantage of nums only having 0,1,2 as values
+def SortColorsOnePass(nums: List[int]) -> None:
+    if len(nums) == 1:
+        return nums
+    
+    beg, mid, end = 0, 0, len(nums) - 1
+    while mid <= end:
+        # will never have a 2 behind mid, so can always advance mid
+        if nums[mid] == 0:
+            nums[beg], nums[mid] = nums[mid], nums[beg]
+            beg += 1
+            mid += 1
+        elif nums[mid] == 2:
+            nums[mid], nums[end] = nums[end], nums[mid]
+            end -= 1
+        else: #nums[mid] == 1
+            mid += 1
