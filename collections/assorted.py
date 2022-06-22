@@ -322,6 +322,15 @@ def totalFruit(fruits: List[int]) -> int:
     return result
 
 
+# https://leetcode.com/problems/best-time-to-buy-and-sell-stock-ii/
+def maxProfit(prices: List[int]) -> int:
+    result = 0
+    for i in range(1, len(prices)):
+        if prices[i] > prices[i-1]:
+            result += prices[i] - prices[i-1]
+    return result
+
+
 def CreateChangeWithCoinsDP(A):
     pass 
 def SlidingWindowMaximum(A):
@@ -1747,7 +1756,59 @@ def MaxDepthNAryTree(root):
                 q.append((child, depth + 1))
         level += 1
     return max_depth
+
+
+# https://leetcode.com/problems/number-of-closed-islands/
+def ClosedIslandsCount(self, grid: List[List[int]]) -> int:
+    m, n = len(grid), len(grid[0])
+    
+    def valid(x, y):
+        return 0 <= x < m and 0 <= y < n
+    def dfs(x, y):
+        if valid(x, y) and grid[x][y] == 0:
+            grid[x][y] = -1
+            if x == 0 or x == m-1 or y == 0 or y == n-1:
+                self.valid_grid = False
+                return
+            dfs(x+1,y)
+            dfs(x,y+1)
+            dfs(x-1,y)
+            dfs(x,y-1)
         
+    # start DFS from inner grid and increase count if island
+    count = 0
+    for x in range(1, m-1):
+        for y in range(1, n-1):
+            if grid[x][y] == 0:
+                self.valid_grid = True
+                dfs(x, y)
+                if self.valid_grid:
+                    count += 1
+    return count
+        
+
+# https://leetcode.com/problems/max-area-of-island/submissions/
+def MaximumAreaOfIsland(self, grid: List[List[int]]) -> int:
+    m, n = len(grid), len(grid[0])
+    
+    def dfs(x, y):
+        if 0 <= x < m and 0 <= y < n and grid[x][y]:
+            grid[x][y] = 0
+            self.current_max_area += 1
+            dfs(x+1,y)
+            dfs(x,y+1)
+            dfs(x-1,y)
+            dfs(x,y-1)
+    
+    best_max_area = 0
+    for x in range(m):
+        for y in range(n):
+            if grid[x][y]:
+                self.current_max_area = 0
+                dfs(x, y)
+                best_max_area = max(best_max_area, self.current_max_area)
+    return best_max_area
+
 
 ##############################################################################################
 ###   EPI SEARCH
@@ -1957,6 +2018,145 @@ def FindTargetSumWays(self, nums: List[int], target: int) -> int:
         return dp[(i, current_total)]
     
     return backtracking(0, 0)
+
+
+# https://leetcode.com/problems/partition-equal-subset-sum/
+# O(2^n) is brute force because at each step we have two choces (could do DFS with backtracking)
+# here we reduce time to sum(nums)
+def CanPartition(nums: List[int]) -> bool:
+    total = sum(nums)
+    if total % 2 == 1:
+        return False
+    half = total // 2 
+    
+    all_sums = set([0])
+    for num in nums:
+        if num == half:
+            return True
+        next_all_sums = set()
+        for sums in all_sums:
+            new_sum = sums + num
+            if new_sum == half:
+                return True
+            next_all_sums.add(new_sum)
+            next_all_sums.add(sums)
+        all_sums = next_all_sums
+    return False
+
+
+# https://leetcode.com/problems/best-time-to-buy-and-sell-stock-with-cooldown/
+def MaximumProfit(prices: List[int]) -> int:
+    # state:
+    # buy -> i + 1 (True)
+    # sell -> i + 2 (False)
+    # O(2*n) runtime and space
+    dp = {} # k: (index, buy/sell) v: max_profit
+
+    def dfs(i, buying):
+        if i >= len(prices):
+            return 0 # no profit here
+        if (i, buying) in dp:
+            return dp[(i, buying)] # ax profit for this key is already stored
+        
+        # now we can choose to buy or sell or cooldown
+        cooldown = dfs(i+1, buying)
+        if buying:
+            buy = dfs(i+1, not buying) - prices[i]
+            dp[(i, buying)] = max(buy, cooldown)
+        else:
+            sell = dfs(i+2, not buying) + prices[i]
+            dp[(i, buying)] = max(sell, cooldown)
+        return dp[(i, buying)]
+            
+    return dfs(0, True)
+
+
+# https://leetcode.com/problems/coin-change/
+def CoinChange(coins: List[int], amount: int) -> int:
+    dp = {}
+    coins.sort()
+    
+    def dfs(remaining):
+        if remaining == 0: 
+            return 0
+        if remaining in dp:
+            return dp[remaining]
+        
+        coins_used = float('inf')
+        for coin in coins:
+            if remaining-coin >= 0:
+                coins_used = min(coins_used, dfs(remaining-coin) + 1)
+            else:
+                break
+        dp[remaining] = coins_used
+        return dp[remaining]
+    
+    result = dfs(amount)
+    return result if result != float('inf') else -1        
+
+
+# https://leetcode.com/problems/coin-change-2/
+# O(n*m) is time and space complexity
+def CoinChangeII_DFS_With_Cache(amount: int, coins: List[int]) -> int:
+    dp = {}
+    def dfs(i, a):
+        if a == amount:
+            return 1
+        if a > amount or i == len(coins):
+            return 0
+        if (i, a) in dp:
+            return dp[(i, a)]
+        
+        dp[(i, a)]  = dfs(i, a + coins[i]) + dfs(i+1, a)
+        return dp[(i, a)]
+    return dfs(0, 0)
+
+# https://leetcode.com/problems/coin-change-2/
+# O(n*m) is time and space complexity
+def CoinChangeII_DP(amount: int, coins: List[int]) -> int:
+    n = len(coins)
+    dp = [[0] * (amount + 1) for _ in range(n + 1)]
+    for i in range(n + 1):
+        dp[i][0] = 1
+    
+    for i in range(n - 1, -1, -1):
+        for j in range(1, amount + 1):
+            bottom = dp[i+1][j]
+            left = dp[i][j-coins[i]] if j-coins[i] >= 0 else 0
+            dp[i][j] = bottom + left 
+            
+    return dp[0][-1]
+            
+# O(n*m) but with O(n) space
+def CoinChangeII_DP_LessSpace(amount: int, coins: List[int]) -> int:
+    dp = [1] + [0] * (amount)
+    for coin in coins:
+            for i in range(1, amount + 1):
+                if i - coin >= 0:
+                        dp[i] += dp[i - coin]
+    return dp[-1]
+
+
+# https://leetcode.com/problems/minimum-cost-for-tickets/
+def MinimumCostTickets(days: List[int], costs: List[int]) -> int:
+    dp = {} # key is index, value is lowest cost
+    
+    def dfs(i):
+        if i == len(days):
+            return 0
+        if i in dp:
+            return dp[i]
+        lowest = float('inf')
+        for cost, day in zip(costs, [1, 7, 30]):
+            further_days = days[i] + day
+            j = i
+            while j < len(days) and days[j] < further_days:
+                j += 1
+            lowest = min(lowest, dfs(j) + cost)
+        dp[i] = lowest
+        return dp[i]
+
+    return dfs(0) 
 
 
 ##############################################################################################
