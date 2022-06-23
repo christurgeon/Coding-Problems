@@ -40,6 +40,12 @@ def ConcatenateTwoLists(nums: List[int]) -> List[int]:
     return nums + nums
 
 
+# https://leetcode.com/problems/contains-duplicate/
+def ContainsDuplicate(nums: List[int]) -> bool:
+    n = len(nums)
+    return n != len(set(nums))
+
+
 # https://leetcode.com/problems/arranging-coins/
 def ArrangeCoins(n):
     stairs = 1
@@ -303,7 +309,7 @@ def NextPermutation(nums: List[int]) -> None:
     reverse(nums, pivot+1, len(nums)-1)
 
 
-def totalFruit(fruits: List[int]) -> int:
+def TotalFruit(fruits: List[int]) -> int:
     count = {}
     unique = result = end = start = 0
     while end < len(fruits):
@@ -322,19 +328,32 @@ def totalFruit(fruits: List[int]) -> int:
     return result
 
 
+# https://leetcode.com/problems/top-k-frequent-elements/
+# first get the frequencies then add those frequencies to buckets 
+def topKFrequent(nums: List[int], k: int) -> List[int]:
+    counts = Counter(nums)
+    buckets = [[] for _ in range (len(nums) + 1)]
+    for num in counts:
+        count = counts[num]
+        buckets[count].append(num)
+        
+    result = []
+    for i in range(len(buckets)-1, -1, -1):
+        bucket = buckets[i]
+        if bucket:
+            result += bucket
+        if len(result) >= k:
+            return result
+    return result
+
+
 # https://leetcode.com/problems/best-time-to-buy-and-sell-stock-ii/
-def maxProfit(prices: List[int]) -> int:
+def MaxProfit(prices: List[int]) -> int:
     result = 0
     for i in range(1, len(prices)):
         if prices[i] > prices[i-1]:
             result += prices[i] - prices[i-1]
     return result
-
-
-def CreateChangeWithCoinsDP(A):
-    pass 
-def SlidingWindowMaximum(A):
-    pass 
 
 
 ##############################################################################################
@@ -425,6 +444,23 @@ def FirstUniqueChar(s: str) -> int:
         if d[char] == 1:
             return idx
     return -1
+
+
+# https://leetcode.com/problems/valid-palindrome/
+def IsPalindrome(s: str) -> bool:
+    l, r = 0, len(s) - 1
+    while l <= r:
+        left, right = s[l].lower(), s[r].lower()
+        if not left.isalnum():
+            l += 1
+        elif not right.isalnum():
+            r -= 1
+        elif left == right:
+            l += 1
+            r -= 1
+        else:
+            return False
+    return True
                
 
 # https://leetcode.com/problems/longest-palindromic-substring/
@@ -505,10 +541,17 @@ def sortString(s: str) -> str:
     return ''.join(result)
 
 
-def RegularExpressionMatching(S):
-    pass
-def WildCardMatching(S):
-    pass 
+# https://leetcode.com/problems/greatest-english-letter-in-upper-and-lower-case/
+def GreatestLetter(s: str) -> str:
+    lookup, answer = set(), ""
+    for c in s:
+        if c in lookup:
+            answer = c.upper() if not answer or c.upper() > answer else answer
+        elif c == c.lower():
+            lookup.add(c.upper())
+        else:
+            lookup.add(c.lower())
+    return answer
 
 
 ##############################################################################################
@@ -650,14 +693,60 @@ def MergeKSortedLists(lists: List[Optional[ListNode]]) -> Optional[ListNode]:
     return dummy_head.next
 
 
-def ReverseNodesInKGroup():
-    pass
-def AddTwoNumbers():
-    pass 
-def RemoveNthNodeFromEndOfList():
-    pass 
-def CopyListWithRandomPointer():
-    pass
+"""
+Another option for the next two problems is to do two traversals,
+one time to get the length and a second time to get the middle
+"""
+# https://leetcode.com/problems/delete-the-middle-node-of-a-linked-list/
+def DeleteMiddleNode(head: Optional[ListNode]) -> Optional[ListNode]:
+    dummy_head = ListNode(0, head)
+    slow, fast = dummy_head, dummy_head
+    while fast.next and fast.next.next:
+        slow = slow.next
+        fast = fast.next.next
+    slow.next = slow.next.next
+    return dummy_head.next
+
+
+# https://leetcode.com/problems/middle-of-the-linked-list/
+def MiddleNode(head: Optional[ListNode]) -> Optional[ListNode]:
+    dummy_head = ListNode(0, head)
+    slow, fast = dummy_head, dummy_head
+    while fast.next and fast.next.next:
+        slow = slow.next
+        fast = fast.next.next
+    return slow.next
+
+
+# https://leetcode.com/problems/maximum-twin-sum-of-a-linked-list/
+def PairSumInList(head: Optional[ListNode]) -> int:
+    
+    def reverseList(node: ListNode):
+        prev = None
+        curr = node
+        while curr:
+            temp = curr.next
+            curr.next = prev
+            prev = curr
+            curr = temp
+        return prev
+    
+    # get to the middle node, then reverse the rest
+    dummy_head = ListNode(0, head)
+    slow, fast = dummy_head, dummy_head
+    while fast.next and fast.next.next:
+        slow = slow.next
+        fast = fast.next.next
+    middle_node = slow.next
+    slow.next = reverseList(middle_node)
+    
+    # loop through start and reversed second half, keeping track of total
+    total = 0
+    fst, scd = head, slow.next
+    while scd:
+        total = max(total, fst.val + scd.val)
+        fst, scd = fst.next, scd.next
+    return total
 
 
 ##############################################################################################
@@ -1074,6 +1163,7 @@ def flatten(root: Optional[TreeNode]) -> None:
         
 
 # EPI
+"""
 def RebuildBSTFromPreorder(preorder_sequence: List[int]):
     def helper(lower, upper):
         pass 
@@ -1090,6 +1180,7 @@ def SerializeAndDeserializeBinaryTree():
     pass 
 def BinaryTreeCameras():
     pass 
+"""
 
 
 ##############################################################################################
@@ -1097,7 +1188,7 @@ def BinaryTreeCameras():
 ##############################################################################################
 
 
-def PathExists(n: int, edges: List[List[int]], source: int, destination: int) -> bool:
+def PathExists(edges: List[List[int]], source: int, destination: int) -> bool:
     if source == destination:
         return True
     
@@ -1276,6 +1367,19 @@ def TwoSumsNotDistinct(nums, target):
     return []
 
 
+# https://leetcode.com/problems/contains-duplicate-ii/
+def ContainsNearbyDuplicate(nums: List[int], k: int) -> bool:
+    if k > 0:        
+        cache = set()
+        for i, num in enumerate(nums):
+            if num in cache:
+                return True
+            cache.add(num)
+            if len(cache) == k + 1:
+                cache.remove(nums[i-k])
+    return False
+
+
 def RomanToInteger(s):
     conversion = { 'I': 1, 'V': 5, 'X': 10, 'L': 50, 'C': 100, 'D': 500, 'M': 1000 }
     result = 0
@@ -1393,14 +1497,6 @@ def FindRepeatedDnaSequences(s: str) -> List[str]:
         else:
             lookup[substr] = False
     return result
-
-
-def MinimumWindowSubstringMap():
-    pass 
-def WordLadder():
-    pass 
-def WordBreak():
-    pass
 
 
 ##############################################################################################
@@ -1695,20 +1791,12 @@ class Solution:
         return result
 
 
-def BinaryTreeMaximumPathSum():
-    pass 
-def AlienDictionary():
-    pass 
-def SerializeAndDeserializeBinaryTree():
-    pass
-
-
 ##############################################################################################
 ###   BREADTH-FIRST SEARCH
 ##############################################################################################
 
 
-def MaximumDepthOfBinaryTreeBFS(self, root: Optional[TreeNode]) -> int:
+def MaximumDepthOfBinaryTreeBFS(root: Optional[TreeNode]) -> int:
     def helper(node, count):
         if node:
             return max(helper(node.left, count + 1), helper(node.right, count + 1))
@@ -2209,6 +2297,51 @@ def FindOnlyNonDuplicateInSortedArray(nums: List[int]) -> int:
     return result
 
 
+# https://leetcode.com/problems/excel-sheet-column-title/
+# the character of the remainder each time is the last character
+def ConvertNumberToTitle(columnNumber: int) -> str:
+    result = []
+    base = ord('A')
+    while columnNumber > 0:
+        remainder = (columnNumber - 1) % 26
+        columnNumber = (columnNumber - 1) // 26
+        result.append(chr(base + remainder))
+    return ''.join(reversed(result))
+
+
+# https://leetcode.com/problems/excel-sheet-column-number/
+def ConvertTitleToNumber(columnTitle: str) -> int:
+    result, incr = 0, 1 
+    base = ord('A')
+    for c in reversed(columnTitle):
+        result += (ord(c) + 1 - base) * incr
+        incr *= 26 
+    return result
+
+
+# https://leetcode.com/problems/lru-cache/
+# can also solve this problem by using doubly linked list with cache
+# the linked list helps with eviction and reordering 
+from collections import OrderedDict # uses doubly linked list under the hood
+
+class LRUCache:
+    def __init__(self, capacity: int):
+        self.capacity = capacity
+        self.cache = OrderedDict()
+    
+    def get(self, key: int) -> int:
+        if key in self.cache:
+            self.cache.move_to_end(key)
+            return self.cache[key]
+        return -1
+    
+    def put(self, key: int, value: int) -> None:
+        self.cache[key] = value
+        self.cache.move_to_end(key)
+        if len(self.cache) > self.capacity:
+            self.cache.popitem(last=False)
+
+
 ##############################################################################################
 ###   GREEDY & INVARIANTS
 ##############################################################################################
@@ -2380,10 +2513,6 @@ def MostWaterFilled(heights: List[int]):
         else: 
             r -= 1
     return max_area
-
-
-def LargestRectangleUnderTheSkyline():  
-    pass
 
 
 ##############################################################################################
