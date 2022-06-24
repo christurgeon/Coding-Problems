@@ -9,12 +9,16 @@
         if you want all solutions, backtracking is used
 """
 
-from asyncio import QueueEmpty
-from email.base64mime import header_length
+"""
+    For recursive quick select, easy to implement, see FindKthLargest_QuickSelect
+"""
+
 import heapq
 import collections
 from typing import *
 from functools import lru_cache
+from functools import cmp_to_key
+from random import random
 
 class ListNode:
     def __init__(self, val=0, next=None):
@@ -356,6 +360,56 @@ def MaxProfit(prices: List[int]) -> int:
     return result
 
 
+#https://leetcode.com/problems/top-k-frequent-words/
+# O(n*log(n))   
+def TopKFrequent_BucketSort(words: List[str], k: int) -> List[str]:
+    buckets = [[] for _ in range(len(words) + 1)]
+    for word, count in collections.Counter(words).items():
+        buckets[count].append(word)
+    result = []
+    for i in range(len(buckets) - 1, -1, -1):
+        bucket = buckets[i]
+        bucket.sort()
+        for word in bucket:
+            result.append(word)
+            k -= 1
+            if k == 0:
+                return result
+    return result
+
+# O(n*log(k)) by only keeping k elements within the heap
+def TopKFrequent_Heap(words: List[str], k: int) -> List[str]:
+    frequencies = collections.Counter(words).items() # word: count
+    return [word for word, count in heapq.nsmallest(k, frequencies, key = lambda item: (-item[1], item[0]))]
+
+
+# https://leetcode.com/problems/split-array-into-consecutive-subsequences/
+def IsPossible(nums: List[int]) -> bool:
+    frequencies = collections.Counter(nums)
+    next_nums = collections.defaultdict(int)
+    for num in nums:
+        # already a part of a subsequence, continue
+        if frequencies[num] == 0:
+            continue
+        
+        # we are expecting this number, move expected to the next number
+        if next_nums[num] > 0:
+            next_nums[num] -= 1
+            next_nums[num+1] += 1
+            
+        # check if next two numbers are available
+        elif frequencies[num+1] > 0 and frequencies[num+2] > 0:
+            frequencies[num+1] -= 1
+            frequencies[num+2] -= 1
+            next_nums[num+3] += 1
+        
+        # we don't have the number we are looking for, and next two numbers are not available
+        else:
+            return False
+        frequencies[num] -= 1
+    return True
+
+
 ##############################################################################################
 ###   STRING
 ##############################################################################################
@@ -552,6 +606,20 @@ def GreatestLetter(s: str) -> str:
         else:
             lookup.add(c.lower())
     return answer
+
+
+# https://leetcode.com/problems/largest-number/
+def LargestNumberMadeFromNums(nums: List[int]) -> str:
+
+    # sorted by value of concatenated string increasingly
+    def cmp(x, y):
+        if x + y > y + x:
+            return 1
+        return -1
+        
+    nums = [str(num) for num in nums]
+    nums.sort(key=cmp_to_key(cmp), reverse=True)
+    return str(int(''.join(nums)))
 
 
 ##############################################################################################
@@ -1341,6 +1409,32 @@ def AllPathsFromFirstNodeToLast(graph: List[List[int]]) -> List[List[int]]:
     return paths
 
 
+# https://leetcode.com/problems/network-delay-time/
+"""
+Uses Dijkstra's algorithm which does a BFS but uses a min heap to pull out 
+the current shortest path, always explores shortest first, can keep a set of visited nodes so that
+we do not cycle
+"""
+def NetworkDelayTime(times: List[List[int]], N: int, K: int) -> int:
+    graph = dict()
+    for u, v, w in times:
+        graph[u] = graph.get(u, {})
+        graph[v] = graph.get(v, {})
+        graph[u][v] = w
+    
+    visited = set()
+    min_heap = [(0, K)] # (total path time, node)
+    while min_heap:
+        current_path_time, current_node = heapq.heappop(min_heap)
+        visited.add(current_node)
+        if len(visited) == N:
+            return current_path_time
+        for neighbor, time in graph[current_node].items():
+            if neighbor not in visited:
+                heapq.heappush(min_heap, (current_path_time + time, neighbor))
+    return -1
+
+
 ##############################################################################################
 ###   MAPS
 ##############################################################################################
@@ -1544,7 +1638,7 @@ def LastStoneWeight(stones: List[int]) -> int:
     return -stones[0] if stones else 0
 
 
-def ReorganizeString(self, s: str) -> str:
+def ReorganizeString(s: str) -> str:
     result, counts = [], Counter(s)
     heap = [(-value, char) for char, value in counts.items()]
     heapq.heapify(heap)
@@ -1568,6 +1662,67 @@ def ReorganizeString(self, s: str) -> str:
         if count - 1 > 0:
             heapq.heappush(heap, (-(count - 1), char))
     return ''.join(result)
+
+
+# https://leetcode.com/problems/kth-largest-element-in-an-array/
+# O(k*log(n))
+def FindKthLargest(nums, k):
+    a = [-n for n in nums]
+    heapq.heapify(a)
+    element = 0
+    for i in range(k):
+        element = heapq.heappop(a)
+    return -element
+
+# Easiest way to find order statistic in linear time (yes, it has a mathematical name) is using quick select
+# time complexity is O(n) on average, 
+#   because on each time we reduce searching range approximately 2 times. 
+# This is not strict proof, for more details you can do some googling. Space complexity is O(n) as well.
+def FindKthLargest_QuickSelect(nums, k):
+        # use first as pivot
+        pivot = random.choice(nums)
+
+        # i think if we want kth largest distinct, could use sets instead of arrays
+        less, equal, greater = [], [], []
+        for num in nums:
+            if num < pivot:
+                less.append(num)
+            elif num > pivot:
+                greater.append(num)
+            else:
+                equal.append(num)
+
+        # see which array the kth element lives in
+        G, E = len(greater), len(equal)
+        if k <= G:
+            return FindKthLargest_QuickSelect(greater, k)
+        elif k > G + E:
+            return FindKthLargest_QuickSelect(less, k - G - E)
+        else:
+            return equal[0]
+
+
+# https://leetcode.com/problems/divide-array-in-sets-of-k-consecutive-numbers/
+# O(n) space and time
+def IsPossibleDivide(nums: List[int], k: int) -> bool:
+    frequencies = collections.Counter(nums)
+    for num in nums:
+        
+        # go to the beginning of a potential sequence
+        start = num
+        while frequencies[start-1] > 0:
+            start -= 1
+        
+        # fill in all sequences while there are counts available for numbers within the start and num range
+        while start <= num:
+            while frequencies[start] > 0:
+                for victim in range(start, start + k):
+                    if frequencies[victim] == 0:
+                        return False 
+                    frequencies[victim] -= 1
+            start += 1
+                
+    return True
 
 
 ##############################################################################################
