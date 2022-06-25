@@ -622,6 +622,18 @@ def LargestNumberMadeFromNums(nums: List[int]) -> str:
     return str(int(''.join(nums)))
 
 
+# https://leetcode.com/problems/valid-anagram/
+def IsAnagram(s: str, t: str) -> bool:
+    if len(s) != len(t):
+        return False
+
+    leftover = {}
+    for c1, c2 in zip(s, t):
+        leftover[c1] = leftover.get(c1, 0) + 1
+        leftover[c2] = leftover.get(c2, 0) - 1
+    return not any(value != 0 for value in leftover.values())
+
+
 ##############################################################################################
 ###   LISTS
 ##############################################################################################
@@ -730,6 +742,33 @@ def GetIntersectionNode(headA: ListNode, headB: ListNode):
         longer, shorter = longer.next, shorter.next 
 
     return None
+
+
+# https://leetcode.com/problems/reverse-linked-list-ii/
+def ReverseBetweenRange(head: Optional[ListNode], left: int, right: int) -> Optional[ListNode]:
+    if left == right:
+        return head
+    
+    # set up start one behind the left location
+    dummy = ListNode(0, head)
+    start = dummy
+    for _ in range(left-1):
+        start = start.next
+    
+    # reverse the nodes within the range
+    prev = None
+    curr = start.next
+    for _ in range(right-left+1):
+        temp = curr.next
+        curr.next = prev
+        prev = curr
+        curr = temp
+        
+    # take the last node in the range and point it to first node outside of range
+    start.next.next = curr
+    # point the 'start' to the new first node in the range
+    start.next = prev
+    return dummy.next
 
 
 # when each one reaches the end, swap list that way they both end up aligned and
@@ -971,6 +1010,44 @@ def SearchBinarySearchTree(node, search_value):
         return SearchBinarySearchTree(node.right, search_value)
 
 
+# https://leetcode.com/problems/invert-binary-tree/
+def InvertTree(root: Optional[TreeNode]) -> Optional[TreeNode]:
+    if root:
+        root.left, root.right = root.right, root.left
+        _ = InvertTree(root.left)
+        _ = InvertTree(root.right)
+    return root
+
+
+# https://leetcode.com/problems/recover-binary-search-tree/
+def recoverTree(root: Optional[TreeNode]) -> None:
+    # in-order traversal to visit left, root, right each time
+    first, second, previous = None, None, None   
+
+    def inorder(node):  
+        nonlocal first, second, previous
+        
+        if not node:
+            return
+
+        inorder(node.left)  
+        if previous and node.val < previous.val:
+            # previous node is greater than current, so it is out of place
+            if not first:
+                first = previous
+            # set second to the current node, they need to be swapped, 
+            # but then as we iterate if we discover a better candidate, 
+            # set it there                                     
+            if first:
+                second = node                    
+        previous = node
+        inorder(node.right)
+        
+    inorder(root)        
+    if first and second:
+        first.val, second.val = second.val, first.val
+
+
 """
     Search for BST violations in a BFS manner, store upper and lower bound
     on the keys stored at the subtree rooted at that node.
@@ -1041,7 +1118,7 @@ def MaximumDepthOfBinaryTree(root):
 
 
 # iterative example from leetcode discussion board, for reference 
-def maxDepth(root):
+def MaxDepth(root):
     depth = 0
     level = [root] if root else []
     while level:
@@ -1198,7 +1275,7 @@ def ComputeLCA_EPI_Version(tree, s, b):
             tree = tree.left 
     return tree
 
-def maxAncestorDiff(root: Optional[TreeNode]) -> int:
+def MaxAncestorDiff(root: Optional[TreeNode]) -> int:
     max_difference_so_far = float('-inf')
 
     # keep track of min and max seen as we traverse down and update the max_difference with this
@@ -1230,12 +1307,46 @@ def flatten(root: Optional[TreeNode]) -> None:
         current = current.right 
         
 
-# EPI
-"""
+# https://leetcode.com/problems/unique-binary-search-trees/
+# see DP version in Dynamic Programming section
+def TotalNumberOfTrees(n: int) -> int:
+    dp = {0:1, 1:1}
+    
+    def dfs(i):
+        if i in dp:
+            return dp[i]
+        result = 0
+        for j in range(i):
+            result += dfs(j) * dfs(i-j-1)
+        dp[i] = result
+        return dp[i]
+    
+    return dfs(n)
+
+
+# elements are unique
+# rebuild subtree as we identify nodes within it
+# TC: O(n)
 def RebuildBSTFromPreorder(preorder_sequence: List[int]):
     def helper(lower, upper):
-        pass 
-    pass
+        if root_index[0] == len(preorder_sequence):
+            return None 
+
+        root = preorder_sequence[root_index[0]]
+        if not lower <= root <= upper:
+            return None
+        root_index[0] += 1
+
+        # node that the helper updates root_index[0]
+        # so the following two calls are critical
+        left_subtree = helper(lower, root)
+        right_subtree = helper(root, upper)
+        return TreeNode(root, left_subtree, right_subtree)
+        
+    root_index = [0]
+    return helper(float('-inf'), float('inf'))
+
+"""
 def FindClosestElementsInSortedArrays(sorted_arrays: List[List[int]]):
     pass 
 def BuildMinHeightBSTFromSortedArray(array: List[int]):
@@ -1244,10 +1355,6 @@ def PairIncludesAncestorAndDescendantOf_M(possible_anc_or_desc_0, possible_anc_o
     pass
 def RangeLookupInBST(tree, interval):
     pass
-def SerializeAndDeserializeBinaryTree():
-    pass 
-def BinaryTreeCameras():
-    pass 
 """
 
 
@@ -2139,6 +2246,32 @@ def MaximumSubarrayV2(nums):
     return max_seen
 
 
+# https://leetcode.com/problems/n-th-tribonacci-number/
+def Tribonacci(n: int) -> int:
+    f, s, t = 0, 1, 1
+    if n == 0:
+        return f
+    if n < 3:
+        return s
+    for _ in range(3, n + 1):
+        next_fib = f + s + t
+        f, s, t = s, t, next_fib
+    return next_fib
+
+
+# https://leetcode.com/problems/climbing-stairs/
+# Can reduce memory to constant by using two variables instead of a whole array
+def ClimbStairs(n: int) -> int:
+    best_fst, best_scd = 1, 2
+    if n == 1:
+        return 1
+    if n == 2:
+        return 2
+    for i in range(2, n):
+        best_fst, best_scd = best_scd, best_fst + best_scd
+    return best_scd
+
+
 def GeneratePascalsTriangle(numRows: int) -> List[List[int]]:
     result = [[1] for _ in range(numRows)]
     for i in range(1, numRows):
@@ -2402,17 +2535,60 @@ def MinimumCostTickets(days: List[int], costs: List[int]) -> int:
     return dfs(0) 
 
 
+# https://leetcode.com/problems/unique-binary-search-trees/
+# consider n=6 aka [1,2,3,4,5,6] looping through j pick each as root and compute number of search trees
+# i.e. root=3
+#       [1, 2, `3`, 4, 5, 6]
+#
+def NumOfBinarySearchTrees_DP(n: int) -> int:
+    trees = [0] * (n+1)
+    trees[0] = 1
+    trees[1] = 1
+    for root in range(2, n+1):
+        for j in range(root):
+            trees[root] += trees[j] * trees[root-j-1]
+    return trees[n]
+
+def NumOfBinarySearchTrees_DFS(n: int) -> int:
+    # binary tree of 0 and 1 nodes
+    dp = {0:1, 1:1}
+    
+    def dfs(i):
+        if i in dp:
+            return dp[i]
+                        
+        total = 0
+        for root in range(i):
+            left = dfs(root)
+            right = dfs(i-root-1)
+            total += left * right
+        dp[root] = total
+        return total
+    
+    return dfs(n)
+
+
+
 ##############################################################################################
 ###   MISC
 ##############################################################################################
 
 
-def HammingWeight(self, n: int) -> int:
+def HammingWeight(n: int) -> int:
     count = 0
     while n:
         count += n & 1
         n >>= 1
     return count
+
+
+# https://leetcode.com/problems/reverse-bits/
+def ReverseBits(n: int) -> int:
+    result = 0
+    for _ in range(32):
+        result = (result << 1) | (n & 1)
+        n >>= 1
+    return result
 
 
 """
