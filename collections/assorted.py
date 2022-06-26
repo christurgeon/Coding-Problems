@@ -410,6 +410,30 @@ def IsPossible(nums: List[int]) -> bool:
     return True
 
 
+# https://leetcode.com/problems/jump-game-ii/
+def JumpGameII(nums: List[int]) -> int:
+    if len(nums) == 1:
+        return 0
+    
+    n = len(nums)
+    queue = deque([(0, 0, 0)]) # (start, end, path_length)
+
+    # first to reach end should have minimum number of jumps using queue
+    while queue:
+        start, furthest, path_length = queue.popleft()
+        new_furthest = furthest
+        for i in range(start, min(n, furthest + 1)):
+            new_furthest = max(i + nums[i], new_furthest)
+        
+        # if we have detected that a path can reach the end, return here
+        if new_furthest >= n - 1:
+            return path_length + 1
+        
+        queue.append((furthest, new_furthest, path_length + 1))
+            
+    return 2**31 - 1
+
+
 ##############################################################################################
 ###   STRING
 ##############################################################################################
@@ -1542,6 +1566,34 @@ def NetworkDelayTime(times: List[List[int]], N: int, K: int) -> int:
     return -1
 
 
+# https://leetcode.com/problems/course-schedule-ii/
+def findOrder(self, numCourses: int, prerequisites: List[List[int]]) -> List[int]:
+    # store course: prereqs and preq: courses it is prereq for            
+    course_to_prereqs = defaultdict(set)
+    prereq_to_courses = defaultdict(set)
+    for course, prereq in prerequisites:
+        prereq_to_courses[prereq].add(course)
+        course_to_prereqs[course].add(prereq)
+    
+    # start with the courses that have no prerequisites
+    taken = []
+    queue = deque([course for course in range(numCourses) if len(course_to_prereqs[course]) == 0])
+    while queue:
+        currently_taking = queue.popleft()
+        taken.append(currently_taking)
+        if len(taken) == numCourses:
+            return taken
+        
+        # loop through the courses that this course is a prereq for
+        for prereq in prereq_to_courses[currently_taking]:
+            # if the course we've just taken was a prereq for the next course, remove it from its prequisites dict
+            course_to_prereqs[prereq].remove(currently_taking)
+            # if we've taken all of the prereqs for the new course, we'll visit it
+            if len(course_to_prereqs[prereq]) == 0:
+                queue.append(prereq)
+    return []
+
+
 ##############################################################################################
 ###   MAPS
 ##############################################################################################
@@ -2051,6 +2103,41 @@ class Solution:
             
         solve(0)
         return result
+
+
+# https://leetcode.com/problems/course-schedule/
+def CanFinish(numCourses: int, prerequisites: List[List[int]]) -> bool:
+    # build dictionary with course and all its prereqs
+    graph = dict()
+    for course, prereq in prerequisites:
+        if course not in graph:
+            graph[course] = [] 
+        graph[course].append(prereq)
+
+    # to detect a cycle, make sure a node is not in the stack as we process
+    def cycle(node, stack):
+        if node in visited:
+            if node in stack:
+                return True
+            else:
+                return False
+            
+        visited.add(node)
+        stack.append(node)
+        for neighbor in graph.get(node, []):
+            if cycle(neighbor, stack):
+                return True
+            
+        # pop it from stack once it is visited
+        stack.pop()
+        return False
+
+    # possible cycles will only use node involved in the graph (since they have prereqs)
+    visited = set()
+    for n in graph.keys():
+        if cycle(n, list()):
+            return False
+    return True
 
 
 ##############################################################################################
@@ -2568,6 +2655,62 @@ def NumOfBinarySearchTrees_DFS(n: int) -> int:
     return dfs(n)
 
 
+# https://leetcode.com/problems/min-cost-climbing-stairs/
+def MinCostClimbingStairs_DP(cost: List[int]) -> int:
+    n = len(cost)
+    cost.append(0)
+    
+    dp = [0] * (n + 1)
+    dp[0] = cost[0]
+    dp[1] = cost[1]
+    
+    for i in range(2, n + 1):
+        dp[i] = min(dp[i-1], dp[i-2]) + cost[i]
+    return dp[-1]
+
+def MinCostClimbingStairs_DFS(cost: List[int]) -> int:
+    n = len(cost)
+    dp = {}
+    
+    def dfs(i):
+        if i >= n:
+            return 0
+        if i in dp:
+            return dp[i]
+
+        dp[i] = min(dfs(i+1) + cost[i], dfs(i+2) + cost[i])
+        return dp[i]
+        
+    return min(dfs(0), dfs(1))
+
+
+# https://leetcode.com/problems/number-of-sub-arrays-with-odd-sum/
+def NumOfSubarraysThatSumToOddNumbers(arr: List[int]) -> int:
+    # let odd[i] store the current number of odd sums ending at A[i]
+    # let odd[i-1] store the number of all previous subarrays whos sum is odd
+    # let even[i] store the current number of even sums ending at A[i]
+    # let even[i-1] store the number of all previous subarrays whos sum is even
+    evens, odds = [0] * len(arr), [0] * len(arr)
+    odds[0] = arr[0] % 2
+    evens[0] = 1 - odds[0]
+    
+    total_odd = odds[0]
+    for i in range(1, len(arr)):
+        n = arr[i]
+        if n % 2 == 1: # odd
+            # all the PREVIOUS subarrays that had an ODD sum become even 
+            # all the PREVIOUS subarrays that had an EVEN sum become odd, plus itself (arr[i] is odd remember)
+            evens[i] = odds[i-1]
+            odds[i] = evens[i-1] + 1
+        else: # even
+            # all the PREVIOUS subarrays that had an ODD sum STAY odd 
+            # all the PREVIOUS subarrays that had an EVEN sum STAY even, plus itself (arr[i] is even remember)
+            evens[i] = evens[i-1] + 1
+            odds[i] = odds[i-1]
+        total_odd += odds[i]    
+    
+    return total_odd % 1000000007 # inherent to leetcode solution
+
 
 ##############################################################################################
 ###   MISC
@@ -2671,6 +2814,27 @@ class LRUCache:
         self.cache.move_to_end(key)
         if len(self.cache) > self.capacity:
             self.cache.popitem(last=False)
+
+
+# https://leetcode.com/problems/first-bad-version/
+def firstBadVersion(self, n: int) -> int:
+    
+    # implemented by LeetCode
+    def isBadVersion(version):
+        pass
+
+    @lru_cache(None)
+    def search(lo, hi):
+        if lo > hi:
+            return lo
+        mid = lo + (hi-lo) // 2
+        bad_version = isBadVersion(mid)
+        if bad_version:
+            return search(lo, mid-1)
+        else:
+            return search(mid+1, hi)
+        
+    return search(0, n-1)
 
 
 ##############################################################################################
