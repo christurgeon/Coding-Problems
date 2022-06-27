@@ -73,6 +73,16 @@ def TwoSumII(numbers: List[int], target: int) -> List[int]:
     return [-1, -1]
 
 
+# https://leetcode.com/problems/maximum-average-subarray-i/
+def FindMaximumAverageInSlidingWindow(nums: List[int], k: int) -> float:
+    total = sum([nums[i] for i in range(k)])
+    maximum = total
+    for i in range(1, len(nums) - k + 1):
+        total = total - nums[i-1] + nums[i+k-1]
+        maximum = max(maximum, total)
+    return float(maximum) / k
+
+
 def LongestConsecutiveInAnArray(nums: List[int]) -> int:
     if not nums:
         return 0
@@ -983,14 +993,68 @@ def AbsoluteToCanonicalPath(path):
     return "/" + "/".join(stack)
 
 
-def BasicCalculator():
-    pass
-def LongestValidParentheses():
-    pass 
-def TrappingRainWater():
-    pass 
-def LargestRectangleInHistogram():
-    pass
+# https://leetcode.com/problems/remove-all-adjacent-duplicates-in-string/
+def RemoveDuplicates_Optimal(s: str) -> str:
+    stack = []
+    for char in s:
+        if stack and stack[-1] == char:
+            stack.pop()
+        else:
+            stack.append(char)
+    return ''.join(stack)
+
+
+# https://leetcode.com/problems/remove-all-adjacent-duplicates-in-string-ii/
+# O(n*k)
+def RemoveDuplicates(s: str, k: int) -> str:
+    stack = []
+    last_seen, last_seen_count = '?', -1
+    
+    i = 0
+    while i < len(s):
+        char = s[i]
+        if char == last_seen:
+            # delete k-1 occurences of our character, and do not add it to the stack
+            if last_seen_count == k-1:
+                for _ in range(k-1):
+                    stack.pop()
+                # update the last_seen and last_seen_count
+                last_seen, last_seen_count = '?', -1
+                if stack:
+                    last_seen, last_seen_count = stack[-1], 1
+                    for j in range(1, min(k, len(stack))):
+                        if stack[~j] != last_seen:
+                            break
+                        last_seen_count += 1
+            else:
+                last_seen_count += 1
+                stack.append(char)
+        else:
+            last_seen, last_seen_count = char, 1
+            stack.append(char)
+        i += 1
+            
+    return ''.join(stack)
+
+# O(n)
+def RemoveDuplicates_Optimized(s: str, k: int) -> str:
+    stack = [['?', -1]]
+    
+    # keep track of char and number of consecutive occurences in array
+    for char in s:
+        if char == stack[-1][0]:
+            if stack[-1][1] == k-1:
+                stack.pop()
+            else:
+                stack[-1][1] += 1
+        else:
+            stack.append([char, 1])
+            
+    # build the result, make sure we get frequencies right
+    result = []
+    for i in range(1, len(stack)):
+        result += [stack[i][0]] * stack[i][1]
+    return ''.join(result)
 
 
 ##############################################################################################
@@ -1370,17 +1434,6 @@ def RebuildBSTFromPreorder(preorder_sequence: List[int]):
     root_index = [0]
     return helper(float('-inf'), float('inf'))
 
-"""
-def FindClosestElementsInSortedArrays(sorted_arrays: List[List[int]]):
-    pass 
-def BuildMinHeightBSTFromSortedArray(array: List[int]):
-    pass 
-def PairIncludesAncestorAndDescendantOf_M(possible_anc_or_desc_0, possible_anc_or_desc_0, middle):
-    pass
-def RangeLookupInBST(tree, interval):
-    pass
-"""
-
 
 ##############################################################################################
 ###   GRAPHS
@@ -1567,10 +1620,10 @@ def NetworkDelayTime(times: List[List[int]], N: int, K: int) -> int:
 
 
 # https://leetcode.com/problems/course-schedule-ii/
-def findOrder(self, numCourses: int, prerequisites: List[List[int]]) -> List[int]:
+def FindOrderOfCourses(numCourses: int, prerequisites: List[List[int]]) -> List[int]:
     # store course: prereqs and preq: courses it is prereq for            
-    course_to_prereqs = defaultdict(set)
-    prereq_to_courses = defaultdict(set)
+    course_to_prereqs = collections.defaultdict(set)
+    prereq_to_courses = collections.defaultdict(set)
     for course, prereq in prerequisites:
         prereq_to_courses[prereq].add(course)
         course_to_prereqs[course].add(prereq)
@@ -1646,7 +1699,7 @@ def RomanToInteger(s):
 
 
 # The majority element is the element that appears more than ⌊n/2⌋ times. You may assume that the majority element always exists in the array.
-def MajorityElement1(self, nums: List[int]) -> int:
+def MajorityElement1(nums: List[int]) -> int:
     nums.sort()
     return nums[len(nums) // 2]
 
@@ -2105,6 +2158,7 @@ class Solution:
         return result
 
 
+# Backtracking
 # https://leetcode.com/problems/course-schedule/
 def CanFinish(numCourses: int, prerequisites: List[List[int]]) -> bool:
     # build dictionary with course and all its prereqs
@@ -2138,6 +2192,100 @@ def CanFinish(numCourses: int, prerequisites: List[List[int]]) -> bool:
         if cycle(n, list()):
             return False
     return True
+
+
+# Backtracking
+# https://leetcode.com/problems/path-with-maximum-gold/
+def GetMaximumGold(grid: List[List[int]]) -> int:
+    n, m, total_gold = len(grid), len(grid[0]), 0
+
+    def backtrack(row, col, current_gold):
+        nonlocal total_gold
+
+        # get current gold, add to current solution, update global max
+        temp = grid[row][col]
+        grid[row][col] = 0
+        current_gold += temp
+        total_gold = max(total_gold, current_gold)
+
+        for r, c in ((row+1, col), (row-1, col), (row, col+1), (row, col-1)):
+            # make sure r and c are within bounds, and only backtrack if the value is not 0
+            if 0 <= r < n and 0 <= c < m and grid[r][c] != 0:
+                backtrack(r, c, current_gold)
+
+        # we set the grid value to 0 so now we need to set it back
+        grid[row][col] = temp
+        current_gold -= temp
+
+    for r, row in enumerate(grid):
+        for c, cell in enumerate(row):
+            if cell != 0:
+                backtrack(r, c, 0)
+
+    return total_gold
+
+# Backtracking
+# https://leetcode.com/problems/combination-sum/
+def CombinationSum(candidates: List[int], target: int) -> List[List[int]]:
+    candidates.sort()
+    n = len(candidates)
+    results = []
+    
+    def backtrack(i, subtotal, sequence):
+        if subtotal == target:
+            results.append(sequence[:])
+            return
+        for j in range(i, n):
+            candidate = candidates[j]
+            if subtotal + candidate <= target:
+                sequence.append(candidate)
+                backtrack(j, subtotal + candidate, sequence)
+                sequence.pop()
+
+    backtrack(0, 0, [])
+    return results
+
+
+# Backtracking
+# https://leetcode.com/problems/combinations/
+def Combine(n: int, k: int) -> List[List[int]]:
+    result = []
+    numbers = [i for i in range(1, n+1)]
+
+    def backtrack(i, combination, remaining):
+        if remaining == 0:
+            result.append(combination[:])
+            return
+        for j in range(i, n):
+            combination.append(numbers[j])
+            backtrack(j+1, combination, remaining-1)
+            combination.pop()
+        
+    backtrack(0, [], k)
+    return result
+
+
+# Backtracking
+# https://leetcode.com/problems/subsets/
+def Subsets(nums: List[int]) -> List[List[int]]:
+    n = len(nums)
+    powerset = []
+
+    def backtrack(i, subset):
+        powerset.append(subset[:])
+        for j in range(i, n):
+            subset.append(nums[j])
+            backtrack(j+1, subset)
+            subset.pop()
+            
+    backtrack(0, [])
+    return powerset
+
+def Subsets_Iterative(nums: List[int]) -> List[List[int]]:
+    powerset = [[]]
+    for n in nums:
+        powerset.extend([r + [n] for r in powerset])
+    return powerset
 
 
 ##############################################################################################
@@ -2710,6 +2858,64 @@ def NumOfSubarraysThatSumToOddNumbers(arr: List[int]) -> int:
         total_odd += odds[i]    
     
     return total_odd % 1000000007 # inherent to leetcode solution
+
+
+# https://leetcode.com/problems/delete-and-earn/
+def DeleteAndEarn(nums: List[int]) -> int:
+    # take a count of each number so we can get its sum
+    counts = collections.Counter(nums)
+    n = max(counts.keys()) + 1
+    
+    # total number of elements we have to iterate through is up to the max in the input
+    dp = [0] * n
+    dp[1] = counts.get(1, 0)
+    
+    for i in range(2, n):
+        # max of the previous if we choose to skip, and taking the number two places before and adding sum
+        sum_of_new_number = counts.get(i, 0) * i 
+        dp[i] = max(dp[i-1], dp[i-2] + sum_of_new_number)
+    return dp[-1]
+
+
+# https://leetcode.com/problems/maximum-product-subarray/
+def MaxProduct(nums: List[int]) -> int:
+    n = len(nums)
+    positives = [0] * (n+1)
+    negatives = [0] * (n+1)
+    positives[1] = max(0, nums[0])
+    negatives[1] = min(0, nums[0])
+    result = nums[0]
+    
+    for i in range(1, n):
+        value = nums[i]
+        if value > 0:
+            positives[i+1] = max(value, positives[i] * value) # stays positive, so safe to multiply
+            negatives[i+1] = min(value, negatives[i] * value) # stays negative, so safe to multiply
+        elif value < 0:
+            positives[i+1] = max(value, negatives[i] * value) # largest negative becomes positive
+            negatives[i+1] = min(value, positives[i] * value) # largest positive becomes negative
+        else:
+            negatives[i+1] = positives[i+1] = 0
+        result = max(result, positives[i+1])
+        
+    return result
+
+def MaxProduct_ConstantSpace(nums: List[int]) -> int:
+    positive = max(0, nums[0])
+    negative = min(0, nums[0])
+    result = nums[0]
+    
+    for i in range(1, len(nums)):
+        value = nums[i]
+        if value > 0:
+            positive, negative = max(value, positive*value), min(value, negative*value)
+        elif value < 0:
+            positive, negative = max(value, negative*value), min(value, positive*value)
+        else:
+            positive, negative = 0, 0
+        result = max(result, positive)   
+    
+    return result
 
 
 ##############################################################################################
