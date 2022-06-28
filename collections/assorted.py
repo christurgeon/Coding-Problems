@@ -292,6 +292,27 @@ class NumMatrix:
         return large_rectangle - upper_rectangle - left_rectangle + intersection
 
 
+# TLE -> revisit with different data structure 
+# https://leetcode.com/problems/range-sum-query-mutable/
+class NumArray:
+    def __init__(self, nums: List[int]):
+        self.sums = [0, nums[0]]
+        for i in range(1, len(nums)):
+            self.sums.append(nums[i] + self.sums[i])
+             
+    # O(n) updating cost, not optimal
+    def update(self, index: int, val: int) -> None:
+        print(self.sums, index, val)
+        original_value = self.sums[index+1] - self.sums[index]
+        value_to_propagate = val - original_value # could be positive / negative
+        if value_to_propagate != 0:
+            for j in range(index+1, len(self.sums)):
+                self.sums[j] += value_to_propagate
+
+    def sumRange(self, left: int, right: int) -> int:
+        return self.sums[right+1] - self.sums[left]
+
+
 # https://leetcode.com/problems/next-permutation/
 def NextPermutation(nums: List[int]) -> None:
     
@@ -442,6 +463,44 @@ def JumpGameII(nums: List[int]) -> int:
         queue.append((furthest, new_furthest, path_length + 1))
             
     return 2**31 - 1
+
+
+# O(n + m)
+# https://leetcode.com/problems/search-a-2d-matrix-ii/
+def SearchMatrixII(matrix: List[List[int]], target: int) -> bool:
+    n, m = len(matrix), len(matrix[0])
+    row, col = n-1, 0
+    while row >= 0 and col < m:
+        if matrix[row][col] == target:
+            return True
+        if col < m-1 and matrix[row][col+1] <= target:
+            col += 1
+        else:
+            row -= 1
+    return False
+
+
+# O(n + log(m))
+# https://leetcode.com/problems/search-a-2d-matrix/
+def SearchMatrixI(matrix: List[List[int]], target: int) -> bool:
+    n, m = len(matrix), len(matrix[0])
+    
+    def binsearch(row_index, lo, hi):
+        while lo <= hi:
+            mid = (hi + lo) // 2
+            if matrix[row_index][mid] == target:
+                return True
+            if matrix[row_index][mid] < target:
+                return binsearch(row_index, mid+1, hi)
+            else:
+                return binsearch(row_index, lo, mid-1)
+        return False
+    
+    for i in range(n - 1):
+        if matrix[i][0] <= target < matrix[i+1][0]:
+            if binsearch(i, 0, m-1):
+                return True
+    return binsearch(n-1, 0, m-1)
 
 
 ##############################################################################################
@@ -1098,6 +1157,20 @@ def SearchBinarySearchTree(node, search_value):
         return SearchBinarySearchTree(node.right, search_value)
 
 
+# https://leetcode.com/problems/range-sum-of-bst/
+def rangeSumBST(root: Optional[TreeNode], low: int, high: int) -> int:
+    total = 0
+    def traverse(node):
+        nonlocal total
+        if node:
+            traverse(node.left)
+            if low <= node.val <= high:
+                total += node.val
+            traverse(node.right)
+    traverse(root)
+    return total
+
+
 # https://leetcode.com/problems/invert-binary-tree/
 def InvertTree(root: Optional[TreeNode]) -> Optional[TreeNode]:
     if root:
@@ -1433,6 +1506,22 @@ def RebuildBSTFromPreorder(preorder_sequence: List[int]):
         
     root_index = [0]
     return helper(float('-inf'), float('inf'))
+
+
+# https://leetcode.com/problems/second-minimum-node-in-a-binary-tree/
+def FindSecondMinimumValue(root: Optional[TreeNode]) -> int:
+    minimum, second_minimum = root.val, float('inf')
+    queue = deque( [(root, 1)] )
+    while queue:
+        level = queue[0][1]
+        while queue and queue[0][1] == level:
+            node, _ = queue.popleft()
+            if node.val != minimum and node.val < second_minimum:
+                second_minimum = node.val
+            if node.left:
+                queue.append((node.left, level + 1))
+                queue.append((node.right, level + 1))
+    return -1 if second_minimum == float('inf') else second_minimum
 
 
 ##############################################################################################
@@ -2286,6 +2375,62 @@ def Subsets_Iterative(nums: List[int]) -> List[List[int]]:
     for n in nums:
         powerset.extend([r + [n] for r in powerset])
     return powerset
+
+
+# Backtracking
+# https://leetcode.com/problems/subsets-ii/
+def SubsetsWithDup(nums: List[int]) -> List[List[int]]:
+    powerset = []
+    nums.sort()
+    n = len(nums)
+
+    def backtrack(i, subset):
+        powerset.append(subset[:])
+        for j in range(i, n):
+            if j > i and nums[j] == nums[j-1]:
+                continue
+            subset.append(nums[j])
+            backtrack(j+1, subset)
+            subset.pop()
+
+    backtrack(0, [])
+    return powerset
+
+def SubsetsWithDup_Iterative(nums: List[int]) -> List[List[int]]:
+        nums.sort()
+        powerset, subset = [[]], []
+        for i in range(len(nums)):
+            # avoid generating duplicates, this check ensures we process the first dup and skip the rest
+            if i > 0 and nums[i] == nums[i-1]:
+                subset = [item + [nums[i]] for item in subset]
+            # add value to powerset as per usual
+            else:
+                subset = [item + [nums[i]] for item in powerset]
+            powerset += subset
+        return powerset
+
+
+# Backtracking
+# https://leetcode.com/problems/permutations/
+def AllPermutations(nums: List[int]) -> List[List[int]]:
+    n = len(nums)
+    result = []
+    used = [False] * n
+    
+    def search(path, used, result):
+        if len(path) == n:
+            result.append(path[:])
+            return
+        for i, element in enumerate(nums):
+            if not used[i]:
+                used[i] = True
+                path.append(element)
+                search(path, used, result)
+                path.pop()
+                used[i] = False
+        
+    search([], used, result)
+    return result
 
 
 ##############################################################################################
