@@ -83,6 +83,7 @@ def FindMaximumAverageInSlidingWindow(nums: List[int], k: int) -> float:
     return float(maximum) / k
 
 
+# https://leetcode.com/problems/longest-consecutive-sequence/
 def LongestConsecutiveInAnArray(nums: List[int]) -> int:
     if not nums:
         return 0
@@ -110,6 +111,7 @@ def LongestConsecutiveInAnArray(nums: List[int]) -> int:
     return longest
 
 
+# https://leetcode.com/problems/best-time-to-buy-and-sell-stock/
 def BestTimeToBuyAndSellStock(prices: List[int]) -> int:
     profit = 0
     running_min = prices[0]
@@ -119,7 +121,21 @@ def BestTimeToBuyAndSellStock(prices: List[int]) -> int:
     return profit
 
 
-def MergeTwoSortedLists(A, B):
+# https://leetcode.com/problems/merge-sorted-array/
+def MergeSortedArraysInPlace(nums1: List[int], m: int, nums2: List[int], n: int) -> None:
+    write_index = m + n - 1
+    m -= 1
+    n -= 1
+    while n >= 0:
+        if m >= 0 and nums1[m] > nums2[n]:
+            nums1[write_index] = nums1[m]
+            m -= 1
+        else:
+            nums1[write_index] = nums2[n]
+            n -= 1
+        write_index -= 1
+
+def MergeTwoSortedArrays(A, B):
     if not A:
         return B
     if not B:
@@ -171,6 +187,9 @@ def CountTheFrequencyOfAnElementInAnArray(A):
         else:
             d[element] += 1
     return d
+
+def CountTheFrequencyOfAnElementInAnArrayCounter(A):
+    return collections.Counter(A)
 
 
 def MoveAllZerosToBeginningOfArray(A):
@@ -276,7 +295,7 @@ class NumArray:
 # 2-D RangeSumQuery, prefixing strategy
 class NumMatrix:
     def __init__(self, matrix: List[List[int]]):
-        ROWS, COLS = len(matrix), len(matrix[0])
+        COLS = len(matrix[0])
         self.lookup = [[0] * (COLS + 1)]
         for i, row in enumerate(matrix):
             self.lookup.append([0])
@@ -344,6 +363,8 @@ def NextPermutation(nums: List[int]) -> None:
     reverse(nums, pivot+1, len(nums)-1)
 
 
+# https://leetcode.com/problems/fruit-into-baskets/
+# what is the length of longest subarray that contains up to two distinct integers
 def TotalFruit(fruits: List[int]) -> int:
     count = {}
     unique = result = end = start = 0
@@ -365,7 +386,7 @@ def TotalFruit(fruits: List[int]) -> int:
 
 # https://leetcode.com/problems/top-k-frequent-elements/
 # first get the frequencies then add those frequencies to buckets 
-def topKFrequent(nums: List[int], k: int) -> List[int]:
+def TopKFrequent(nums: List[int], k: int) -> List[int]:
     counts = Counter(nums)
     buckets = [[] for _ in range (len(nums) + 1)]
     for num in counts:
@@ -503,6 +524,19 @@ def SearchMatrixI(matrix: List[List[int]], target: int) -> bool:
     return binsearch(n-1, 0, m-1)
 
 
+# https://leetcode.com/problems/check-if-matrix-is-x-matrix/
+def CheckXMatrix(grid: List[List[int]]) -> bool:
+    n = len(grid)
+    for i in range(n):
+        for j in range(n):
+            if i == j or i+j == n-1:
+                if grid[i][j] == 0:
+                    return False
+            elif grid[i][j] != 0:
+                return False
+    return True
+
+
 ##############################################################################################
 ###   STRING
 ##############################################################################################
@@ -545,6 +579,7 @@ def DefangingAnIPAddress(IP):
     return "[.]".join(split_IP)
 
 
+# https://leetcode.com/problems/jewels-and-stones/
 # find how many of the stones you have are also jewels
 def JewelsAndStones(jewels, stones):
     d = dict.fromkeys(list(jewels))
@@ -555,6 +590,7 @@ def JewelsAndStones(jewels, stones):
     return cnt
 
 
+# https://leetcode.com/problems/string-to-integer-atoi/
 def StringToInteger(S):
     if not S or len(S) == 0:
         return None 
@@ -568,6 +604,7 @@ def StringToInteger(S):
     return sign * num
 
 
+# https://leetcode.com/problems/longest-substring-without-repeating-characters/
 def LongestSubstringWithoutRepeatingCharacters(S):
     if len(S) == 0:
         return 0
@@ -582,6 +619,7 @@ def LongestSubstringWithoutRepeatingCharacters(S):
     return max(size, len(cache))
 
 
+# https://leetcode.com/problems/first-unique-character-in-a-string/
 def FirstUniqueChar(s: str) -> int:
     d = {}
     for char in s:
@@ -639,14 +677,11 @@ def LongestPalindromicSubstring(s):
     return s[l:r+1]
 
 
+# https://leetcode.com/problems/minimum-window-substring/
 def MinimumWindowSubstring(s, target):
-    counts = {}
-    for t in target:
-        counts[t] = 1 if t not in counts else counts[t] + 1
-        
+    counts = collections.Counter(target)
     start, found = 0, 0
     minL, minR = float('-inf'), float('inf')
-    min_window = ""
     for end in range(len(s)):
         
         # keep trying to fill the range
@@ -666,7 +701,6 @@ def MinimumWindowSubstring(s, target):
                 counts[s[start]] += 1
                 if counts[s[start]] > 0:
                     found -= 1
-                
             start += 1
             
     return s[minL : minR] if minL > float('-inf') else ""
@@ -3061,6 +3095,84 @@ def MaxProduct_ConstantSpace(nums: List[int]) -> int:
         result = max(result, positive)   
     
     return result
+
+
+# https://leetcode.com/problems/longest-common-subsequence/   
+def LongestCommonSubsequence(text1: str, text2: str) -> int:
+    dp = [[0] * (len(text2) + 1) for _ in range(len(text1) + 1)]
+    for i in range(len(text1) - 1, -1, -1):
+        for j in range(len(text2) - 1, -1, -1):
+            if text1[i] == text2[j]:
+                dp[i][j] = dp[i+1][j+1] + 1
+            else:
+                dp[i][j] = max(dp[i+1][j], dp[i][j+1])
+    return dp[0][0]
+
+
+# O(n^2)
+# https://leetcode.com/problems/longest-increasing-subsequence/        
+def LengthOfLIS(nums: List[int]) -> int:
+    dp = [1] * len(nums)
+    maximum = 1
+    for i in range(len(nums) - 1, -1, -1):
+        for j in range(i+1, len(nums)):
+            if nums[j] > nums[i]:
+                dp[i] = max(dp[i], dp[j] + 1)
+        maximum = max(maximum, dp[i])
+    return maximum
+
+# O (n logn) 
+def LengthOfLIS_Optimal (nums: List[int]) -> int:
+    a = []
+    for num in nums:
+        idx = bisect.bisect_left(a, num)
+        if idx == len(a):
+            a.append(num)
+        else:
+            a[idx] = num
+    return len(a)
+
+
+# https://leetcode.com/problems/edit-distance/
+def MinEditDistance(word1: str, word2: str) -> int:
+    #      word2 j
+    #    a  c  d  ''
+    # a  .  .  .  3
+    # c  .  .  .  2
+    # e  .  .  .  1
+    # '' 3  2  1  0
+    w1, w2 = len(word1), len(word2)
+    dp = [[0 for _ in range(w2+1)] for _ in range(w1)]
+    dp.append([i for i in range(w2, -1, -1)])
+    for i in range(1, w1+1):
+        dp[~i][-1] = i
+
+    for i in range(w1-1, -1, -1):
+        for j in range(w2-1, -1, -1):
+            
+            # if both chars are the same, advance pointers
+            if word1[i] == word2[j]:
+                dp[i][j] += dp[i+1][j+1]
+            
+            # both operations cost one
+            else:
+                #          down (remove)     right (add)      diag (replace)
+                dp[i][j] = min(dp[i+1][j], dp[i][j+1], dp[i+1][j+1]) + 1
+                
+    return dp[0][0]
+
+
+def NinEditDistance_TopDown(s1: str, s2: str) -> int:
+    @lru_cache(None)
+    def dp(i, j):
+        if i == 0: 
+            return j  # Need to insert j chars
+        if j == 0: 
+            return i  # Need to delete i chars
+        if s1[i-1] == s2[j-1]:
+            return dp(i-1, j-1)
+        return min(dp(i-1, j), dp(i, j-1), dp(i-1, j-1)) + 1
+    return dp(len(s1), len(s2))
 
 
 ##############################################################################################
