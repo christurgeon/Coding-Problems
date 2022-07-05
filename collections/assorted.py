@@ -537,6 +537,23 @@ def CheckXMatrix(grid: List[List[int]]) -> bool:
     return True
 
 
+# https://leetcode.com/problems/summary-ranges/
+def SummaryRanges(nums: List[int]) -> List[str]:
+    result = []
+    if nums:
+        first, second = nums[0], nums[0]
+        for i in range(1, len(nums)):
+            number = nums[i]
+            if number != second + 1:
+                result.append(str(first) + ("" if first == second else f"->{second}"))
+                first = second = number
+            else:
+                second = number
+
+        result.append(str(first) + ("" if first == second else f"->{second}"))
+    return result
+
+
 ##############################################################################################
 ###   STRING
 ##############################################################################################
@@ -1217,6 +1234,45 @@ def RangeSumBST(root: Optional[TreeNode], low: int, high: int) -> int:
             traverse(node.right)
     traverse(root)
     return total
+
+
+# https://leetcode.com/problems/kth-smallest-element-in-a-bst/
+def KthSmallest(root: Optional[TreeNode], k: int) -> int:
+    result, found = float('-inf'), False
+    
+    def dfs(node):
+        nonlocal result, found, k
+        if not node :
+            return 2**31 - 1
+        if found:
+            return result
+        
+        dfs(node.left)
+        k -= 1
+        if k == 0:
+            found = True
+            result = node.val
+        dfs(node.right)
+        return result
+        
+    return dfs(root)
+
+
+# https://leetcode.com/problems/binary-tree-paths/
+def BinaryTreePaths(root: Optional[TreeNode]) -> List[str]:
+    stack = [(root, "")]
+    result = []
+    while stack:
+        node, path = stack.pop()
+        if node:
+            # leaf
+            s = path + str(node.val)
+            if not node.left and not node.right:
+                result.append(s)
+            s += "->"
+            stack.append((node.right, s))
+            stack.append((node.left, s))    
+    return result
 
 
 # https://leetcode.com/problems/invert-binary-tree/
