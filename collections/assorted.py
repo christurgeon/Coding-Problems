@@ -804,6 +804,34 @@ def RemoveElements(head: Optional[ListNode], val: int) -> Optional[ListNode]:
     return dummy_head.next
         
 
+# https://leetcode.com/problems/convert-binary-number-in-a-linked-list-to-integer/
+def GetDecimalValue(head: ListNode) -> int:
+    value = []
+    while head:
+        value.append(str(head.val))
+        head = head.next
+    return int(''.join(value), 2)
+
+
+# https://leetcode.com/problems/merge-nodes-in-between-zeros/
+def MergeNodes(head: Optional[ListNode]) -> Optional[ListNode]:
+    dummy_head = ListNode(0, head)
+    writer = dummy_head.next
+    current = dummy_head.next.next
+    
+    while current:
+        if current.val == 0:
+            if current.next:
+                writer = writer.next
+                writer.val = 0
+        else:
+            writer.val += current.val
+        current = current.next
+        
+    writer.next = None
+    return dummy_head.next
+
+
 # https://leetcode.com/problems/reverse-linked-list/
 def ReverseLinkedList(head: Optional[ListNode]) -> Optional[ListNode]:
     previous = None
