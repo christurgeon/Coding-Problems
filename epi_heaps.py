@@ -1,7 +1,7 @@
 import math
 import heapq
 import itertools
-from typing import Iterator, List
+from typing import Iterator, List, Tuple
 
 
 def topKLargest(k: int, stream: Iterator[str]):

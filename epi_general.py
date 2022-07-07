@@ -1,8 +1,24 @@
 import math 
 import collections
 import random
-import copy
-from typing import List
+import itertools
+from typing import List, Iterator
+
+
+class ListNode:
+    def __init__(self, data=0, next=None):
+        self.data = data
+        self.next = next 
+
+class BinaryTreeNode:
+    def __init__(self, data=None, left=None, right=None):
+        self.data = data 
+        self.left = left 
+        self.right = right 
+
+        
+#############################################################################################################
+#############################################################################################################
 
 
 def count_bits(x):
@@ -295,8 +311,6 @@ def plus_one(L):
         L.append(0)
     return L
         
-################################################################################################### REVIEW THIS ONE
-
 
 # num1: list[int], num2: list[int]) -> list[int]:
 def multiply(num1, num2):
@@ -469,6 +483,24 @@ def nextPermutation(perm):
     return perm
 
 
+def MoveAllZerosToBeginningOfArray(A):
+    write_index = 0
+    for i in range(1, len(A)):
+        if A[i] == 0:
+            A[write_index], A[i] = A[i], A[write_index]
+            write_index += 1
+    return A
+
+
+def MoveAllZerosToEndOfArray(A):
+    write_index = len(A) - 1
+    for i in reversed(range(len(A))):
+        if A[i] == 0:
+            A[write_index], A[i] = A[i], A[write_index]
+            write_index -= 1
+    return A
+
+
 def generateSubsetBySampling(k, A):
     for i in range(k):
         r = random.randint(1, len(A) - 1)
@@ -512,17 +544,39 @@ def computePascalTriangle(n: int):
     return result
 
 
-####################################################################################################
-#                                        LINKED LIST                                               #
-####################################################################################################
+def isBalancedBinaryTree(tree: BinaryTreeNode) -> bool:
+    """
+    if for each node in the tree, the difference in height of its 
+    left and right subtrees is at most 1
+    - preorder traversal: O(n)
+    - space bounded by height: O(h)
+    """
+    BalancedStatusWithHeight = collections.namedtuple('BalancedStatusWithHeight', ('balanced', 'height'))
+
+    # first value of the return value indicates if it is balanced
+    # second value is the height of the tree
+    def checkBalanced(tree):
+        if not tree:
+            return BalancedStatusWithHeight(balanced=True, height=-1)
+        left_result = checkBalanced(tree.left)
+        if not left_result.balanced:
+            return left_result
+        right_result = checkBalanced(tree.right)
+        if not right_result.balanced:
+            return right_result
+        is_balanced = abs(left_result.height - right_result.height) <= 1
+        height = max(left_result.height, right_result.height) + 1
+        return BalancedStatusWithHeight(is_balanced, height)
+
+    return checkBalanced(tree).balanced
 
 
-class ListNode:
-    def __init__(self, data=0, next=None):
-        self.data = data
-        self.next = next 
 
-        
+##############################################################################################
+###   LINKED LISTS
+##############################################################################################
+
+
 def searchList(L: ListNode, key: int):
     while L and L.data != key:
         L = L.next
@@ -744,3 +798,71 @@ def cyclicallyRightShiftList(L: ListNode, k: int):
     new_head = new_tail.next
     new_tail.next = None
     return new_head
+
+
+##############################################################################################
+###   GREEDY & INVARIANTS
+##############################################################################################
+
+
+# gallons[i] is amount of gas in city i
+# distances[i] is the distanct i to the next city
+# Suppose we pick z as starting point, with gas present at z. Since we never have less gas than we started with at z, and when we return to z we have 0 gas 
+#   (since it's given that gas is just enough to complete the traversal)
+#  assumes always exists an ample city
+def FindAmpleCity(gallons: List[int], distances: List[int]):
+    mpg = 20
+    remaining_gallons = 0
+    city_remaining_gallons_tuple = (0, 0) # (city, gallons)
+    cities_count = len(gallons)
+    for i in range(1, cities_count):
+        # fueled up - fuel used to go to next city
+        remaining_gallons += gallons[i-1] - (distances[i-1] // mpg)
+        if remaining_gallons < city_remaining_gallons_tuple[1]:
+            city_remaining_gallons_tuple = (i, remaining_gallons)
+    return city_remaining_gallons_tuple[0] # return city
+
+
+"""
+ Record heights as we go, and then reduce the width by 
+ moving the pointer located at the smaller side O(n)
+"""
+def MostWaterFilled(heights: List[int]):
+    l, r, max_area = 0, len(heights) - 1, 0
+    while l < r:
+        width = r - l
+        height = min(heights[l], heights[r])
+        max_area = max(max_area, width * height)
+        if heights[l] < heights[r]:
+            l += 1
+        else: 
+            r -= 1
+    return max_area
+
+
+# each worker assigned exactly 2 tasks, each one takes fixed amount of time, and tasks are independent
+# answer: worker who gets longest outstanding task also gets shortest
+def OptimumAssignmentOfTasks(task_durations: List[int]):
+    task_durations.sort()
+    return [(task_durations[i], task_durations[~i]) for i in range(len(task_durations) // 2)]
+
+
+def ScheduleToMinimizeWaitTimes(service_times: List[int]) -> int:
+    # greedily process in order of shortest times
+    service_times.sort()
+    total_waiting_time = 0
+    for idx, service_time in enumerate(service_times):
+        num_remaining = len(service_times) - (idx + 1)
+        total_waiting_time += service_time * num_remaining
+    return total_waiting_time
+
+
+def MinimumTimesToVisitAllSchedules(schedules):
+    schedules.sort(key=lambda x: x[-1])
+    overlapped_until, times = float('-inf'), 0
+    for schedule in schedule:
+        start, end = schedule[0], schedule[1]
+        if start > current:
+            overlapped_until = end
+            times += 1 
+    return times

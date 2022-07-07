@@ -40,10 +40,6 @@ class Node:
 ##############################################################################################
 
 
-def ConcatenateTwoLists(nums: List[int]) -> List[int]:
-    return nums + nums
-
-
 # https://leetcode.com/problems/contains-duplicate/
 def ContainsDuplicate(nums: List[int]) -> bool:
     n = len(nums)
@@ -83,6 +79,21 @@ def FindMaximumAverageInSlidingWindow(nums: List[int], k: int) -> float:
     return float(maximum) / k
 
 
+# https://leetcode.com/problems/longest-substring-without-repeating-characters/
+def LengthOfLongestSubstring(s: str) -> int:
+    if len(s) == 0:
+        return 0
+    cache = dict()
+    size = 0
+    for idx, i in enumerate(s):
+        if i in cache:
+            size = max(size, len(cache))
+            starting = cache[i]
+            cache = {k: v for k,v in cache.items() if v > starting}
+        cache[i] = idx
+    return max(size, len(cache))        
+
+
 # https://leetcode.com/problems/longest-consecutive-sequence/
 def LongestConsecutiveInAnArray(nums: List[int]) -> int:
     if not nums:
@@ -119,6 +130,138 @@ def BestTimeToBuyAndSellStock(prices: List[int]) -> int:
         profit = max(profit, price - running_min)
         running_min = min(running_min, price)
     return profit
+
+
+# https://leetcode.com/problems/find-first-and-last-position-of-element-in-sorted-array/
+def SearchRange(nums: List[int], target: int) -> List[int]:
+    found = [-1, -1]
+    
+    # look for left most one
+    left, right = 0, len(nums) - 1
+    while left <= right:
+        mid = (left + right) // 2
+        if nums[mid] == target:
+            found[0] = mid
+            right = mid - 1
+        elif nums[mid] < target:
+            left = mid + 1
+        else:
+            right = mid - 1
+        
+    # look for right most one
+    left, right = 0, len(nums) - 1
+    while left <= right:
+        mid = (left + right) // 2
+        if nums[mid] == target:
+            found[1] = mid
+            left = mid + 1
+        elif nums[mid] < target:
+            left = mid + 1
+        else:
+            right = mid - 1
+    
+    return found
+
+
+# https://leetcode.com/problems/single-number/
+def SingleNumberV1(nums: List[int]) -> int:
+    result = 0
+    for num in nums:
+        result ^= num
+    return result
+
+def SingleNumberV2(nums: List[int]) -> int:
+    d = dict()
+    for n in nums:
+        d[n] = d.get(n, 0) + 1
+        if d[n] == 2:
+            del d[n]
+    return list(d.keys())[0]
+    
+
+# https://leetcode.com/problems/plus-one/
+def PlusOne(digits: List[int]) -> List[int]:
+    digits[-1] = 1 if len(digits) == 0 else digits[-1] + 1
+    i = len(digits) - 1
+    while i > 0 and digits[i] == 10:
+        digits[i] = 0
+        digits[i-1] = digits[i-1] + 1
+        i -= 1
+    if digits[0] == 10:
+        digits[0] = 1
+        digits.append(0)
+    return digits
+        
+
+# https://leetcode.com/problems/remove-duplicates-from-sorted-array/
+def RemoveDuplicates(nums: List[int]) -> int:
+    if len(nums) <= 1:
+        return len(nums)
+    i, j = 0, 1
+    while j < len(nums):
+        if nums[i] != nums[j]:
+            i += 1
+            nums[i] = nums[j]
+        j += 1
+    return i + 1
+        
+
+# https://leetcode.com/problems/maximum-ascending-subarray-sum/
+def MaxAscendingSum(nums: List[int]) -> int:
+    current_max = float('-inf')
+    subarray_max = nums[0]
+    for i in range(1, len(nums)):
+        if nums[i] > nums[i-1]:
+            subarray_max += nums[i]
+        else:
+            current_max = max(current_max, subarray_max)
+            subarray_max = nums[i]
+    return max(current_max, subarray_max)        
+
+
+# https://leetcode.com/problems/merge-intervals/
+def MergeIntervals(intervals: List[List[int]]) -> List[List[int]]:
+    if len(intervals) <= 1:
+        return intervals
+    intervals = sorted(intervals, key=lambda i: i[0])
+    overlapped = [intervals[0]]
+    for i in range(1, len(intervals)):
+        l, r = intervals[i][0], intervals[i][1]
+        if overlapped[-1][1] >= l:
+            overlapped[-1][1] = max(overlapped[-1][1], r)
+        else:
+            overlapped.append([l, r])
+    return overlapped
+            
+
+# https://leetcode.com/problems/non-decreasing-array/
+def checkPossibility(nums):
+    if nums is None:
+        return False
+    length = len(nums)
+    if length <= 2:
+        return True
+    changes = False
+    for i in range(length-1):
+        if nums[i] > nums[i+1]:
+            if changes:
+                return False
+            else:
+                changes = True
+            if i > 0:
+                if nums[i-1] > nums[i+1]: 
+                    nums[i+1] = nums[i]
+    return True
+            
+
+# https://leetcode.com/problems/move-zeroes/
+def MoveZeroes(nums: List[int]) -> None:
+    chunk_size = i = 0
+    for i in range(len(nums)):
+        if nums[i] == 0:
+            chunk_size += 1
+        elif chunk_size >= 1:
+            nums[i], nums[i-chunk_size] = nums[i-chunk_size], nums[i]
 
 
 # https://leetcode.com/problems/merge-sorted-array/
@@ -177,53 +320,6 @@ def RemoveDuplicatesFromAnArray(A):
             write_index += 1
 
     return A[:write_index]
-
-
-def CountTheFrequencyOfAnElementInAnArray(A):
-    d = dict()
-    for element in A:
-        if element not in d:
-            d[element] = 1
-        else:
-            d[element] += 1
-    return d
-
-def CountTheFrequencyOfAnElementInAnArrayCounter(A):
-    return collections.Counter(A)
-
-
-def MoveAllZerosToBeginningOfArray(A):
-    write_index = 0
-    for i in range(1, len(A)):
-        if A[i] == 0:
-            A[write_index], A[i] = A[i], A[write_index]
-            write_index += 1
-    return A
-
-
-def MoveAllZerosToEndOfArray(A):
-    write_index = len(A) - 1
-    for i in reversed(range(len(A))):
-        if A[i] == 0:
-            A[write_index], A[i] = A[i], A[write_index]
-            write_index -= 1
-    return A
-
-
-def BinarySearchAnArray(A, x):
-    low, high = 0, len(A) - 1
-
-    while low <= high:
-        mid = (low + high) // 2 # average of low and high
-        
-        if A[mid] > x:
-            high = mid - 1
-        elif A[mid] < x:
-            low = mid + 1
-        else:
-            return True
-
-    return False
 
 
 def ArrayChange(nums: List[int], operations: List[List[int]]) -> List[int]:
@@ -363,6 +459,25 @@ def NextPermutation(nums: List[int]) -> None:
     reverse(nums, pivot+1, len(nums)-1)
 
 
+# https://leetcode.com/problems/search-insert-position/
+def SearchInsert(nums: List[int], target: int) -> int:
+    l, h = 0, len(nums) - 1
+    if target < nums[0]:
+        return 0
+    if target > nums[-1]:
+        return len(nums)
+    while l <= h:
+        mid = (l + h) // 2
+        if nums[mid] == target:
+            return mid
+        if nums[mid] < target and nums[mid+1] > target:
+            return mid+1
+        if nums[mid] > target:
+            h = mid - 1
+        else:
+            l = mid + 1
+
+
 # https://leetcode.com/problems/fruit-into-baskets/
 # what is the length of longest subarray that contains up to two distinct integers
 def TotalFruit(fruits: List[int]) -> int:
@@ -462,6 +577,24 @@ def IsPossible(nums: List[int]) -> bool:
     return True
 
 
+# https://leetcode.com/problems/jump-game/
+def JumpGameI(nums: List[int]) -> bool:
+    if len(nums) <= 1:
+        return True
+
+    max_can_reach = nums[0]
+    current_index = 0
+    while max_can_reach < len(nums) - 1 and current_index != max_can_reach:
+
+        max_range = max_can_reach
+        for i in range(current_index, max_range + 1):
+            max_can_reach = max(max_can_reach, i + nums[i])
+
+        current_index = max_range
+
+    return True if max_can_reach >= len(nums) - 1 else False
+
+
 # https://leetcode.com/problems/jump-game-ii/
 def JumpGameII(nums: List[int]) -> int:
     if len(nums) == 1:
@@ -554,11 +687,61 @@ def SummaryRanges(nums: List[int]) -> List[str]:
     return result
 
 
+# https://leetcode.com/problems/container-with-most-water/
+def MaxArea(height: List[int]) -> int:
+    left, right = 0, len(height) - 1
+    width = len(height) - 1
+    result = 0
+    for i in reversed(range(1, width + 1)):
+        if height[left] >= height[right]:
+            result = max(result, height[right] * i)
+            right -= 1
+        else:
+            result = max(result, height[left] * i)
+            left += 1
+    return result
+
+
+# https://leetcode.com/problems/median-of-two-sorted-arrays/
+def FindMedianSortedArrays(nums1: List[int], nums2: List[int]) -> float:
+    M, N = len(nums1), len(nums2)
+    total = (M + N + 1) // 2
+        
+    # let N be the larger array
+    if M > N:
+        nums1, nums2 = nums2, nums1
+        M, N = N, M
+    
+    # bin search through smaller array M
+    low, high = 0, M
+    while low <= high:
+        mid_M = low + (high - low) // 2
+        mid_N = total - mid_M
+        M_left  = float('-inf') if mid_M == 0 else nums1[mid_M-1]
+        N_left  = float('-inf') if mid_N == 0 else nums2[mid_N-1]
+        M_right = float('inf')  if mid_M == M else nums1[mid_M]
+        N_right = float('inf')  if mid_N == N else nums2[mid_N]
+
+        if M_left <= N_right and N_left <= M_right:
+            if (M + N) % 2 == 1:
+                return max(M_left, N_left)
+            else:
+                return (max(M_left, N_left) + min(M_right, N_right)) / 2.0
+
+        if M_left > N_right:
+            high = mid_M - 1
+        else:
+            low = mid_M + 1
+    
+    return -1
+
+
 ##############################################################################################
 ###   STRING
 ##############################################################################################
 
 
+# https://leetcode.com/problems/length-of-last-word/
 def LengthOfLastWord(s: str) -> int:
     size = 0
     for char in reversed(s):
@@ -582,6 +765,7 @@ def RemovePalindromicString(s: str) -> int:
     return 2
 
 
+# https://leetcode.com/problems/remove-vowels-from-a-string/
 def RemoveVowelsFromAString(S):
     vowels = dict.fromkeys(["a", "e", "i", "o", "u"])
     new_string = []
@@ -591,6 +775,7 @@ def RemoveVowelsFromAString(S):
     return ''.join(new_string)
 
 
+# https://leetcode.com/problems/defanging-an-ip-address/
 def DefangingAnIPAddress(IP):
     split_IP = IP.split('.')
     return "[.]".join(split_IP)
@@ -607,6 +792,20 @@ def JewelsAndStones(jewels, stones):
     return cnt
 
 
+def IntegerToString(x: int):
+    negative = False
+    if x < 0:
+        x, negative = -x, True
+    s = []
+    while True:
+        s.append(chr(ord('0') + x % 10))
+        x = x // 10
+        if x == 0:
+            break
+    # add negative sign back if needed
+    return ('-' if negative else '') + ''.join(reversed(s))
+
+
 # https://leetcode.com/problems/string-to-integer-atoi/
 def StringToInteger(S):
     if not S or len(S) == 0:
@@ -619,6 +818,45 @@ def StringToInteger(S):
             num += int(c) * place 
             place *= 10
     return sign * num
+
+
+# https://leetcode.com/problems/implement-strstr/
+def StrStr(haystack: str, needle: str) -> int:
+    if needle == "":
+        return 0
+    i = 0
+    while i < len(haystack) - len(needle) + 1:
+        if haystack[i] == needle[0]:
+            if haystack[i:i + len(needle)] == needle:
+                return i
+        i += 1
+    return -1
+
+
+# https://leetcode.com/problems/multiply-strings/
+def Multiply(num1: str, num2: str) -> str:
+    result = [0] * (len(num1) + len(num2))
+    for i in reversed(range(len(num1))):
+        for j in reversed(range(len(num2))):
+            result[i + j + 1] += int(num1[i]) * int(num2[j])
+            result[i + j] += result[i + j + 1] // 10
+            result[i + j + 1] %= 10
+    result = ''.join([str(i) for i in result])
+    result = result.lstrip("0")
+    if result == "":
+        result = "0"
+    return result
+        
+
+# https://leetcode.com/problems/longest-common-prefix/
+def LongestCommonPrefix(strs: List[str]) -> str:
+    prefix = [""]
+    for index, char in enumerate(strs[0]):
+        for j in range(1, len(strs)):
+            if index == len(strs[j]) or char != strs[j][index]:
+                return "".join(prefix)
+        prefix.append(char)
+    return "".join(prefix)
 
 
 # https://leetcode.com/problems/longest-substring-without-repeating-characters/
@@ -779,10 +1017,11 @@ def IsAnagram(s: str, t: str) -> bool:
 
 
 ##############################################################################################
-###   LISTS
+###   LINKED LISTS
 ##############################################################################################
 
 
+# https://leetcode.com/problems/remove-duplicates-from-sorted-list/
 def DeleteDuplicates(head: Optional[ListNode]) -> Optional[ListNode]:
     current = head
     while current:
@@ -792,6 +1031,7 @@ def DeleteDuplicates(head: Optional[ListNode]) -> Optional[ListNode]:
     return head
 
 
+# https://leetcode.com/problems/remove-linked-list-elements/
 def RemoveElements(head: Optional[ListNode], val: int) -> Optional[ListNode]:
     dummy_head = ListNode(-1) 
     dummy_head.next = head
@@ -803,6 +1043,25 @@ def RemoveElements(head: Optional[ListNode], val: int) -> Optional[ListNode]:
             current_node = current_node.next
     return dummy_head.next
         
+
+# https://leetcode.com/problems/remove-nth-node-from-end-of-list/
+def RemoveNthFromEnd(head: ListNode, n: int) -> ListNode:
+    size = 0
+    pointer = head
+    while pointer:
+        pointer = pointer.next
+        size += 1    
+    idx = size - n + 1
+    if n == size:
+        head = head.next
+        return head
+    pointer = head
+    for i in range(idx-2):
+        pointer = pointer.next
+    node_to_remove = pointer.next
+    pointer.next = node_to_remove.next
+    return head
+
 
 # https://leetcode.com/problems/convert-binary-number-in-a-linked-list-to-integer/
 def GetDecimalValue(head: ListNode) -> int:
@@ -830,6 +1089,30 @@ def MergeNodes(head: Optional[ListNode]) -> Optional[ListNode]:
         
     writer.next = None
     return dummy_head.next
+
+
+# https://leetcode.com/problems/rotate-list/
+def RotateRight(head: Optional[ListNode], k: int) -> Optional[ListNode]:
+    if not head or not head.next or k == 0:
+        return head
+    
+    size = 1
+    temp = head
+    while temp.next:
+        temp = temp.next
+        size += 1
+    if k % size == 0:
+        return head
+        
+    first, second = head, head
+    for _ in range(k % size):
+        second = second.next
+    while second.next:
+        first, second = first.next, second.next
+    temp = first.next    
+    first.next = None
+    second.next = head
+    return temp
 
 
 # https://leetcode.com/problems/reverse-linked-list/
@@ -861,6 +1144,7 @@ def DeleteNodeFromList(node: ListNode):
         node.next = node.next.next
 
 
+# https://leetcode.com/problems/merge-two-sorted-lists/
 def MergeTwoLinkedLists(l1: ListNode, l2: ListNode):
     dummy_head = it = ListNode()
     while l1 and l2:
@@ -996,6 +1280,36 @@ def MiddleNode(head: Optional[ListNode]) -> Optional[ListNode]:
         slow = slow.next
         fast = fast.next.next
     return slow.next
+
+
+# https://leetcode.com/problems/swap-nodes-in-pairs/
+def SwapPairs(head: ListNode) -> ListNode:
+    if head is None or head.next is None:
+        return head
+    
+    dummy_head = head.next
+    prior = None
+    first = head
+    second = head.next
+    while first and second:
+        first_cache = first
+        second_cache = second
+
+        temp = second.next
+        second.next = first
+        first.next = temp
+        first = temp
+        
+        if temp is not None:
+            second = temp.next
+        else:
+            second = None
+            
+        if prior:
+            prior.next = second_cache
+        prior = first_cache
+        
+    return dummy_head
 
 
 # https://leetcode.com/problems/maximum-twin-sum-of-a-linked-list/
@@ -1286,6 +1600,30 @@ def KthSmallest(root: Optional[TreeNode], k: int) -> int:
     return dfs(root)
 
 
+# https://leetcode.com/problems/cousins-in-binary-tree/
+def IsCousins(root: TreeNode, x: int, y: int) -> bool:
+
+    def helper(root, x, y, parent_value, depth):
+        if root:
+            if root.val == x or root.val == y:
+                return [(parent_value, depth)]
+            else:
+                val = root.val
+                new_depth = depth + 1
+                return helper(root.left, x, y, val, new_depth) + helper(root.right, x, y, val, new_depth)
+        else:
+            return []
+
+    if root:
+        vals = helper(root, x, y, root.val, 0)
+        if len(vals) == 2:
+            return vals[0][0] != vals[1][0] and vals[0][1] == vals[1][1]
+        else:
+            return False
+    else:
+        return False
+        
+
 # https://leetcode.com/problems/binary-tree-paths/
 def BinaryTreePaths(root: Optional[TreeNode]) -> List[str]:
     stack = [(root, "")]
@@ -1475,12 +1813,28 @@ def ZigZagLevelOrderTravesal(root):
         return result
 
 
+# https://leetcode.com/problems/path-sum/
+def HasPathSum(root: Optional[TreeNode], targetSum: int) -> bool:
+    if not root:
+        return False
+
+    def helper(node, current_sum, target_sum):
+        # print(current_sum, node.val if node else "-")
+        if node and not node.left and not node.right and current_sum + node.val == target_sum:
+            return True
+        elif node and (node.left or node.right):
+            return helper(node.left, current_sum + node.val, target_sum) or helper(node.right, current_sum + node.val, target_sum)
+        return False
+
+    return helper(root, 0, targetSum) 
+        
+
 # https://leetcode.com/problems/binary-tree-maximum-path-sum/
 class Solution:
     def __init__(self):
         self.max_path_sum = float('-inf')
 
-    def maxPathSum(self, root: Optional[TreeNode]) -> int:
+    def MaxPathSum(self, root: Optional[TreeNode]) -> int:
         # i think we have to traverse all O(n) time, let's try recursively
         # do bottom up search and trim paths
         def search(node):
@@ -2041,7 +2395,6 @@ def IsValidSudokoBrute(board):
     return True
 
 
-# https://leetcode.com/problems/group-anagrams/
 def GroupAnagrams(strs):
     result = {}
     for s in strs:
@@ -2571,6 +2924,49 @@ def AllPermutations(nums: List[int]) -> List[List[int]]:
         
     search([], used, result)
     return result
+
+
+# Backtracking
+# https://leetcode.com/problems/sudoku-solver/
+def SolveSudoku(board: List[List[str]]) -> None:
+
+    def validPlacement(row, col, value):
+        # check row and column
+        for i in range(9):
+            if board[row][i] == value or board[i][col] == value:
+                return False
+        # check square
+        row_bound = (row // 3) * 3
+        col_bound = (col // 3) * 3
+        for i in range(3):
+            for j in range(3):
+                if board[i+row_bound][j+col_bound] == value:
+                    return False 
+        return True
+    
+    def solve(row, col):
+        # start a new col
+        if col == 9:
+            col = 0
+            row += 1
+            # we have filled all rows
+            if row == 9:
+                return True
+            
+        if board[row][col] != '.':
+            return solve(row, col+1)
+        
+        # if we have space available and we can place
+        for value in range(1, 10):
+            if validPlacement(row, col, str(value)):
+                board[row][col] = str(value)
+                if solve(row, col+1):
+                    return True
+        # backtracking
+        board[row][col] = '.'
+        return False
+    
+    solve(0, 0)
 
 
 ##############################################################################################
@@ -3291,6 +3687,22 @@ def HammingWeight(n: int) -> int:
     return count
 
 
+# https://leetcode.com/problems/reverse-integer/
+def ReverseInteger(x: int) -> int:
+    new_digit = 0
+    curr = abs(x)
+    if x != 0:
+        sign = int(curr / x)
+    else:
+        sign = 1
+    while curr > 0:
+        rem = curr % 10
+        new_digit = 10*new_digit + rem
+        curr = curr // 10
+    if -2**31 <= sign*new_digit <= 2**31 - 1:
+        return sign*new_digit
+    return 0
+
 # https://leetcode.com/problems/reverse-bits/
 def ReverseBits(n: int) -> int:
     result = 0
@@ -3308,6 +3720,25 @@ def AddDigitsLoop(num):
     while num > 9:
         num = sum(int(d) for d in str(num))
     return num
+
+
+# https://leetcode.com/problems/generate-parentheses/
+def GenerateParenthesis(n: int) -> List[str]:
+    result = []
+
+    def helper(n_open: int, n_close: int, agg: str, result: List[int]):
+        if n_open == 0 and n_close == 0:
+            result.append(agg)
+            return
+        # if open ( is available then add one and recurse
+        if n_open > 0:
+            helper(n_open-1, n_close, agg + "(", result)
+        # if there are extra ) available, use one
+        if n_close > n_open:
+            helper(n_open, n_close-1, agg + ")", result)
+            
+    helper(n, n, "", result)
+    return result
 
 
 # https://leetcode.com/problems/happy-number/
@@ -3415,6 +3846,80 @@ def firstBadVersion(n: int) -> int:
     return search(0, n-1)
 
 
+# https://leetcode.com/problems/validate-ip-address/
+def ValidIPAddress(IP):
+    def IPv4(IP):
+        def starts_with(s, match):
+            return s.startswith(match)
+
+        tokens = IP.split(".")
+        if len(tokens) != 4:
+            return "Neither"
+        try:
+            for token in tokens:
+                if starts_with(token, "0") and len(token) > 1:
+                    return "Neither"
+                if not token.isdigit():
+                    return "Neither"
+                res = int(token)
+                if res < 0 or res > 255:
+                    return "Neither"
+        except Exception as e:
+            return "Neither"
+        return "IPv4"
+    
+    def IPv6(IP):
+        def good_hex(hex_):
+            match = re.match("^[A-Fa-f0-9]+$", hex_)
+            return True if match else False
+                
+        tokens = IP.split(":")
+        if len(tokens) != 8:
+            return "Neither"
+        for i in tokens:
+            size = len(i)
+            if size < 1 or size > 4:
+                return "Neither"
+            if not good_hex(i):
+                return "Neither"
+        return "IPv6"
+    
+    return_one = IPv4(IP)
+    if return_one != "Neither":
+        return return_one
+    else:
+        return IPv6(IP)
+
+
+# https://leetcode.com/problems/powx-n/
+def MyPowFuncion(x, n):
+    def helper(orig, x, n):
+        an = abs(n)
+        if an == 0:
+            return 1.0
+        if an == 1:
+            return x
+        new_n = n-1 if n > 1 else n+1
+        return helper(orig, orig*x, new_n)
+
+    result = helper(x, x, n)
+    if n != abs(n):
+        return 1.0 / result
+    else:
+        return result
+
+def myPowV2(x, n):
+    if x == 0:
+        return 1.0
+    result = 1.0
+    for i in range(0, abs(n)):
+        result *= x
+    if n != abs(n):
+        return 1.0 / result
+    else:
+        return result
+
+
 ##############################################################################################
 ###   GREEDY & INVARIANTS
 ##############################################################################################
@@ -3490,34 +3995,6 @@ def CoinChangeUS(n):
         num_coins += n // coin 
         n %= coin
     return num_coins
-
-
-# each worker assigned exactly 2 tasks, each one takes fixed amount of time, and tasks are independent
-# answer: worker who gets longest outstanding task also gets shortest
-def OptimumAssignmentOfTasks(task_durations: List[int]):
-    task_durations.sort()
-    return [(task_durations[i], task_durations[~i]) for i in range(len(task_durations) // 2)]
-
-
-def ScheduleToMinimizeWaitTimes(service_times: List[int]) -> int:
-    # greedily process in order of shortest times
-    service_times.sort()
-    total_waiting_time = 0
-    for idx, service_time in enumerate(service_times):
-        num_remaining = len(service_times) - (idx + 1)
-        total_waiting_time += service_time * num_remaining
-    return total_waiting_time
-
-
-def MinimumTimesToVisitAllSchedules(schedules):
-    schedules.sort(key=lambda x: x[-1])
-    overlapped_until, times = float('-inf'), 0
-    for schedule in schedule:
-        start, end = schedule[0], schedule[1]
-        if start > current:
-            overlapped_until = end
-            times += 1 
-    return times
     
 
 """
@@ -3553,40 +4030,31 @@ def MajorityElementSearch(stream: Iterator[int]) -> str:
     return candidate
 
 
-# gallons[i] is amount of gas in city i
-# distances[i] is the distanct i to the next city
-# Suppose we pick z as starting point, with gas present at z. Since we never have less gas than we started with at z, and when we return to z we have 0 gas 
-#   (since it's given that gas is just enough to complete the traversal)
-#  assumes always exists an ample city
-def FindAmpleCity(gallons: List[int], distances: List[int]):
-    mpg = 20
-    remaining_gallons = 0
-    city_remaining_gallons_tuple = (0, 0) # (city, gallons)
-    cities_count = len(gallons)
-    for i in range(1, cities_count):
-        # fueled up - fuel used to go to next city
-        remaining_gallons += gallons[i-1] - (distances[i-1] // mpg)
-        if remaining_gallons < city_remaining_gallons_tuple[1]:
-            city_remaining_gallons_tuple = (i, remaining_gallons)
-    return city_remaining_gallons_tuple[0] # return city
-
-
-"""
- Record heights as we go, and then reduce the width by 
- moving the pointer located at the smaller side O(n)
-"""
-def MostWaterFilled(heights: List[int]):
-    l, r, max_area = 0, len(heights) - 1, 0
-    while l < r:
-        width = r - l
-        height = min(heights[l], heights[r])
-        max_area = max(max_area, width * height)
-        if heights[l] < heights[r]:
-            l += 1
-        else: 
-            r -= 1
-    return max_area
-
+# https://leetcode.com/problems/letter-combinations-of-a-phone-number/
+def LetterCombinations(digits: str) -> List[str]:
+    def helper(idx, digits, digits_map, aggregator, curr):
+        if idx == len(digits):
+            aggregator.append(curr)
+        else:
+            for c in digits_map[digits[idx]]:
+                helper(idx+1, digits, digits_map, aggregator, curr+c)
+    digits_map = {
+        "2":  ["a", "b", "c"],
+        "3":  ["d", "e", "f"],
+        "4":  ["g", "h", "i"],
+        "5":  ["j", "k", "l"],
+        "6":  ["m", "n", "o"],
+        "7":  ["p", "q", "r", "s"],
+        "8":  ["t", "u", "v"],
+        "9":  ["w", "x", "y", "z"]    
+    }
+    agg = []
+    if len(digits) > 0:
+        helper(0, digits, digits_map, agg, "") # populate agg using reference
+        return agg
+    else:
+        return agg
+        
 
 ##############################################################################################
 ###   SORTING
@@ -3618,7 +4086,6 @@ def SortColors(nums: List[int]) -> None:
             quicksort(j + 1, hi)
         
     quicksort(0, len(nums) - 1)
-
 
 # takes advantage of nums only having 0,1,2 as values
 def SortColorsOnePass(nums: List[int]) -> None:

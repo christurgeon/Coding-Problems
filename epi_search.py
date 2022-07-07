@@ -1,3 +1,8 @@
+import collections 
+import math
+from typing import List
+
+
 def binarySearch(t: int, A: List[int]):
     L, R = 0, len(A)-1
     while L <= R:
@@ -117,7 +122,7 @@ def sortedMatrixSearch(A: List[List[int]], x: int):
     else move backwards across that row
     """
     row, col = 0, len(A[0]) - 1 # top right corner
-    while row < len(A) and col >= 0
+    while row < len(A) and col >= 0:
         if A[row][col] == x:
             return True
         elif A[row][col] < x:
@@ -144,10 +149,7 @@ def findMinMaxSimultaneously(A: List[int]):
     # process two at a time
     for i in range(2, len(A) - 1, 2):
         local_min_max = min_max(A[i], A[i+1])
-        global_min_max = MinMax(
-            min(global_min_max.smallest, local_min_max.smallest)
-            max(global_min_max.largest,  local_min_max.largest)
-        )
+        global_min_max = MinMax(min(global_min_max.smallest, local_min_max.smallest), max(global_min_max.largest,  local_min_max.largest))
         # if there is odd number of elements then compare the last
     if len(A) % 2 == 1:
         global_min_max = MinMax(min(global_min_max.smallest, A[-1]), max(global_min_max.largest, A[-1]))
