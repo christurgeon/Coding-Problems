@@ -1,20 +1,14 @@
-#   DS
-# https://igotanoffer.com/blogs/tech/data-structure-interview-questions
-#   ALGO
-# https://igotanoffer.com/blogs/tech/algorithms-interview-questions
-
 """
-    For a given problem that lends itself to be solved naturally recursively (i.e. N-Queens)
-        if you want optimal solution dynamic programming 
-        if you want all solutions, backtracking is used
-"""
-
-"""
-    For recursive quick select, easy to implement, see FindKthLargest_QuickSelect
+NOTES
+- For a given problem that lends itself to be solved naturally recursively (i.e. N-Queens)
+    if you want optimal solution dynamic programming 
+    if you want all solutions, backtracking is used
+- For quick select algorithm, easies to implement recursively, see FindKthLargest_QuickSelect()
 """
 
 import heapq
 import collections
+import time
 from typing import *
 from functools import lru_cache
 from functools import cmp_to_key
@@ -4104,3 +4098,51 @@ def SortColorsOnePass(nums: List[int]) -> None:
             end -= 1
         else: #nums[mid] == 1
             mid += 1
+
+
+##############################################################################################
+###   CONCURRENCY
+##############################################################################################
+
+
+# https://leetcode.com/problems/print-in-order/
+class Foo:
+    def __init__(self):
+        self.sleeptime = 0.001
+        self.semaphore = 0
+
+    def first(self, printFirst: 'Callable[[], None]') -> None:
+        printFirst()
+        self.semaphore += 1
+
+    def second(self, printSecond: 'Callable[[], None]') -> None:
+        while self.semaphore != 1:
+            time.sleep(self.sleeptime)
+        printSecond()
+        self.semaphore += 1
+
+    def third(self, printThird: 'Callable[[], None]') -> None:
+        while self.semaphore != 2:
+            time.sleep(self.sleeptime)
+        printThird()
+
+
+# https://leetcode.com/problems/print-foobar-alternately/
+class FooBar:
+    def __init__(self, n):
+        self.n = n
+        self.semaphore = 0
+
+    def foo(self, printFoo: 'Callable[[], None]') -> None:
+        for i in range(self.n):
+            while self.semaphore == 1:
+                time.sleep(0.001)
+            printFoo()
+            self.semaphore = 1
+
+    def bar(self, printBar: 'Callable[[], None]') -> None:
+        for i in range(self.n):
+            while self.semaphore == 0:
+                time.sleep(0.001)
+            printBar()
+            self.semaphore = 0
