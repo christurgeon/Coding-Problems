@@ -6,6 +6,7 @@ NOTES
 - For quick select algorithm, easies to implement recursively, see FindKthLargest_QuickSelect()
 """
 
+import re
 import heapq
 import collections
 import time
@@ -4098,6 +4099,40 @@ def SortColorsOnePass(nums: List[int]) -> None:
             end -= 1
         else: #nums[mid] == 1
             mid += 1
+
+
+# https://leetcode.com/problems/sort-characters-by-frequency/
+def SortCharsByFrequency(s: str) -> str:
+    n = len(s)
+    counts = Counter(s)
+    buckets = [[] for _ in range(n+1)]
+    for char, count in counts.items():
+        buckets[count].append(char)
+    result = []
+    for i in range(n, 0, -1):
+        for char in buckets[i]:
+            result.append(char * i)
+    return ''.join(result)
+
+
+# https://leetcode.com/problems/sort-array-by-increasing-frequency/
+def SortNumbersByFrequenceyV1(nums: List[int]) -> List[int]:
+    n = len(nums)
+    counts = Counter(nums)
+    buckets = [[] for _ in range(n+1)]
+    for char, count in counts.items():
+        buckets[count].append(char)
+    result = []
+    for i in range(1, n+1):
+        if buckets[i]:
+            buckets[i].sort(reverse=True)
+            for num in buckets[i]:
+                result.extend([num] * i) 
+    return result
+
+def SortNumbersByFrequenceyV2(nums: List[int]) -> List[int]:
+    r = Counter(nums)
+    return sorted(nums, key=lambda x: (r[x], -x))
 
 
 ##############################################################################################
