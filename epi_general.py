@@ -518,6 +518,19 @@ def reservoirSampling(k, A):
     return result
 
 
+def majorityElementSearch(stream: Iterator[int]) -> str:
+    candidate_count = 0
+    for it in stream:
+        if candidate_count == 0:
+            candidate = it
+            candidate_count += 1
+        elif candidate == it:
+            candidate_count += 1
+        else:
+            candidate_count -= 1
+    return candidate
+
+
 def onlineRandomSampling(stream: Iterator(int), k: int):
     """
     keep track of a sampling out of a data stream

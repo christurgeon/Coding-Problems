@@ -9,6 +9,7 @@ NOTES
 import re
 import heapq
 import collections
+import bisect
 import time
 from typing import *
 from functools import lru_cache
@@ -31,7 +32,7 @@ class Node:
         self.val = val
 
 ##############################################################################################
-###   ARRAYS
+###   [ARRAYS]
 ##############################################################################################
 
 
@@ -731,8 +732,23 @@ def FindMedianSortedArrays(nums1: List[int], nums2: List[int]) -> float:
     return -1
 
 
+# https://leetcode.com/problems/non-overlapping-intervals/
+def EraseOverlapIntervals(intervals: List[List[int]]) -> int:
+    intervals.sort() # will sort by first, then second if first is tied
+    count = 0
+    previous_end = intervals[0][1]
+    for i in range(1, len(intervals)):
+        start, end = intervals[i]
+        if start >= previous_end: # non-overlapping
+            previous_end = end
+        else: # overlapping, update previous end to be the interval we keep (one with lesser end value)
+            previous_end = min(previous_end, end)
+            count += 1
+    return count
+
+
 ##############################################################################################
-###   STRING
+###   [STRING]
 ##############################################################################################
 
 
@@ -1012,7 +1028,7 @@ def IsAnagram(s: str, t: str) -> bool:
 
 
 ##############################################################################################
-###   LINKED LISTS
+###   [LINKED LISTS]
 ##############################################################################################
 
 
@@ -1339,7 +1355,7 @@ def PairSumInList(head: Optional[ListNode]) -> int:
 
 
 ##############################################################################################
-###   STACKS AND QUEUES
+###   [STACKS AND QUEUES]
 ##############################################################################################
 
 
@@ -1507,8 +1523,24 @@ def RemoveDuplicates_Optimized(s: str, k: int) -> str:
     return ''.join(result)
 
 
+# https://leetcode.com/problems/132-pattern/
+def Find132pattern(nums: List[int]) -> bool:
+    stack = [] # (value, minimum seen before it), stack is in monotonically decreasing order
+    current_minimum = nums[0]
+    n = len(nums)
+    for i in range(1, n):
+        value = nums[i]
+        while stack and value >= stack[-1][0]:
+            stack.pop()
+        if stack and value > stack[-1][1]:
+            return True
+        stack.append([value, current_minimum])
+        current_minimum = min(current_minimum, value)
+    return False
+
+
 ##############################################################################################
-###   TREES
+###   [TREES]
 ##############################################################################################
 
 #        4
@@ -1643,6 +1675,27 @@ def InvertTree(root: Optional[TreeNode]) -> Optional[TreeNode]:
         _ = InvertTree(root.left)
         _ = InvertTree(root.right)
     return root
+
+
+# https://leetcode.com/problems/subtree-of-another-tree/
+def isSubtree(root: Optional[TreeNode], subRoot: Optional[TreeNode]) -> bool:
+    
+    def same(tree, subtree):
+        if tree and subtree and tree.val == subtree.val:
+            return same(tree.left, subtree.left) and same(tree.right, subtree.right)
+        elif not subtree and not tree:
+            return True
+        else:
+            return False
+
+    if not root:
+        return False 
+    if not subRoot:
+        return True
+    if same(root, subRoot):
+        return True
+    
+    return isSubtree(root.left, subRoot) or isSubtree(root.right, subRoot)
 
 
 # https://leetcode.com/problems/recover-binary-search-tree/
@@ -2010,8 +2063,22 @@ def FindSecondMinimumValue(root: Optional[TreeNode]) -> int:
     return -1 if second_minimum == float('inf') else second_minimum
 
 
+# https://leetcode.com/problems/sum-of-left-leaves/
+def SumOfLeftLeaves(root: Optional[TreeNode]) -> int:
+    
+    def traverse(node, searched_left):
+        if not node:
+            return 0
+        elif not node.left and not node.right and searched_left:
+            return node.val
+        else:
+            return traverse(node.left, True) + traverse(node.right, False)
+
+    return traverse(root, False)
+
+    
 ##############################################################################################
-###   GRAPHS
+###   [GRAPHS]
 ##############################################################################################
 
 
@@ -2256,8 +2323,32 @@ def CloneGraph(node):
         return starter
 
 
+# https://leetcode.com/problems/find-eventual-safe-states/
+def EventualSafeNodes(graph: List[List[int]]) -> List[int]:
+    # if we find a cycle then all nodes in the cycle are not safe nodes
+    n = len(graph)
+    safe = {}
+    result = []
+    
+    def dfs(node):
+        if node in safe:
+            return safe[node]
+        # assume the node is not safe, DFS each neighbor and if neighbors are all safe we can assume node is safe 
+        safe[node] = False 
+        for neighbor in graph[node]:
+            if not dfs(neighbor):
+                return False 
+        safe[node] = True
+        return True
+    
+    for node in range(0, n):
+        if dfs(node):
+            result.append(node)
+    return result
+
+
 ##############################################################################################
-###   MAPS
+###   [MAPS]
 ##############################################################################################
 
 
@@ -2439,7 +2530,7 @@ def IsPossibleDivide(nums: List[int], k: int) -> bool:
 
 
 ##############################################################################################
-###   HEAPS
+###   [HEAPS]
 ##############################################################################################
 
 # heapify operation is actually O(n)
@@ -2547,7 +2638,7 @@ def FindKthLargest_QuickSelect(nums, k):
 
 
 ##############################################################################################
-###   DEPTH-FIRST SEARCH
+###   [DEPTH-FIRST SEARCH]
 ##############################################################################################
 
 
@@ -2965,7 +3056,7 @@ def SolveSudoku(board: List[List[str]]) -> None:
 
 
 ##############################################################################################
-###   BREADTH-FIRST SEARCH
+###   [BREADTH-FIRST SEARCH]
 ##############################################################################################
 
 
@@ -3071,6 +3162,46 @@ def MaximumAreaOfIsland(self, grid: List[List[int]]) -> int:
     return best_max_area
 
 
+# https://leetcode.com/problems/shortest-bridge/
+def ShortestBridge(grid: List[List[int]]) -> int:
+    n = len(grid)
+    def valid(r, c):
+        return 0 <= r < n and 0 <= c < n
+    def next_coordinates(r, c):
+        return ((r+1, c), (r, c+1), (r-1, c), (r, c-1))
+    
+    # used to find all coordinates in the first island
+    visited = set()
+    def dfs(r, c):
+        if valid(r, c) and grid[r][c] == 1 and (r, c) not in visited: 
+            visited.add((r, c))
+            for row, col in next_coordinates(r, c): 
+                dfs(row, col)
+        
+    # expand out one level each time, first to reach a 1 we return 
+    def bfs():
+        expansions = 0
+        queue = deque(visited)
+        while queue:
+            for _ in range(len(queue)):
+                r, c = queue.popleft()
+                for row, col in next_coordinates(r, c):
+                    if valid(row, col) and (row, col) not in visited:
+                        if grid[row][col] == 1:
+                            return expansions
+                        queue.append((row, col))
+                        visited.add((row, col))
+            expansions += 1
+        return expansions
+    
+    for r in range(n):
+        for c in range(n):
+            if grid[r][c] == 1:
+                dfs(r, c)
+                return bfs()
+    return -1
+
+
 ##############################################################################################
 ###   EPI SEARCH
 ##############################################################################################
@@ -3122,7 +3253,7 @@ def HIndex(citations: List[int]) -> int:
 
 
 ##############################################################################################
-###   DYNAMIC PROGRAMMING
+###   [DYNAMIC PROGRAMMING]
 ##############################################################################################
 
 
@@ -3173,7 +3304,7 @@ def ClimbStairs(n: int) -> int:
         return 1
     if n == 2:
         return 2
-    for i in range(2, n):
+    for _ in range(2, n):
         best_fst, best_scd = best_scd, best_fst + best_scd
     return best_scd
 
@@ -3615,7 +3746,7 @@ def LengthOfLIS(nums: List[int]) -> int:
     return maximum
 
 # O (n logn) 
-def LengthOfLIS_Optimal (nums: List[int]) -> int:
+def LengthOfLIS_Optimal(nums: List[int]) -> int:
     a = []
     for num in nums:
         idx = bisect.bisect_left(a, num)
@@ -3669,7 +3800,7 @@ def NinEditDistance_TopDown(s1: str, s2: str) -> int:
 
 
 ##############################################################################################
-###   MISC
+###   [MISC]
 ##############################################################################################
 
 
@@ -3704,6 +3835,18 @@ def ReverseBits(n: int) -> int:
     for _ in range(32):
         result = (result << 1) | (n & 1)
         n >>= 1
+    return result
+
+
+# https://leetcode.com/problems/distribute-candies-to-people/
+def DistributeCandies(candies: int, num_people: int) -> List[int]:
+    result = [0] * num_people
+    i = 0
+    while candies > 0:
+        remaining = min(candies, i + 1)
+        result[i % num_people] += remaining
+        candies -= i + 1
+        i += 1
     return result
 
 
@@ -3887,7 +4030,7 @@ def ValidIPAddress(IP):
 
 
 # https://leetcode.com/problems/powx-n/
-def MyPowFuncion(x, n):
+def MyPowV1(x, n):
     def helper(orig, x, n):
         an = abs(n)
         if an == 0:
@@ -3903,7 +4046,7 @@ def MyPowFuncion(x, n):
     else:
         return result
 
-def myPowV2(x, n):
+def MyPowV2(x, n):
     if x == 0:
         return 1.0
     result = 1.0
@@ -3916,7 +4059,7 @@ def myPowV2(x, n):
 
 
 ##############################################################################################
-###   GREEDY & INVARIANTS
+###   [GREEDY & INVARIANTS]
 ##############################################################################################
 
 """ NOTES 
@@ -4012,27 +4155,8 @@ def HasThreeSum(A, target):
     return any(HasTwoSum(A, target - a) for a in A)
 
 
-def MajorityElementSearch(stream: Iterator[int]) -> str:
-    candidate_count = 0
-    for it in stream:
-        if candidate_count == 0:
-            candidate = it
-            candidate_count += 1
-        elif candidate == it:
-            candidate_count += 1
-        else:
-            candidate_count -= 1
-    return candidate
-
-
 # https://leetcode.com/problems/letter-combinations-of-a-phone-number/
 def LetterCombinations(digits: str) -> List[str]:
-    def helper(idx, digits, digits_map, aggregator, curr):
-        if idx == len(digits):
-            aggregator.append(curr)
-        else:
-            for c in digits_map[digits[idx]]:
-                helper(idx+1, digits, digits_map, aggregator, curr+c)
     digits_map = {
         "2":  ["a", "b", "c"],
         "3":  ["d", "e", "f"],
@@ -4043,16 +4167,40 @@ def LetterCombinations(digits: str) -> List[str]:
         "8":  ["t", "u", "v"],
         "9":  ["w", "x", "y", "z"]    
     }
+    
+    def helper(idx, aggregator, curr):
+        if idx == len(digits):
+            aggregator.append(curr)
+        else:
+            for c in digits_map[digits[idx]]:
+                helper(idx+1, aggregator, curr+c)
+
     agg = []
     if len(digits) > 0:
-        helper(0, digits, digits_map, agg, "") # populate agg using reference
+        helper(0, agg, "") # populate agg using reference
         return agg
     else:
         return agg
         
 
+# https://leetcode.com/problems/boats-to-save-people/
+def NumRescueBoats(people: List[int], limit: int) -> int:
+    people.sort()
+    l, r = 0, len(people) - 1
+    boats_used = 0
+    while l <= r:
+        if people[l] + people[r] <= limit:
+            boats_used += 1
+            l += 1
+            r -= 1
+        else: 
+            boats_used += 1
+            r -= 1
+    return boats_used
+
+
 ##############################################################################################
-###   SORTING
+###   [SORTING]
 ##############################################################################################
 
 
@@ -4136,7 +4284,7 @@ def SortNumbersByFrequenceyV2(nums: List[int]) -> List[int]:
 
 
 ##############################################################################################
-###   CONCURRENCY
+###   [CONCURRENCY]
 ##############################################################################################
 
 
@@ -4169,14 +4317,14 @@ class FooBar:
         self.semaphore = 0
 
     def foo(self, printFoo: 'Callable[[], None]') -> None:
-        for i in range(self.n):
+        for _ in range(self.n):
             while self.semaphore == 1:
                 time.sleep(0.001)
             printFoo()
             self.semaphore = 1
 
     def bar(self, printBar: 'Callable[[], None]') -> None:
-        for i in range(self.n):
+        for _ in range(self.n):
             while self.semaphore == 0:
                 time.sleep(0.001)
             printBar()
