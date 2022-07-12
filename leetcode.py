@@ -3799,6 +3799,52 @@ def NinEditDistance_TopDown(s1: str, s2: str) -> int:
     return dp(len(s1), len(s2))
 
 
+# https://leetcode.com/problems/integer-break/
+def IntegerBreak_DFS(n: int) -> int:
+    dp = { 1:1 }
+    def dfs(num):
+        if num in dp:
+            return dp[num]
+        dp[num] = 0 if num == n else num
+        for i in range(1, num):
+            product = dfs(i) * dfs(num-i)
+            dp[num] = max(dp[num], product)
+        return dp[num]
+    return dfs(n)
+
+def IntegerBreak_DP(n: int) -> int:
+    dp = { 1:1 }
+    for num in range(2, n + 1):
+        dp[num] = 0 if num == n else num
+        for i in range(1, num):
+            dp[num] = max(dp[num], dp[i] * dp[num-i])
+    return dp[n]
+
+
+# https://leetcode.com/problems/stone-game/
+def StoneGameV1(piles: List[int]) -> bool:
+    dp = {}
+    
+    def dfs(l, r):
+        if l > r:
+            return 0
+        if (l, r) in dp:
+            return dp[(l, r)]
+        
+        alices_choice = ((r - l) % 2 == 1)
+        take_left = piles[l] if alices_choice else 0 # bobs_choice
+        take_right = piles[r] if alices_choice else 0 # bobs_choice
+        dp[(l, r)] = max(dfs(l+1, r) + take_left, dfs(l, r-1) + take_right)
+        return dp[(l, r)]
+    
+    half = sum(piles) // 2
+    return dfs(0, len(piles) - 1) > half
+
+# if Alice plays optimally, she will always win
+def StoneGameV1(piles: List[int]) -> bool:
+    return True
+
+
 ##############################################################################################
 ###   [MISC]
 ##############################################################################################
