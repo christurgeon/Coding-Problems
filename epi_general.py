@@ -584,6 +584,95 @@ def isBalancedBinaryTree(tree: BinaryTreeNode) -> bool:
     return checkBalanced(tree).balanced
 
 
+# elements are unique
+# rebuild subtree as we identify nodes within it
+# TC: O(n)
+def RebuildBSTFromPreorder(preorder_sequence: List[int]):
+    def helper(lower, upper):
+        if root_index[0] == len(preorder_sequence):
+            return None 
+
+        root = preorder_sequence[root_index[0]]
+        if not lower <= root <= upper:
+            return None
+        root_index[0] += 1
+
+        # node that the helper updates root_index[0]
+        # so the following two calls are critical
+        left_subtree = helper(lower, root)
+        right_subtree = helper(root, upper)
+        return TreeNode(root, left_subtree, right_subtree)
+        
+    root_index = [0]
+    return helper(float('-inf'), float('inf'))
+
+    
+"""
+    Search for BST violations in a BFS manner, store upper and lower bound
+    on the keys stored at the subtree rooted at that node.
+"""
+def IsBinaryTreeABinarySearchTree(tree):
+    queue = collections.deque((tree, float('-inf'), float('inf')))
+    while queue:
+        node, lower, upper = queue.popleft()
+        if node:
+            if not (lower <= node.val <= upper):
+                return False 
+            queue.append( (node.left, lower, node.val) )
+            queue.append( (node.right, node.val, upper) )
+    return True
+
+
+"""
+    Write a program that takes as input a BST and a value k and returns the first key 
+    that would appear in an inorder traversal which is greater than the input value k
+        inorder is left, root, right (so we are looking for k's root essentially)
+
+    basically in sorted order take the one to the right of k
+"""
+def FindFirstNodeGreaterThanK(tree, k):
+    current, greater_than_k = tree, None
+    while current:
+        if current.data > k:
+            greater_than_k = current
+            current = current.left
+        else: # root and all keys in subtree are <= k so skip them
+            current = current.right
+    return greater_than_k
+
+
+# traverse down the right subtree and whenever end is reached, we know that is the greatest value
+def FindKLargestElementsInABST(tree, k):
+    
+    def helper(tree):
+        if tree and len(result) < k:
+            helper(tree.right)
+            if len(result) < k:
+                result.append(tree.val)
+                helper(tree.left)
+
+    result = []
+    helper(tree)
+    return result       
+
+
+def countDecreasingSubArrays(A):
+    count = 0
+    subarray_length = 1
+    for i in range(len(A)-1) :
+        if (A[i+1] < A[i]):
+            subarray_length += 1
+ 
+        # end of subarray, update the result
+        else:
+            count += (subarray_length * (subarray_length - 1)) // 2
+            subarray_length = 1
+     
+    # clean up case where we end in a subarray 
+    if (subarray_length > 1):
+        count += (subarray_length * (subarray_length - 1)) // 2
+    return count
+
 
 ##############################################################################################
 ###   LINKED LISTS

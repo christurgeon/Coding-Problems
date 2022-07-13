@@ -1,9 +1,11 @@
-"""
-NOTES
+""" NOTE
 - For a given problem that lends itself to be solved naturally recursively (i.e. N-Queens)
-    if you want optimal solution dynamic programming 
-    if you want all solutions, backtracking is used
-- For quick select algorithm, easies to implement recursively, see FindKthLargest_QuickSelect()
+  - if you want optimal solution, try dynamic programming 
+  - if you want all solutions, try backtracking
+
+- For quick select algorithm, easiest way to implement is recursively
+  - typical way to find order statistic (median, Nth largest, etc.) in linear time (yes, it has a mathematical name) is using quick select
+  - time complexity is O(n) on average because on each time we reduce searching range approximately 2 times. 
 """
 
 import re
@@ -95,10 +97,7 @@ def LongestConsecutiveInAnArray(nums: List[int]) -> int:
     if not nums:
         return 0
     
-    s = set()
-    for num in nums:
-        s.add(num)
-    
+    s = set(nums)
     longest = 0
     for num in nums:
         if num in s:
@@ -126,6 +125,15 @@ def BestTimeToBuyAndSellStock(prices: List[int]) -> int:
         profit = max(profit, price - running_min)
         running_min = min(running_min, price)
     return profit
+
+
+# https://leetcode.com/problems/best-time-to-buy-and-sell-stock-ii/
+def MaxProfit(prices: List[int]) -> int:
+    result = 0
+    for i in range(1, len(prices)):
+        if prices[i] > prices[i-1]:
+            result += prices[i] - prices[i-1]
+    return result
 
 
 # https://leetcode.com/problems/find-first-and-last-position-of-element-in-sorted-array/
@@ -231,9 +239,7 @@ def MergeIntervals(intervals: List[List[int]]) -> List[List[int]]:
             
 
 # https://leetcode.com/problems/non-decreasing-array/
-def checkPossibility(nums):
-    if nums is None:
-        return False
+def CheckPossibility(nums: List[int]) -> bool:
     length = len(nums)
     if length <= 2:
         return True
@@ -318,6 +324,7 @@ def RemoveDuplicatesFromAnArray(A):
     return A[:write_index]
 
 
+# https://leetcode.com/problems/replace-elements-in-an-array/
 def ArrayChange(nums: List[int], operations: List[List[int]]) -> List[int]:
     d = {x: i for i, x in enumerate(nums)}
     for x, y in operations:
@@ -332,28 +339,8 @@ def RotateArrayBykSteps(A, k):
     return A[len(A) - k:] + A[:len(A) - k]
 
 
-def CountDecreasingSubArrays(A):
-    count = 0
-    subarray_length = 1
-    for i in range(len(A)-1) :
-        if (A[i+1] < A[i]):
-            subarray_length += 1
- 
-        # end of subarray, update the result
-        else:
-            count += (subarray_length * (subarray_length - 1)) // 2
-            subarray_length = 1
-     
-    # clean up case where we end in a subarray 
-    if (subarray_length > 1):
-        count += (subarray_length * (subarray_length - 1)) // 2
- 
-    return count
-
-
 def RotateMatrix(M):
     N = len(M)
-    
     # loop through each of the squares, will give top left x
     for x in range(N // 2):
         # set the bounds of the square
@@ -364,9 +351,6 @@ def RotateMatrix(M):
 
 # https://leetcode.com/problems/rotate-image/
 def RotatImageLeetcode(matrix: List[List[int]]) -> None:
-    """
-    Do not return anything, modify matrix in-place instead.
-    """
     n = len(matrix)
     for i in range(n // 2):
         for j in range(i, n - i - 1):
@@ -514,15 +498,6 @@ def TopKFrequent(nums: List[int], k: int) -> List[int]:
     return result
 
 
-# https://leetcode.com/problems/best-time-to-buy-and-sell-stock-ii/
-def MaxProfit(prices: List[int]) -> int:
-    result = 0
-    for i in range(1, len(prices)):
-        if prices[i] > prices[i-1]:
-            result += prices[i] - prices[i-1]
-    return result
-
-
 #https://leetcode.com/problems/top-k-frequent-words/
 # O(n*log(n))   
 def TopKFrequent_BucketSort(words: List[str], k: int) -> List[str]:
@@ -577,17 +552,13 @@ def IsPossible(nums: List[int]) -> bool:
 def JumpGameI(nums: List[int]) -> bool:
     if len(nums) <= 1:
         return True
-
     max_can_reach = nums[0]
     current_index = 0
     while max_can_reach < len(nums) - 1 and current_index != max_can_reach:
-
         max_range = max_can_reach
         for i in range(current_index, max_range + 1):
             max_can_reach = max(max_can_reach, i + nums[i])
-
         current_index = max_range
-
     return True if max_can_reach >= len(nums) - 1 else False
 
 
@@ -609,25 +580,9 @@ def JumpGameII(nums: List[int]) -> int:
         # if we have detected that a path can reach the end, return here
         if new_furthest >= n - 1:
             return path_length + 1
-        
         queue.append((furthest, new_furthest, path_length + 1))
             
     return 2**31 - 1
-
-
-# O(n + m)
-# https://leetcode.com/problems/search-a-2d-matrix-ii/
-def SearchMatrixII(matrix: List[List[int]], target: int) -> bool:
-    n, m = len(matrix), len(matrix[0])
-    row, col = n-1, 0
-    while row >= 0 and col < m:
-        if matrix[row][col] == target:
-            return True
-        if col < m-1 and matrix[row][col+1] <= target:
-            col += 1
-        else:
-            row -= 1
-    return False
 
 
 # O(n + log(m))
@@ -651,6 +606,21 @@ def SearchMatrixI(matrix: List[List[int]], target: int) -> bool:
             if binsearch(i, 0, m-1):
                 return True
     return binsearch(n-1, 0, m-1)
+
+
+# O(n + m)
+# https://leetcode.com/problems/search-a-2d-matrix-ii/
+def SearchMatrixII(matrix: List[List[int]], target: int) -> bool:
+    n, m = len(matrix), len(matrix[0])
+    row, col = n-1, 0
+    while row >= 0 and col < m:
+        if matrix[row][col] == target:
+            return True
+        if col < m-1 and matrix[row][col+1] <= target:
+            col += 1
+        else:
+            row -= 1
+    return False
 
 
 # https://leetcode.com/problems/check-if-matrix-is-x-matrix/
@@ -678,7 +648,6 @@ def SummaryRanges(nums: List[int]) -> List[str]:
                 first = second = number
             else:
                 second = number
-
         result.append(str(first) + ("" if first == second else f"->{second}"))
     return result
 
@@ -764,11 +733,11 @@ def LengthOfLastWord(s: str) -> int:
     return size
 
 
+# https://leetcode.com/problems/remove-palindromic-subsequences/
 """
 Given a string consisting of only a's and b's what is the minimum 
 amount of palindromes you can remove to make it empty
-    solution: since its two chars if s is not palindrome, 
-              then it takes 2 removals only
+    solution: since its two chars if s is not palindrome, then it takes 2 removals only
 """
 def RemovePalindromicString(s: str) -> int:
     if s == s[::-1]:
@@ -887,10 +856,7 @@ def LongestSubstringWithoutRepeatingCharacters(S):
 
 # https://leetcode.com/problems/first-unique-character-in-a-string/
 def FirstUniqueChar(s: str) -> int:
-    d = {}
-    for char in s:
-        d[char] = 1 if char not in d else d[char] + 1
-
+    d = collections.Counter(s)
     for idx, char in enumerate(s):
         if d[char] == 1:
             return idx
@@ -972,7 +938,7 @@ def MinimumWindowSubstring(s, target):
     return s[minL : minR] if minL > float('-inf') else ""
 
 
-# https://leetcode.com/problems/increasing-decreasing-string/submissions/
+# https://leetcode.com/problems/increasing-decreasing-string/
 def SortString(s: str) -> str:
     freqs = sorted([char, count] for char, count in collections.Counter(s).items())
     result = []
@@ -1067,7 +1033,7 @@ def RemoveNthFromEnd(head: ListNode, n: int) -> ListNode:
         head = head.next
         return head
     pointer = head
-    for i in range(idx-2):
+    for _ in range(idx - 2):
         pointer = pointer.next
     node_to_remove = pointer.next
     pointer.next = node_to_remove.next
@@ -1600,7 +1566,9 @@ def RangeSumBST(root: Optional[TreeNode], low: int, high: int) -> int:
             traverse(node.left)
             if low <= node.val <= high:
                 total += node.val
-            traverse(node.right)
+            # only bother looking down right subtree if potential values in range
+            if node.val <= high:
+                traverse(node.right)
     traverse(root)
     return total
 
@@ -1630,25 +1598,19 @@ def KthSmallest(root: Optional[TreeNode], k: int) -> int:
 # https://leetcode.com/problems/cousins-in-binary-tree/
 def IsCousins(root: TreeNode, x: int, y: int) -> bool:
 
-    def helper(root, x, y, parent_value, depth):
-        if root:
-            if root.val == x or root.val == y:
-                return [(parent_value, depth)]
-            else:
-                val = root.val
-                new_depth = depth + 1
-                return helper(root.left, x, y, val, new_depth) + helper(root.right, x, y, val, new_depth)
-        else:
+    def helper(root, parent_value, depth):
+        if not root:
             return []
+        elif root.val == x or root.val == y:
+            return [(parent_value, depth)]
+        else:
+            return helper(root.left, root.val, depth + 1) + helper(root.right, root.val, depth + 1)
 
     if root:
-        vals = helper(root, x, y, root.val, 0)
+        vals = helper(root, root.val, 0)
         if len(vals) == 2:
             return vals[0][0] != vals[1][0] and vals[0][1] == vals[1][1]
-        else:
-            return False
-    else:
-        return False
+    return False
         
 
 # https://leetcode.com/problems/binary-tree-paths/
@@ -1658,13 +1620,13 @@ def BinaryTreePaths(root: Optional[TreeNode]) -> List[str]:
     while stack:
         node, path = stack.pop()
         if node:
-            # leaf
             s = path + str(node.val)
             if not node.left and not node.right:
                 result.append(s)
-            s += "->"
-            stack.append((node.right, s))
-            stack.append((node.left, s))    
+            else:
+                s += "->"
+                stack.append((node.right, s))
+                stack.append((node.left, s))    
     return result
 
 
@@ -1678,7 +1640,7 @@ def InvertTree(root: Optional[TreeNode]) -> Optional[TreeNode]:
 
 
 # https://leetcode.com/problems/subtree-of-another-tree/
-def isSubtree(root: Optional[TreeNode], subRoot: Optional[TreeNode]) -> bool:
+def IsSubtree(root: Optional[TreeNode], subRoot: Optional[TreeNode]) -> bool:
     
     def same(tree, subtree):
         if tree and subtree and tree.val == subtree.val:
@@ -1694,14 +1656,11 @@ def isSubtree(root: Optional[TreeNode], subRoot: Optional[TreeNode]) -> bool:
         return True
     if same(root, subRoot):
         return True
-    
-    return isSubtree(root.left, subRoot) or isSubtree(root.right, subRoot)
+    return IsSubtree(root.left, subRoot) or IsSubtree(root.right, subRoot)
 
 
 # https://leetcode.com/problems/recover-binary-search-tree/
 def RecoverTree(root: Optional[TreeNode]) -> None:
-    # in-order traversal to visit left, root, right each time
-    first, second, previous = None, None, None   
 
     def inorder(node):  
         nonlocal first, second, previous
@@ -1710,70 +1669,19 @@ def RecoverTree(root: Optional[TreeNode]) -> None:
 
         inorder(node.left)  
         if previous and node.val < previous.val:
-            # previous node is greater than current, so it is out of place
             if not first:
                 first = previous
-            # set second to the current node, they need to be swapped, 
-            # but then as we iterate if we discover a better candidate, 
-            # set it there                                     
+            # set second to the current node, they need to be swapped, but then 
+            # as we iterate if we discover a better candidate, set it there                                     
             if first:
                 second = node                    
         previous = node
         inorder(node.right)
         
+    first, second, previous = None, None, None   
     inorder(root)        
     if first and second:
         first.val, second.val = second.val, first.val
-
-
-"""
-    Search for BST violations in a BFS manner, store upper and lower bound
-    on the keys stored at the subtree rooted at that node.
-"""
-def IsBinaryTreeABinarySearchTree(tree):
-    queue = deque((tree, float('-inf'), float('inf')))
-    while queue:
-        node, lower, upper = queue.popleft()
-        if node:
-            if not (lower <= node.val <= upper):
-                return False 
-            queue.append( (node.left, lower, node.val) )
-            queue.append( (node.right, node.val, upper) )
-    return True
-
-
-"""
-    Write a program that takes as input a BST and a value k and returns the first key 
-    that would appear in an inorder traversal which is greater than the input value k
-        inorder is left, root, right (so we are looking for k's root essentially)
-
-    basically in sorted order take the one to the right of k
-"""
-def FindFirstNodeGreaterThanK(tree, k):
-    current, greater_than_k = tree, None
-    while current:
-        if current.data > k:
-            greater_than_k = current
-            current = current.left
-        else: # root and all keys in subtree are <= k so skip them
-            current = current.right
-    return greater_than_k
-
-
-"""
-    Traverse down the right subtree and whenever end is reached, we know that is the greatest value
-"""
-def FindKLargestElementsInABST(tree, k):
-    def helper(tree):
-        if tree and len(result) < k:
-            helper(tree.right)
-            if len(result) < k:
-                result.append(tree.val)
-                helper(tree.left)
-
-    result = []
-    helper(tree)
-    return result            
 
 
 # https://leetcode.com/problems/symmetric-tree/
@@ -1866,15 +1774,14 @@ def HasPathSum(root: Optional[TreeNode], targetSum: int) -> bool:
     if not root:
         return False
 
-    def helper(node, current_sum, target_sum):
-        # print(current_sum, node.val if node else "-")
-        if node and not node.left and not node.right and current_sum + node.val == target_sum:
+    def helper(node, current_sum):
+        if node and not node.left and not node.right and current_sum + node.val == targetSum:
             return True
         elif node and (node.left or node.right):
-            return helper(node.left, current_sum + node.val, target_sum) or helper(node.right, current_sum + node.val, target_sum)
+            return helper(node.left, current_sum + node.val) or helper(node.right, current_sum + node.val)
         return False
 
-    return helper(root, 0, targetSum) 
+    return helper(root, 0) 
         
 
 # https://leetcode.com/problems/binary-tree-maximum-path-sum/
@@ -1985,6 +1892,7 @@ def MaxAncestorDiff(root: Optional[TreeNode]) -> int:
             new_max_above, new_min_above = max(max_above, node.val), min(min_above, node.val)
             diff = max(abs(new_max_above-node.val), abs(new_min_above-node.val))
             max_difference_so_far = max(max_difference_so_far, diff)
+
             search(node.left, new_max_above, new_min_above)
             search(node.right, new_max_above, new_min_above)
 
@@ -1993,7 +1901,6 @@ def MaxAncestorDiff(root: Optional[TreeNode]) -> int:
 
 
 # https://leetcode.com/problems/flatten-binary-tree-to-linked-list/
-@lru_cache(None)
 def flatten(root: Optional[TreeNode]) -> None:
     current = root
     while current:
@@ -2024,29 +1931,6 @@ def TotalNumberOfTrees(n: int) -> int:
     return dfs(n)
 
 
-# elements are unique
-# rebuild subtree as we identify nodes within it
-# TC: O(n)
-def RebuildBSTFromPreorder(preorder_sequence: List[int]):
-    def helper(lower, upper):
-        if root_index[0] == len(preorder_sequence):
-            return None 
-
-        root = preorder_sequence[root_index[0]]
-        if not lower <= root <= upper:
-            return None
-        root_index[0] += 1
-
-        # node that the helper updates root_index[0]
-        # so the following two calls are critical
-        left_subtree = helper(lower, root)
-        right_subtree = helper(root, upper)
-        return TreeNode(root, left_subtree, right_subtree)
-        
-    root_index = [0]
-    return helper(float('-inf'), float('inf'))
-
-
 # https://leetcode.com/problems/second-minimum-node-in-a-binary-tree/
 def FindSecondMinimumValue(root: Optional[TreeNode]) -> int:
     minimum, second_minimum = root.val, float('inf')
@@ -2057,7 +1941,7 @@ def FindSecondMinimumValue(root: Optional[TreeNode]) -> int:
             node, _ = queue.popleft()
             if node.val != minimum and node.val < second_minimum:
                 second_minimum = node.val
-            if node.left:
+            if node.left: # if it has chlidren, since if it has left then it has right for this problem
                 queue.append((node.left, level + 1))
                 queue.append((node.right, level + 1))
     return -1 if second_minimum == float('inf') else second_minimum
@@ -2097,7 +1981,7 @@ def PathExists(edges: List[List[int]], source: int, destination: int) -> bool:
         graph[edge[0]].append(edge[1])
         graph[edge[1]].append(edge[0])
         
-    visited, stack = {}, [source]
+    visited, stack = set(), [source]
     while stack:
         current = stack.pop()
         if current in graph:
@@ -2105,9 +1989,8 @@ def PathExists(edges: List[List[int]], source: int, destination: int) -> bool:
                 if neighbor == destination:
                     return True
                 if neighbor not in visited:
-                    visited[neighbor] = None 
+                    visited.add(neighbor) 
                     stack.append(neighbor)
-                
     return False
 
 
@@ -2129,7 +2012,6 @@ def FindJudge(N: int, trust: List[List[int]]) -> int:
 def NumberOfConnectedComponents(isConnected: List[List[int]]) -> int:
     if not isConnected:
         return 0
-    
     count = 0
     visited = set()
     for i in range(len(isConnected)):
@@ -2141,7 +2023,6 @@ def NumberOfConnectedComponents(isConnected: List[List[int]]) -> int:
                     if isConnected[current][j] == 1 and j not in visited and i != j:
                         q.append(j)
                         visited.add(j)
-
             visited.add(i)
             count += 1
     return count
@@ -2156,7 +2037,6 @@ def CenterOfStarGraph(edges: List[List[int]]) -> int:
 def LargestConnectedComponent(graph) -> int:
     if not graph:
         return 0
-    
     largest = 0
     visited = set()
     for node, neighbors in graph.items():
@@ -2201,8 +2081,8 @@ def ReconstructItinerary(tickets: List[List[str]]) -> List[str]:
     return result[::-1]
 
 
-# https://leetcode.com/problems/all-ancestors-of-a-node-in-a-directed-acyclic-graph/submissions/
-"""Could also do a topological sort, need to review that"""
+# Could also do a topological sort
+# https://leetcode.com/problems/all-ancestors-of-a-node-in-a-directed-acyclic-graph/
 def GetAllAncestorsOfAllNodes(n: int, edges: List[List[int]]) -> List[List[int]]:
     graph = {i: [] for i in range(n)}
     for source, target in edges:
@@ -2226,12 +2106,12 @@ def GetAllAncestorsOfAllNodes(n: int, edges: List[List[int]]) -> List[List[int]]
 
 # https://leetcode.com/problems/all-paths-from-source-to-target/
 def AllPathsFromFirstNodeToLast(graph: List[List[int]]) -> List[List[int]]:
-    target = len(graph) - 1
+    last_node = len(graph) - 1
     paths = []
     queue = deque([ [0, [0]] ])
     while queue:
         current, path_so_far = queue.popleft()
-        if current == target:
+        if current == last_node:
             paths.append(path_so_far)
         else:
             for neighbor in graph[current]:
@@ -2258,7 +2138,7 @@ def NetworkDelayTime(times: List[List[int]], N: int, K: int) -> int:
     while min_heap:
         current_path_time, current_node = heapq.heappop(min_heap)
         visited.add(current_node)
-        if len(visited) == N:
+        if N == len(visited):
             return current_path_time
         for neighbor, time in graph[current_node].items():
             if neighbor not in visited:
@@ -2299,7 +2179,7 @@ def FindOrderOfCourses(numCourses: int, prerequisites: List[List[int]]) -> List[
 
 
 # https://leetcode.com/problems/clone-graph/
-def CloneGraph(node):
+def CloneGraph(node): 
     
     # populate val, but populate neighbors later
     def clone(some):
@@ -2426,7 +2306,6 @@ def MajorityElement3(nums):
 def LongestSubstringWithoutRepeatingCharactersMap(s):
     if len(s) == 0:
         return 0
-
     cache = dict()
     longest = 1
     for idx, letter in enumerate(s):
@@ -2481,7 +2360,8 @@ def IsValidSudokoBrute(board):
     return True
 
 
-def GroupAnagrams(strs):
+# https://leetcode.com/problems/group-anagrams/
+def GroupAnagrams(strs: List[str]) -> List[List[str]]:
     result = {}
     for s in strs:
         transformed_s = ''.join(sorted(s))
@@ -2533,12 +2413,14 @@ def IsPossibleDivide(nums: List[int], k: int) -> bool:
 ###   [HEAPS]
 ##############################################################################################
 
-# heapify operation is actually O(n)
+"""
+1. heapify operation is actually O(n)
 
-# remember that heapq only applies minheap functionality
-# negate all values to get maxheap functionality
+2. remember that heapq only applies min-heap functionality, 
+   so negate all values to get a max-heap 
 
-# heapq.nlargest
+3. useful method  =>  heapq.nlargest(n, heap)
+"""
 
 # https://leetcode.com/problems/kth-largest-element-in-a-stream/
 class KthLargest:
@@ -2609,10 +2491,7 @@ def FindKthLargest(nums, k):
         element = heapq.heappop(a)
     return -element
 
-# Easiest way to find order statistic in linear time (yes, it has a mathematical name) is using quick select
-# time complexity is O(n) on average, 
-#   because on each time we reduce searching range approximately 2 times. 
-# This is not strict proof, for more details you can do some googling. Space complexity is O(n) as well.
+# NOTE see note on quickselect at top of file
 def FindKthLargest_QuickSelect(nums, k):
         # use first as pivot
         pivot = random.choice(nums)
