@@ -2768,8 +2768,8 @@ def GetMaximumGold(grid: List[List[int]]) -> int:
         for c, cell in enumerate(row):
             if cell != 0:
                 backtrack(r, c, 0)
-
     return total_gold
+
 
 # Backtracking
 # https://leetcode.com/problems/combination-sum/
@@ -3298,7 +3298,7 @@ def MaxAlternatingSum(nums: List[int]) -> int:
 
 
 # https://leetcode.com/problems/target-sum/
-def FindTargetSumWays(self, nums: List[int], target: int) -> int:
+def FindTargetSumWays(nums: List[int], target: int) -> int:
     dp = {} # (index, total) -> number of ways to get to target value
     
     def backtracking(i, current_total):
@@ -3473,7 +3473,6 @@ def NumOfBinarySearchTrees_DFS(n: int) -> int:
     def dfs(i):
         if i in dp:
             return dp[i]
-                        
         total = 0
         for root in range(i):
             left = dfs(root)
@@ -3736,6 +3735,17 @@ def HammingWeight(n: int) -> int:
         count += n & 1
         n >>= 1
     return count
+
+
+# https://leetcode.com/problems/flipping-an-image/
+def FlipAndInvertImage(image: List[List[int]]) -> List[List[int]]:
+    for row in image:
+        l, r = 0, len(row)-1
+        while l <= r:
+            row[l], row[r] = row[r] ^ 1, row[l] ^ 1
+            l += 1
+            r -= 1
+    return image
 
 
 # https://leetcode.com/problems/reverse-integer/
