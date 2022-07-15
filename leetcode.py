@@ -53,6 +53,16 @@ def ArrangeCoins(n):
     return stairs - 1      
 
 
+# https://leetcode.com/problems/running-sum-of-1d-array/
+def RunningSum(nums: List[int]) -> List[int]:
+    n = len(nums)
+    running = [0] * n
+    running[0] = nums[0]
+    for i in range(1, n):
+        running[i] = nums[i] + running[i-1]
+    return running
+
+
 # https://leetcode.com/problems/two-sum-ii-input-array-is-sorted/
 def TwoSumII(numbers: List[int], target: int) -> List[int]:
     lo, hi = 0, len(numbers) - 1
@@ -731,6 +741,22 @@ def LengthOfLastWord(s: str) -> int:
         else:
             size += 1
     return size
+
+
+# https://leetcode.com/problems/final-value-of-variable-after-performing-operations/
+def FinalValueAfterOperations(operations: List[str]) -> int:
+    x = 0
+    for operation in operations:
+        if operation[0] == "+" or operation[-1] == "+":
+            x += 1                
+        elif operation[0] == "-" or operation[-1] == "-":
+            x -= 1
+    return x
+
+
+# https://leetcode.com/problems/maximum-number-of-words-found-in-sentences/
+def MostWordsFound(sentences: List[str]) -> int:
+    return max(sentence.count(" ") for sentence in sentences) + 1
 
 
 # https://leetcode.com/problems/remove-palindromic-subsequences/
