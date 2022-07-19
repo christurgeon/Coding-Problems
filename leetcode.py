@@ -2282,6 +2282,35 @@ def TwoSumsNotDistinct(nums, target):
     return []
 
 
+# https://leetcode.com/problems/count-the-number-of-consistent-strings/
+def CountConsistentStrings(allowed: str, words: List[str]) -> int:
+    lookup = set(allowed)
+    result = 0
+    for word in words:
+        valid = True
+        for char in word:
+            if char not in lookup:
+                valid = False
+                break
+        if valid:
+            result += 1
+    return result
+
+
+# https://leetcode.com/problems/maximum-number-of-pairs-in-array/
+def NumberOfPairs(nums: List[int]) -> List[int]:
+    lookup = dict()
+    result = [0, len(nums)]
+    for num in nums:
+        if lookup.get(num, 0) == 1:
+            lookup[num] = 0
+            result[0] += 1
+            result[1] -= 2
+        else:
+            lookup[num] = 1
+    return result
+
+
 # https://leetcode.com/problems/number-of-good-pairs/
 def NumIdenticalPairs(self, nums: List[int]) -> int:
     pairs = collections.defaultdict(int)
