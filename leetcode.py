@@ -53,6 +53,11 @@ def ArrangeCoins(n):
     return stairs - 1      
 
 
+# https://leetcode.com/problems/build-array-from-permutation/
+def BuildArray(nums: List[int]) -> List[int]:
+        return [nums[nums[i]] for i in range(len(nums))]
+
+
 # https://leetcode.com/problems/running-sum-of-1d-array/
 def RunningSum(nums: List[int]) -> List[int]:
     n = len(nums)
@@ -2275,6 +2280,16 @@ def TwoSumsNotDistinct(nums, target):
         diff = target - value 
         d[diff] = idx
     return []
+
+
+# https://leetcode.com/problems/number-of-good-pairs/
+def NumIdenticalPairs(self, nums: List[int]) -> int:
+    pairs = collections.defaultdict(int)
+    result = 0
+    for num in nums:
+        result += pairs[num]
+        pairs[num] += 1
+    return result
 
 
 # https://leetcode.com/problems/contains-duplicate-ii/
