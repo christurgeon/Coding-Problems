@@ -748,6 +748,12 @@ def LengthOfLastWord(s: str) -> int:
     return size
 
 
+# https://leetcode.com/problems/reverse-string/
+def ReverseString(s: List[str]) -> None:
+    for i in range(len(s) // 2):
+        s[i], s[~i] = s[~i], s[i]
+
+
 # https://leetcode.com/problems/final-value-of-variable-after-performing-operations/
 def FinalValueAfterOperations(operations: List[str]) -> int:
     x = 0
@@ -4061,6 +4067,30 @@ def MyPowV2(x, n):
         return 1.0 / result
     else:
         return result
+
+
+# https://leetcode.com/problems/power-of-two/
+"""
+bit manipulation problem for n & (n-1) trick, which removes the last non-zero bit from our number
+example:
+    1. n = 100000, n-1 = 011111 and n & (n-1) = 000000, so if it is power of two, result is zero
+    2. n = 101110, n-1 = 101101 and n & (n-1) = 101100, number is not power of two and result is not zero
+"""
+def IsPowerOfTwo(n: int) -> bool:
+    return n > 0 and not (n & n-1)
+
+
+# https://leetcode.com/problems/add-two-integers/
+# they cant be fr here LOL ...  
+def Sum(num1: int, num2: int) -> int:
+    return num1 + num2
+
+
+# https://leetcode.com/problems/minimum-sum-of-four-digit-number-after-splitting-digits/
+def MinimumSum(num: int) -> int:
+    n = list(str(num))
+    n.sort()
+    return int(n[0] + n[2]) + int(n[1] + n[3])
 
 
 ##############################################################################################
