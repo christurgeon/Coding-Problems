@@ -44,6 +44,22 @@ def ContainsDuplicate(nums: List[int]) -> bool:
     return n != len(set(nums))
 
 
+# https://leetcode.com/problems/richest-customer-wealth/
+def MaximumWealth(accounts: List[List[int]]) -> int:
+    max_wealth = 0
+    for i in range(len(accounts)):
+        max_wealth = max(max_wealth, sum(accounts[i]))
+    return max_wealth
+
+
+# https://leetcode.com/problems/shuffle-the-array/
+def Shuffle(nums: List[int], n: int) -> List[int]:
+    result = [None] * 2*n
+    for i in range(0, 2*n, 2):
+        result[i], result[i+1] = nums[i//2], nums[i//2 + n]
+    return result
+
+
 # https://leetcode.com/problems/arranging-coins/
 def ArrangeCoins(n):
     stairs = 1
@@ -752,6 +768,11 @@ def LengthOfLastWord(s: str) -> int:
 def ReverseString(s: List[str]) -> None:
     for i in range(len(s) // 2):
         s[i], s[~i] = s[~i], s[i]
+
+
+# https://leetcode.com/problems/check-if-two-string-arrays-are-equivalent/
+def ArrayStringsAreEqual(word1: List[str], word2: List[str]) -> bool:
+    return ''.join(word1) == ''.join(word2)
 
 
 # https://leetcode.com/problems/final-value-of-variable-after-performing-operations/
@@ -2338,6 +2359,30 @@ def ContainsNearbyDuplicate(nums: List[int], k: int) -> bool:
             if len(cache) == k + 1:
                 cache.remove(nums[i-k])
     return False
+
+
+# https://leetcode.com/problems/sum-of-unique-elements/
+def SumOfUnique(nums: List[int]) -> int:
+    result = 0
+    counts = dict()
+    for num in nums:
+        if num not in counts:
+            result += num
+        elif counts[num] == 1:
+            result -= num
+        counts[num] = counts.get(num, 0) + 1
+    return result
+                
+
+# https://leetcode.com/problems/check-if-number-has-equal-digit-count-and-digit-value/
+def DigitCount(num: str) -> bool:
+    counts = dict()
+    for digit in num:
+        if digit in counts:
+            counts[digit] += 1
+        else:
+            counts[digit] = 1   
+    return all(int(digit) == counts.get(str(i), 0) for i, digit in enumerate(num))   
 
 
 # https://leetcode.com/problems/roman-to-integer/
