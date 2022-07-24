@@ -69,6 +69,21 @@ def ArrangeCoins(n):
     return stairs - 1      
 
 
+# https://leetcode.com/problems/squares-of-a-sorted-array/
+def SortedSquares(nums: List[int]) -> List[int]:
+    result = [0] * len(nums)
+    l, r = 0, len(nums) - 1
+    while l <= r:
+        left, right = abs(nums[l]), abs(nums[r])
+        if left > right:
+            result[r-l] = left*left
+            l += 1
+        else:
+            result[r-l] = right*right
+            r -= 1
+    return result
+
+
 # https://leetcode.com/problems/build-array-from-permutation/
 def BuildArray(nums: List[int]) -> List[int]:
         return [nums[nums[i]] for i in range(len(nums))]
@@ -768,6 +783,11 @@ def LengthOfLastWord(s: str) -> int:
 def ReverseString(s: List[str]) -> None:
     for i in range(len(s) // 2):
         s[i], s[~i] = s[~i], s[i]
+
+
+# https://leetcode.com/problems/truncate-sentence/
+def TruncateSentence(s: str, k: int) -> str:
+    return " ".join(s.split(" ")[:k])
 
 
 # https://leetcode.com/problems/check-if-two-string-arrays-are-equivalent/
