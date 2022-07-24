@@ -5,3 +5,16 @@ https://www.youtube.com/c/NeetCode
 https://leetcode.com/discuss/general-discussion/460599/blind-75-leetcode-questions
 https://www.geeksforgeeks.org/system-design-tutorial/
 https://sourcemaking.com/design_patterns
+
+
+Behavioural Questions:
+    1. Tell me about a time when you challenged the status quo.
+    2. Tell me about a time when you had a conflict with someone.
+    3. Tell me about a time when you couldn’t deliver the work you promised.
+    4. Tell me about a time when you gave users the higher priority.
+    5. Tell me about a time when you saw two different tasks. And how did you combine them?
+    6. Tell me about a time when promised something and delivered.
+    7. Tell me about a time when you exceeded expectations.
+    8. How do you stay up to date with technology?
+    9. Tell me about a time when you took risks and failed.
+    10. Tell me about a time when you had to teach a colleague of yours.

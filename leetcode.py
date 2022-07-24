@@ -89,6 +89,27 @@ def BuildArray(nums: List[int]) -> List[int]:
         return [nums[nums[i]] for i in range(len(nums))]
 
 
+# https://leetcode.com/problems/how-many-numbers-are-smaller-than-the-current-number/
+def SmallerNumbersThanCurrent(nums: List[int]) -> List[int]:
+    buckets = [0] * 101
+    for num in nums:
+        buckets[num] += 1
+    prev = 0
+    for i, bucket in enumerate(buckets):
+        if bucket > 0:
+            buckets[i] = prev
+            prev += bucket
+    return [buckets[num] for num in nums]
+
+
+# https://leetcode.com/problems/create-target-array-in-the-given-order/   
+def CreateTargetArray(nums: List[int], index: List[int]) -> List[int]:
+    target = []
+    for num, idx in zip(nums, index):
+        target.insert(idx, num)
+    return target
+
+
 # https://leetcode.com/problems/running-sum-of-1d-array/
 def RunningSum(nums: List[int]) -> List[int]:
     n = len(nums)
