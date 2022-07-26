@@ -60,6 +60,20 @@ def Shuffle(nums: List[int], n: int) -> List[int]:
     return result
 
 
+# https://leetcode.com/problems/kids-with-the-greatest-number-of-candies/
+def KidsWithCandies(candies: List[int], extraCandies: int) -> List[bool]:
+    maximum = max(candies)
+    return [candy + extraCandies >= maximum for candy in candies]
+        
+
+# https://leetcode.com/problems/decompress-run-length-encoded-list/
+def DecompressRLElist(nums: List[int]) -> List[int]:
+    result = []
+    for i in range(0, len(nums) - 1, 2):
+        result += [nums[i+1]] * nums[i]
+    return result
+        
+        
 # https://leetcode.com/problems/arranging-coins/
 def ArrangeCoins(n):
     stairs = 1
