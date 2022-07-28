@@ -830,6 +830,29 @@ def ArrayStringsAreEqual(word1: List[str], word2: List[str]) -> bool:
     return ''.join(word1) == ''.join(word2)
 
 
+# https://leetcode.com/problems/sorting-the-sentence/
+def SortSentence(s: str) -> str:
+    d = [None] * 10
+    for word in s.split(" "):
+        index = int(word[-1])
+        d[index] = word[:-1]
+    return " ".join([d[i] for i in range(10) if d[i]])
+        
+        
+# https://leetcode.com/problems/split-a-string-in-balanced-strings/
+def BalancedStringSplit(s: str) -> int:
+    l, r, total = 0, 0, 0
+    for char in s:
+        if char == 'L':
+            l += 1
+        else: # char == 'R'
+            r += 1
+            
+        if l == r:
+            total += 1
+    return total
+        
+        
 # https://leetcode.com/problems/final-value-of-variable-after-performing-operations/
 def FinalValueAfterOperations(operations: List[str]) -> int:
     x = 0
