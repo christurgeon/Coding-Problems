@@ -1775,6 +1775,34 @@ def InvertTree(root: Optional[TreeNode]) -> Optional[TreeNode]:
     return root
 
 
+# https://leetcode.com/problems/evaluate-boolean-binary-tree/
+def EvaluateTree(root: Optional[TreeNode]) -> bool:
+    if not root.left and not root.right:
+        return root.val
+    if root.val == 2:
+        return self.evaluateTree(root.left) or self.evaluateTree(root.right)
+    else:
+        return self.evaluateTree(root.left) and self.evaluateTree(root.right)
+            
+            
+# https://leetcode.com/problems/find-a-corresponding-node-of-a-binary-tree-in-a-clone-of-that-tree/
+def GetTargetCopy(original: TreeNode, cloned: TreeNode, target: TreeNode) -> TreeNode:
+    node = None
+    
+    def traverse(tree):
+        nonlocal node
+        if not tree:
+            return
+        if tree and tree.val == target.val:
+            node = tree
+            return 
+        traverse(tree.left)
+        traverse(tree.right)
+    
+    traverse(cloned)
+    return node
+
+
 # https://leetcode.com/problems/subtree-of-another-tree/
 def IsSubtree(root: Optional[TreeNode], subRoot: Optional[TreeNode]) -> bool:
     
