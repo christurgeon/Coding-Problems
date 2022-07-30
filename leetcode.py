@@ -103,6 +103,19 @@ def BuildArray(nums: List[int]) -> List[int]:
         return [nums[nums[i]] for i in range(len(nums))]
 
 
+# https://leetcode.com/problems/matrix-diagonal-sum/
+def DiagonalSum(mat: List[List[int]]) -> int:
+    total = 0
+    n = len(mat)
+    j = n - 1
+    for i in range(n):
+        total += mat[i][i]
+        if i != j:
+            total += mat[i][j]
+        j -= 1
+    return total        
+    
+
 # https://leetcode.com/problems/how-many-numbers-are-smaller-than-the-current-number/
 def SmallerNumbersThanCurrent(nums: List[int]) -> List[int]:
     buckets = [0] * 101
