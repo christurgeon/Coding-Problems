@@ -827,6 +827,12 @@ def LengthOfLastWord(s: str) -> int:
     return size
 
 
+# https://leetcode.com/problems/check-if-the-sentence-is-pangram/
+def CheckIfPangram(sentence: str) -> bool:
+    letters = set(sentence)
+    return len(letters) == 26
+
+
 # https://leetcode.com/problems/reverse-string/
 def ReverseString(s: List[str]) -> None:
     for i in range(len(s) // 2):
@@ -851,7 +857,23 @@ def SortSentence(s: str) -> str:
         d[index] = word[:-1]
     return " ".join([d[i] for i in range(10) if d[i]])
         
-        
+
+# https://leetcode.com/problems/remove-outermost-parentheses/   
+def RemoveOuterParentheses(s: str) -> str:
+    result = []
+    tracker, start = 0, 0
+    for i, char in enumerate(s):
+        if char == "(":
+            tracker += 1
+        elif char == ")":
+            tracker -= 1
+        if tracker == 0:
+            sliced = s[start+1:i]
+            result.append(sliced)
+            start = i + 1
+    return "".join(result)
+
+
 # https://leetcode.com/problems/split-a-string-in-balanced-strings/
 def BalancedStringSplit(s: str) -> int:
     l, r, total = 0, 0, 0
