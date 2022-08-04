@@ -4010,6 +4010,29 @@ def FlipAndInvertImage(image: List[List[int]]) -> List[List[int]]:
     return image
 
 
+# https://leetcode.com/problems/subtract-the-product-and-sum-of-digits-of-an-integer/
+def SubtractProductAndSum(n: int) -> int:
+    product, summation = 1, 0
+    while n:
+        digit = n % 10
+        product *= digit
+        summation += digit
+        n //= 10
+    return product - summation
+
+
+# https://leetcode.com/problems/number-of-steps-to-reduce-a-number-to-zero/
+def NumberOfSteps(num: int) -> int:
+    count = 0
+    while num:
+        if num % 2 == 0:
+            num /= 2
+        else:
+            num -= 1
+        count += 1
+    return count
+
+
 # https://leetcode.com/problems/reverse-integer/
 def ReverseInteger(x: int) -> int:
     new_digit = 0
