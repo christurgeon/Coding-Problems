@@ -4021,6 +4021,15 @@ def SubtractProductAndSum(n: int) -> int:
     return product - summation
 
 
+# https://leetcode.com/problems/minimum-time-visiting-all-points/
+def MinTimeToVisitAllPoints(points: List[List[int]]) -> int:
+    n, time = len(points), 0
+    for i in range(n-1):
+        current_point, next_point = points[i], points[i+1]
+        time += max(abs(next_point[0] - current_point[0]), abs(next_point[1] - current_point[1]))
+    return time
+
+
 # https://leetcode.com/problems/number-of-steps-to-reduce-a-number-to-zero/
 def NumberOfSteps(num: int) -> int:
     count = 0
