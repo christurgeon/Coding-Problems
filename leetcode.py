@@ -810,6 +810,27 @@ def EraseOverlapIntervals(intervals: List[List[int]]) -> int:
     return count
 
 
+# https://leetcode.com/problems/max-increase-to-keep-city-skyline/ 
+def MaxIncreaseKeepingSkyline(grid: List[List[int]]) -> int:
+    maxPerRow = []
+    maxPerCol = []
+    n = len(grid)
+    for row in grid:
+        maxPerRow.append(max(row))
+    for col in range(n):
+        currMaxCol = 0
+        for row in grid:
+            currMaxCol = max(currMaxCol, row[col])
+        maxPerCol.append(currMaxCol)
+    result = 0
+    for r, row in enumerate(grid):
+        for c, col in enumerate(row):
+            diff = min(maxPerRow[r], maxPerCol[c]) - col
+            if diff > 0:
+                result += diff
+    return result
+
+
 ##############################################################################################
 ###   [STRING]
 ##############################################################################################
