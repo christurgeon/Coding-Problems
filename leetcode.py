@@ -831,6 +831,29 @@ def MaxIncreaseKeepingSkyline(grid: List[List[int]]) -> int:
     return result
 
 
+# https://leetcode.com/problems/map-of-highest-peak/
+def HighestPeak(isWater: List[List[int]]) -> List[List[int]]:
+    n, m = len(isWater), len(isWater[0])
+    queue = deque([])
+    for r in range(n):
+        for c in range(m):
+            if isWater[r][c] == 1:
+                isWater[r][c] = 0 # is water
+                queue.append((r, c))
+            else: 
+                isWater[r][c] = -1 # not processed yet
+    
+    while queue:
+        r, c = queue.popleft()
+        for new_r, new_c in [(r + 1, c), (r, c + 1), (r - 1, c), (r, c - 1)]:
+            # make sure it is in bounds and not seen before
+            if 0 <= new_r < n and 0 <= new_c < m and isWater[new_r][new_c] == -1:
+                isWater[new_r][new_c] = isWater[r][c] + 1
+                queue.append((new_r, new_c))
+
+    return isWater
+
+
 ##############################################################################################
 ###   [STRING]
 ##############################################################################################
