@@ -31,3 +31,40 @@ def countNegatives(self, grid: List[List[int]]) -> int:
             r_ptr += 1
           
     return result
+
+
+# https://leetcode.com/problems/partition-list/ 
+def partition(head: Optional[ListNode], x: int) -> Optional[ListNode]:
+    if not head:
+        return head
+
+    sec_head, sec_tail = None, None
+    fst_head, fst_tail = None, None
+    
+    curr = head
+    while curr: 
+        if curr.val < x:
+            if fst_head:
+                fst_tail.next = curr
+                fst_tail = fst_tail.next
+            else:
+                fst_head = curr
+                fst_tail = curr
+        else:
+            if sec_head:
+                sec_tail.next = curr
+                sec_tail = sec_tail.next
+            else:
+                sec_head = curr
+                sec_tail = curr
+        curr = curr.next
+
+    if sec_tail:
+        sec_tail.next = None
+    if fst_tail:
+        fst_tail.next = sec_head
+    
+    if fst_head:
+        return fst_head
+    return sec_head
+        
