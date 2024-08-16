@@ -67,4 +67,27 @@ def partition(head: Optional[ListNode], x: int) -> Optional[ListNode]:
     if fst_head:
         return fst_head
     return sec_head
-        
+
+
+# https://leetcode.com/problems/generate-binary-strings-without-adjacent-zeros/
+def validStrings(n: int) -> List[str]:
+    result = []
+
+    def generate(current, last_one_idx, depth):
+        nonlocal result
+        # create the next two results
+        v1 = current + "0"
+        v2 = current + "1"
+        # if we are done, aggregate the result
+        if depth == n:
+            if depth - last_one_idx <= 1:
+                result.append(v1)
+            result.append(v2)
+            return
+        # recurse
+        if depth - last_one_idx <= 1:
+            generate(v1, last_one_idx, depth+1)
+        generate(v2, depth, depth+1)
+    
+    generate("", 0, 1)
+    return result
