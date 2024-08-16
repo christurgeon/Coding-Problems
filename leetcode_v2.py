@@ -91,3 +91,15 @@ def validStrings(n: int) -> List[str]:
     
     generate("", 0, 1)
     return result
+
+
+# https://leetcode.com/problems/validate-stack-sequences/
+def validateStackSequences(pushed: List[int], popped: List[int]) -> bool:
+    stack = []
+    popped_index = 0
+    for i in pushed:
+        stack.append(i)
+        while len(stack) > 0 and stack[-1] == popped[popped_index]:
+            stack.pop()
+            popped_index += 1
+    return len(stack) == 0
