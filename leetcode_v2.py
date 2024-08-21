@@ -103,3 +103,22 @@ def validateStackSequences(pushed: List[int], popped: List[int]) -> bool:
             stack.pop()
             popped_index += 1
     return len(stack) == 0
+
+
+# https://leetcode.com/problems/find-occurrences-of-an-element-in-an-array/
+def occurrencesOfElement(nums: List[int], queries: List[int], x: int) -> List[int]:
+    lookup = {}
+
+    result, occurrences = [], 1
+    for idx, n in enumerate(nums):
+        if n == x:
+            lookup[occurrences] = idx
+            occurrences += 1
+
+    for q in queries:
+        if q in lookup:
+            result.append(lookup[q])
+        else:
+            result.append(-1)
+
+    return result
