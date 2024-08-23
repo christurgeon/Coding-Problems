@@ -347,6 +347,33 @@ def canReachEnd(A):
         furthest_reach = max(furthest_reach, A[i] + i)
         i += 1
     return furthest_reach >= last_index
+    
+
+
+def minStepsToLastLocation(A: List[int]) -> int:
+    """
+    Write a program to compute the minimum amount of steps to reach the last location
+    Adapted from EPI
+    [1,1,1,1] => 3 
+    [1,2,1,1] => 2
+    [3,0,0,0] => 1
+    """
+    size = len(A)
+    furthest_we_can_reach = A[0]
+    # Track the remaining steps we can make from the current max, if steps runs out, another jump is made...
+    steps = A[0]
+    jumps = 1
+    for i in range(1, size):
+        if i == size - 1:
+            return jumps
+        furthest_we_can_reach = max(furthest_we_can_reach, A[0] + i)
+        steps -= 1
+        if steps == 0:
+            jumps += 1
+            if i >= furthest_we_can_reach:
+                return -1
+            steps = furthest_we_can_reach - 1
+    return jumps
 
 
 def deleteDuplicates(A):
