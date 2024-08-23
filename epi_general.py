@@ -349,7 +349,6 @@ def canReachEnd(A):
     return furthest_reach >= last_index
     
 
-
 def minStepsToLastLocation(A: List[int]) -> int:
     """
     Write a program to compute the minimum amount of steps to reach the last location
