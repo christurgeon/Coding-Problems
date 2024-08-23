@@ -375,6 +375,40 @@ def minStepsToLastLocation(A: List[int]) -> int:
     return jumps
 
 
+def minStepsToLastLocation(A):
+    """
+    The idea is to iteratively calculate the minimum number of jumps required
+    to reach the end of the list. We track the furthest reach in the current 
+    jump, and when steps are exhausted, we increment the jump count and update 
+    the steps with the difference between the furthest reach and the current index.
+    """
+    if len(A) == 1:
+        return 0
+    
+    furthest_reach = 0
+    last_index = len(A) - 1
+    steps = A[0]
+    jumps = 0
+    i = 0
+    
+    while i < last_index:
+        furthest_reach = max(furthest_reach, A[i] + i)
+        steps -= 1
+        
+        if steps == 0:
+            jumps += 1
+            if furthest_reach <= i:
+                return -1
+            steps = furthest_reach - i    
+        i += 1
+        
+        if furthest_reach >= last_index:
+            jumps += 1
+            break
+    
+    return jumps
+    
+
 def deleteDuplicates(A):
     """
     incrementally write values to the left and skip over others
