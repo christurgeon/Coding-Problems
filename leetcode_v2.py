@@ -122,3 +122,13 @@ def occurrencesOfElement(nums: List[int], queries: List[int], x: int) -> List[in
             result.append(-1)
 
     return result
+
+
+# https://leetcode.com/problems/minimum-number-of-moves-to-seat-everyone/ 
+def minMovesToSeat(seats: List[int], students: List[int]) -> int:
+    seats = sorted(seats)
+    students = sorted(students)
+    total_moves = 0
+    for i, j in zip(seats, students):
+        total_moves += abs(i - j)
+    return total_moves
