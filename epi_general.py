@@ -497,7 +497,7 @@ def enumeratePrimes(n):
     given n, include all primes up to and including n
     """
     primes = []
-    #is_prime[p] represents if p is prime or not, initially all set to trye, then use sieving to eliminate
+    #is_prime[p] represents if p is prime or not, initially all set to true, then use sieving to eliminate
     is_prime = [False, False] + [True] * (n - 1)
     for p in range(2, n + 1):
         if is_prime[p]:
