@@ -470,6 +470,27 @@ def rearrange(A):
     for i in range(len(A)):
         A[i:i + 2] = sorted(A[i:i + 2], reverse=bool(i % 2))
 
+
+def rearrangeV2(A):
+    """
+    Rearranges the list A such that it follows the pattern:
+    A[0] >= A[1] <= A[2] >= A[3] <= A[4] ...
+
+    The function iterates through the list and swaps adjacent elements
+    to ensure the pattern is followed.
+    """
+    n = len(A)
+    
+    for i in range(1, n):
+        if i % 2 == 1:
+            # If we're at an odd index (i = 1, 3, 5, ...), ensure A[i-1] >= A[i]
+            if A[i - 1] < A[i]:
+                A[i - 1], A[i] = A[i], A[i - 1]
+        else:
+            # If we're at an even index (i = 2, 4, 6, ...), ensure A[i-1] <= A[i]
+            if A[i - 1] > A[i]:
+                A[i - 1], A[i] = A[i], A[i - 1]
+
         
 def enumeratePrimes(n):
     """
