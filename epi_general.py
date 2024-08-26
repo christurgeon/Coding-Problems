@@ -536,7 +536,7 @@ def generatePrimes(n):
 
 def applyPermutation(perm, A):
     """
-    move one element at a time to its correct location, but we need to move the existing elements somehwere
+    move one element at a time to its correct location, but we need to move the existing elements somewhere
     the natural place to move the existing element is to the recently vacated place, with a swap,
     but then we need to update the permutation array
     # once P[i] == i, we are done with the sequence of swaps
@@ -545,6 +545,51 @@ def applyPermutation(perm, A):
         while perm[i] != i:
             A[perm[i]], A[i] = A[i], A[perm[i]]
             perm[perm[i]], perm[i] = perm[i], perm[perm[i]]
+
+
+def applyPermutationNoModifyingPermList(perm, A):
+    n = len(A)
+    for i in range(n):
+        # Follow the cycle starting from element i
+        next_position = i
+        
+        while perm[next_position] >= 0:
+            # Swap the current element with the target element
+            target_position = perm[next_position]
+
+            # Swap the current element with the target element
+            A[i], A[target_position] = A[target_position], A[i]
+            
+            # Mark the position in P as visited by setting it negative
+            perm[next_position] -= n
+            
+            next_position = target_position
+    
+    # Restore the permutation array
+    for i in range(n):
+        perm[i] += n
+
+
+def inversePermutation(perm):
+    """
+    find the unique inverse of a permutation
+
+    Permutation means that at location i should be element P[i]...
+    Inverse permutation means that at element P[i] should be element i
+
+    Example:
+        Given P = [2, 0, 1, 3], the inverse permutation P_inv should be [1, 2, 0, 3].
+    Explanation:
+        P[0] = 2 means that in P_inv, the element 0 should be placed at index 2.
+        P[1] = 0 means that in P_inv, the element 1 should be placed at index 0.
+        P[2] = 1 means that in P_inv, the element 2 should be placed at index 1.
+        P[3] = 3 means that in P_inv, the element 3 should be placed at index 3.
+    """
+    n = len(perm)
+    P_inv = [0] * n
+    for i in range(n):
+        P_inv[perm[i]] = i    
+    return P_inv
 
 
 def nextPermutation(perm):
