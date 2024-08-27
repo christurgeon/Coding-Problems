@@ -683,6 +683,15 @@ def computePascalTriangle(n: int):
     return result
 
 
+def isStrAPalindrome(s: str):
+    """
+    tip: s[~i] is the same as s[-(i+1)]
+
+    the last element at an index is located at s[-1]
+    """
+    return all(s[i]) == s[~i] for i in range(len(s) // 2))
+
+
 def isBalancedBinaryTree(tree: BinaryTreeNode) -> bool:
     """
     if for each node in the tree, the difference in height of its 
