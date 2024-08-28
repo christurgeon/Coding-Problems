@@ -132,3 +132,31 @@ def minMovesToSeat(seats: List[int], students: List[int]) -> int:
     for i, j in zip(seats, students):
         total_moves += abs(i - j)
     return total_moves
+
+
+# https://leetcode.com/problems/palindrome-linked-list/
+def isPalindrome(head: Optional[ListNode]) -> bool:
+    if head is None or head.next is None:
+        return True
+
+    # use the 2-iterator approach
+    slow, fast = head, head
+    while fast and fast.next:
+        fast = fast.next.next
+        slow = slow.next
+
+    # reverse the second half
+    prev = None
+    while slow:
+        temp = slow.next
+        slow.next = prev
+        prev = slow
+        slow = temp
+
+    # compare the contents of 1st and 2nd hald
+    fst, scd = head, prev
+    while scd:
+        if fst.val != scd.val:
+            return False
+        fst, scd = fst.next, scd.next
+    return True
