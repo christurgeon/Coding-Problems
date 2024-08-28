@@ -160,3 +160,16 @@ def isPalindrome(head: Optional[ListNode]) -> bool:
             return False
         fst, scd = fst.next, scd.next
     return True
+
+
+# https://leetcode.com/problems/linked-list-random-node/
+class GetRandomNodeValue:
+    
+    def __init__(self, head: Optional[ListNode]):
+        self.values = []
+        while head:
+            self.values.append(head.val)
+            head = head.next
+
+    def getRandom(self) -> int:
+        return random.choice(self.values)
