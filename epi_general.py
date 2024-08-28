@@ -609,7 +609,7 @@ def nextPermutation(perm):
     return perm
 
 
-def MoveAllZerosToBeginningOfArray(A):
+def moveAllZerosToBeginningOfArray(A):
     write_index = 0
     for i in range(1, len(A)):
         if A[i] == 0:
@@ -618,7 +618,7 @@ def MoveAllZerosToBeginningOfArray(A):
     return A
 
 
-def MoveAllZerosToEndOfArray(A):
+def moveAllZerosToEndOfArray(A):
     write_index = len(A) - 1
     for i in reversed(range(len(A))):
         if A[i] == 0:
@@ -691,6 +691,23 @@ def isStrAPalindrome(s: str):
     """
     return all(s[i]) == s[~i] for i in range(len(s) // 2))
 
+
+def ss_decode_col_id(col: str) -> int:
+    """
+    decode spread sheet columns e.g. AA, ZZZ, BZX to their integer representation
+
+    so A  -> 1
+       Z  -> 26
+       AA -> 27
+
+    multiply result by 26 because these are essentially base 26 numbers, so we want to shift it over one spot
+    """
+    result = 0
+    for c in col:
+        letter_index = ord(c.upper()) - ord('A') + 1
+        result = (result * 26) + letter_index
+    return result
+    
 
 def isBalancedBinaryTree(tree: BinaryTreeNode) -> bool:
     """
