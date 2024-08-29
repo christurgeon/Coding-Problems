@@ -195,3 +195,21 @@ def buildTree(inorder: List[int], postorder: List[int]) -> Optional[TreeNode]:
     root.left = self.buildTree(inorder[:index], postorder)
     return root
         
+
+# https://leetcode.com/problems/maximum-strong-pair-xor-i
+def maximumStrongPairXor(nums: List[int]) -> int:
+    # Sort to reduce the search space.
+    nums.sort()
+    ans = 0
+    for i in range(0, len(nums)):
+        # Search for j
+        # So in a brute force, we could search from i to the end 
+        # But since we are sorted we only need to search such that the difference is not negative.
+        # Therefore, we can get the rightmost value by: 
+        # => nums[j] - nums[i] <= nums[i]
+        # => nums[j] <= nums[i] + nums[i]
+        # so j must be at the index of twice nums[i]
+        rightmost_value = bisect_right(nums, nums[i]+nums[i])
+        for j in range(i, rightmost_value):
+            ans = max(ans, nums[i]^nums[j])
+    return ans
