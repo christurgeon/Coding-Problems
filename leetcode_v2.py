@@ -173,3 +173,25 @@ class GetRandomNodeValue:
 
     def getRandom(self) -> int:
         return random.choice(self.values)
+
+
+# https://leetcode.com/problems/construct-binary-tree-from-inorder-and-postorder-traversal/
+def buildTree(inorder: List[int], postorder: List[int]) -> Optional[TreeNode]:
+    """
+    The rightmost value in the postorder list is the root.
+
+    If we look up the index in the inorder list, we know everything to the left
+    is on the left subtree path and everything on the right is on the right
+    subtree path.
+
+    Input: inorder = [9,3,15,20,7], postorder = [9,15,7,20,3]
+    Output: [3,9,20,null,null,15,7]
+    """
+    if not inorder or not postorder:
+        return None
+    root = TreeNode(postorder.pop())
+    index = inorder.index(root.val)
+    root.right = self.buildTree(inorder[index+1:], postorder)
+    root.left = self.buildTree(inorder[:index], postorder)
+    return root
+        
