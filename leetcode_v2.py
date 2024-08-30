@@ -232,6 +232,17 @@ def countPrefixSuffixPairs_v1(words: List[str]) -> int:
                 ans += 1
     return ans
 
+    
+# https://leetcode.com/problems/count-prefix-and-suffix-pairs-i/
+def countPrefixSuffixPairs_v2(self, words: List[str]) -> int:
+    ans = 0
+    n = len(words)
+    for i in range(n):
+        for j in range(i+1, n):
+            if words[j].startswith(words[i]) and words[j].endswith(words[i]):
+                ans += 1
+    return ans
+    
 
 # https://leetcode.com/problems/count-prefix-and-suffix-pairs-i/
 class TrieNode:
