@@ -269,7 +269,7 @@ class Trie:
             if c not in curr.children:
                 return False
             curr = curr.children[c]
-        return True
+        return curr.end
 
     def clear(self):
         self.root = TrieNode()
