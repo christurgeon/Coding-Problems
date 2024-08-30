@@ -196,7 +196,7 @@ def buildTree(inorder: List[int], postorder: List[int]) -> Optional[TreeNode]:
     return root
         
 
-# https://leetcode.com/problems/maximum-strong-pair-xor-i
+# https://leetcode.com/problems/maximum-strong-pair-xor-i/
 def maximumStrongPairXor(nums: List[int]) -> int:
     # Sort to reduce the search space.
     nums.sort()
@@ -213,3 +213,73 @@ def maximumStrongPairXor(nums: List[int]) -> int:
         for j in range(i, rightmost_value):
             ans = max(ans, nums[i]^nums[j])
     return ans
+
+
+# https://leetcode.com/problems/count-prefix-and-suffix-pairs-i/
+def countPrefixSuffixPairs_v1(words: List[str]) -> int:
+    
+    def isPrefixAndSuffix(str1, str2):
+        s1 = len(str1)
+        s2 = len(str2)
+        if s1 > s2:
+            return False
+        return str1 == str2[:s1] and str1 == str2[-s1:len(str2)]
+
+    ans = 0
+    for i, w1 in enumerate(words):
+        for j in range(i+1, len(words)):
+            if isPrefixAndSuffix(w1, words[j]):
+                ans += 1
+    return ans
+
+
+# https://leetcode.com/problems/count-prefix-and-suffix-pairs-i/
+class TrieNode:
+    def __init__(self):
+        self.children = {}
+        self.end = False
+
+class Trie:
+    def __init__(self):
+        self.root = TrieNode()
+    
+    def insert(self, word):
+        # Traverse down the trie, adding a value as we go
+        curr = self.root
+        for c in word:
+            curr.children[c] = TrieNode()
+            curr = curr.children[c]
+        curr.end = True
+
+    def search(self, word):
+        # Search down the trie
+        curr = self.root
+        for c in word:
+            if c not in curr.children:
+                return False
+            curr = curr.children[c]
+        return True
+
+    def clear(self):
+        self.root = TrieNode()
+
+class Solution:
+    def countPrefixSuffixPairs(self, words: List[str]) -> int:
+        ans = 0
+        prefix_trie, suffix_trie = Trie(), Trie()        
+        for i in reversed(range(1, len(words))):
+            # Create a trie to hold the suffix and the prefix
+            # Then we can do lookups each time on it, as we move to words to the left 
+            prefix_trie.insert(words[i])
+            suffix_trie.insert(words[i][::-1])
+            for j in range(0, i):
+                if len(words[j]) > len(words[i]):
+                    continue
+                if prefix_trie.search(words[j]) and suffix_trie.search(words[j][::-1]):
+                    ans += 1
+            prefix_trie.clear()
+            suffix_trie.clear()
+        return ans
+            
+
+    
