@@ -303,4 +303,22 @@ def reverseWords(s: str) -> str:
     while stack:
         builder.append(stack.pop())
     return " ".join(builder)
-            
+
+
+# https://leetcode.com/problems/product-of-array-except-self/
+def productExceptSelf(nums: List[int]) -> List[int]:
+    prefix = suffix = []
+
+    # compute the prefix
+    curr_prod = 1
+    for i in range(len(nums)):
+        prefix.append(curr_prod)
+        curr_prod *= nums[i]
+
+    # compute the suffix
+    curr_prod = 1
+    for i in reversed(range(len(nums))):
+        suffix[i] *= curr_prod
+        curr_prod *= nums[i]
+
+    return suffix
