@@ -291,6 +291,16 @@ class Solution:
             prefix_trie.clear()
             suffix_trie.clear()
         return ans
-            
 
-    
+
+# https://leetcode.com/problems/reverse-words-in-a-string/ 
+def reverseWords(s: str) -> str:
+    stack = []
+    for word in s.split(" "):
+        if word != "":
+            stack.append(word)
+    builder = []
+    while stack:
+        builder.append(stack.pop())
+    return " ".join(builder)
+            
