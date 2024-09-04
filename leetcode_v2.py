@@ -333,3 +333,16 @@ def countBits(n: int) -> List[int]:
             offset = offset * 2
         counter.append(counter[i - offset] + 1)
     return counter
+
+
+# https://leetcode.com/problems/reverse-vowels-of-a-string/
+def reverseVowels(s: str) -> str:
+    vowel = set(["a", "e", "i", "o", "u", "A", "E", "I", "O", "U"])
+    vowels_stack = [c for c in s if c in vowel]
+    result = []
+    for c in s:
+        if c in vowel:
+            result.append(vowels_stack.pop())
+        else:
+            result.append(c)
+    return "".join(result)
