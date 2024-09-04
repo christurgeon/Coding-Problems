@@ -322,3 +322,14 @@ def productExceptSelf(nums: List[int]) -> List[int]:
         curr_prod *= nums[i]
 
     return suffix
+
+
+# https://leetcode.com/problems/counting-bits/
+def countBits(n: int) -> List[int]:
+    counter = [0]
+    offset = 1
+    for i in range(1, n+1): 
+        if i == offset * 2:
+            offset = offset * 2
+        counter.append(counter[i - offset] + 1)
+    return counter
