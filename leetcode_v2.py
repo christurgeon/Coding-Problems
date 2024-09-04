@@ -346,3 +346,40 @@ def reverseVowels(s: str) -> str:
         else:
             result.append(c)
     return "".join(result)
+
+
+# https://leetcode.com/problems/implement-trie-prefix-tree/
+class TrieNode:
+    def __init__(self):
+        self.children = {}
+        self.end = False
+
+class Trie:
+    def __init__(self):
+        self.root = TrieNode()
+
+    def insert(self, word: str) -> None:
+        curr_level = self.root
+        for c in word:
+            if c not in curr_level.children:
+                curr_level.children[c] = TrieNode()
+            curr_level = curr_level.children[c]
+        curr_level.end = True
+
+    def search(self, word: str) -> bool:
+        curr_level = self.root
+        for c in word:
+            if c in curr_level.children:
+                curr_level = curr_level.children[c]
+            else:
+                return False
+        return curr_level.end
+
+    def startsWith(self, prefix: str) -> bool:
+        curr_level: TrieNode = self.root
+        for c in prefix:
+            if c in curr_level.children:
+                curr_level = curr_level.children[c]
+            else:
+                return False
+        return True
