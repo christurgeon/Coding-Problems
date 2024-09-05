@@ -404,3 +404,16 @@ def guessNumber(n: int) -> int:
         else:
             raise ValueError("guess() return unexpected value") 
     return -1
+
+
+# https://leetcode.com/problems/daily-temperatures/
+def dailyTemperatures(temperatures: List[int]) -> List[int]:
+    n = len(temperatures)
+    ans, stack = [0] * n, []
+    for i in range(n):
+        temperature = temperatures[i]
+        while stack and stack[-1][1] < temperature:
+            element = stack.pop()
+            ans[element[0]] = i - element[0]
+        stack.append((i, temperature))
+    return ans
