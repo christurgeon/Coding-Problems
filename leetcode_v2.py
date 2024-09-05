@@ -383,3 +383,24 @@ class Trie:
             else:
                 return False
         return True
+
+
+# https://leetcode.com/problems/guess-number-higher-or-lower/
+def guessNumber(n: int) -> int:
+    # The guess API is already defined for you. (def guess(num: int) -> int)
+    # @return -1 if num is higher than the picked number
+    #          1 if num is lower than the picked number
+    #          otherwise return 0
+    lo, hi = 1, n
+    while lo <= hi:
+        mid = (lo + hi) // 2
+        result = guess(mid)
+        if result == 0:
+            return mid
+        elif result == -1:
+            hi = mid - 1
+        elif result == 1:
+            lo = mid + 1
+        else:
+            raise ValueError("guess() return unexpected value") 
+    return -1
