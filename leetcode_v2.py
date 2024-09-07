@@ -454,3 +454,33 @@ def buildTreev2(preorder: List[int], inorder: List[int]) -> Optional[TreeNode]:
     root.left = self.buildTreev2(preorder[1:index+1], inorder[:index])
     root.right = self.buildTreev2(preorder[index+1:], inorder[index+1:])
     return root
+
+
+# https://leetcode.com/problems/smallest-number-in-infinite-set/
+class SmallestInfiniteSet:
+    """
+    The idea is that any time we add back a number, we store it inside a min heap.
+    Then when we pop a number we check if the smallest in the min heap is less than
+    the smallest that would otherwise be in the set.
+    """
+    def __init__(self):
+        self.added_back_heap, self.size = [], 0
+        self.lowest = 1
+
+    def popSmallest(self) -> int:
+        if self.size == 0 or self.lowest < self.added_back_heap[0]:
+            self.lowest += 1
+            return self.lowest - 1
+        else:
+            val = heapq.heappop(self.added_back_heap)
+            self.size -= 1
+            # Since we allow adding duplicates, continue to pop any out
+            while self.size > 0 and self.added_back_heap[0] == val:
+                heapq.heappop(self.added_back_heap)
+                self.size -= 1
+            return val
+
+    def addBack(self, num: int) -> None:
+        if num < self.lowest:
+            heapq.heappush(self.added_back_heap, num)
+            self.size += 1
