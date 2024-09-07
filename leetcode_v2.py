@@ -417,3 +417,40 @@ def dailyTemperatures(temperatures: List[int]) -> List[int]:
             ans[element[0]] = i - element[0]
         stack.append((i, temperature))
     return ans
+
+
+# https://leetcode.com/problems/construct-binary-tree-from-preorder-and-inorder-traversal/ 
+def buildTreev1(preorder: List[int], inorder: List[int]) -> Optional[TreeNode]:
+    """
+    The first element in the preorder traversal is the root of the tree. In the inorder traversal, elements to the
+    left of the root belong to the left subtree, and elements to the right belong to the right subtree.
+
+    Build the tree up to {stopping_value} from the inorder list.
+    """
+    p_idx = 0
+    i_idx = 0
+    i_len = len(inorder)
+    def helper(stopping_value):
+        nonlocal p_idx
+        nonlocal i_idx
+        if i_idx < i_len and inorder[i_idx] != stopping_value:
+            curr_root_val = preorder[p_idx]
+            curr_root = TreeNode(curr_root_val)
+            p_idx += 1
+            curr_root.left = helper(curr_root_val)
+            i_idx += 1
+            curr_root.right = helper(stopping_value)
+            return curr_root
+        return None
+    return helper(None)
+
+
+# # https://leetcode.com/problems/construct-binary-tree-from-preorder-and-inorder-traversal/ 
+def buildTreev2(preorder: List[int], inorder: List[int]) -> Optional[TreeNode]:
+    if not preorder or not inorder:
+        return None
+    root = TreeNode(preorder[0])
+    index = inorder.index(preorder[0])
+    root.left = self.buildTreev2(preorder[1:index+1], inorder[:index])
+    root.right = self.buildTreev2(preorder[index+1:], inorder[index+1:])
+    return root
