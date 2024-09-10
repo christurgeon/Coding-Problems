@@ -484,3 +484,30 @@ class SmallestInfiniteSet:
         if num < self.lowest:
             heapq.heappush(self.added_back_heap, num)
             self.size += 1
+
+
+# https://leetcode.com/problems/find-median-from-data-stream/
+class MedianFinder:
+    def __init__(self):
+        # Stores the numbers greater than median
+        self.gt = []
+        # Stores the numbers less than median
+        self.lt = []
+
+    def addNum(self, num: int) -> None:
+        # Add the new number to the heap that stores elements greater than the median and 
+        # then pop out an element that is the smallest. We will add that element to the heap
+        # holding elements that are less than the median.
+        heapq.heappush(self.gt, num)
+        val = heapq.heappop(self.gt)
+        heapq.heappush(self.lt, -val)
+        if len(self.lt) > len(self.gt):
+            heapq.heappush(self.gt, -heapq.heappop(self.lt))
+
+    def findMedian(self) -> float:
+        # Equal numbers greater than and equal to the median
+        if len(self.lt) == len(self.gt):
+            return 0.5 * (self.gt[0] + (-self.lt[0]))
+        # Extra number in `gt` heap
+        else:
+            return self.gt[0]
