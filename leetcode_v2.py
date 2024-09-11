@@ -565,3 +565,14 @@ def canVisitAllRooms(rooms: List[List[int]]) -> bool:
     seen = set([0]) # room 0 is seen
     dfs(0)
     return len(seen) == len(rooms)
+
+
+# https://leetcode.com/problems/removing-stars-from-a-string/ 
+def removeStars(s: str) -> str:
+    stack = []
+    for c in s:
+        if c == "*":
+            stack.pop()
+        else:
+            stack.append(c)
+    return "".join(stack)
