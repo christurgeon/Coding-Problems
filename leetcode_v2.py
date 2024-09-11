@@ -514,7 +514,7 @@ class MedianFinder:
 
 
 # https://leetcode.com/problems/reorder-list/ 
-def reorderList(self, head: Optional[ListNode]) -> None:
+def reorderList(head: Optional[ListNode]) -> None:
     size = 0
     curr = head
     while curr:
@@ -553,3 +553,15 @@ def reorderList(self, head: Optional[ListNode]) -> None:
             curr = curr.next
 
     return dummy_head.next
+
+
+# https://leetcode.com/problems/keys-and-rooms/ 
+def canVisitAllRooms(rooms: List[List[int]]) -> bool:
+    def dfs(room_idx):
+        for key in rooms[room_idx]:
+            if key not in seen:
+                seen.add(key)
+                dfs(key)
+    seen = set([0]) # room 0 is seen
+    dfs(0)
+    return len(seen) == len(rooms)
