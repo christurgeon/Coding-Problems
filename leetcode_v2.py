@@ -511,3 +511,45 @@ class MedianFinder:
         # Extra number in `gt` heap
         else:
             return self.gt[0]
+
+
+# https://leetcode.com/problems/reorder-list/ 
+def reorderList(self, head: Optional[ListNode]) -> None:
+    size = 0
+    curr = head
+    while curr:
+        size += 1
+        curr = curr.next
+    if size < 3:
+        return head
+    
+    # find the middle
+    middle = head
+    for _ in range(size // 2):
+        middle = middle.next
+
+    # reverse the second half of the list
+    temp = middle.next
+    middle.next = None
+    left, right = temp, temp.next
+    temp.next = None
+    while right:
+        temp = right.next
+        right.next = left
+        left = right
+        right = temp
+
+    # reconstruct the list
+    dummy_head = ListNode(0, None)
+    curr = dummy_head
+    while head or left:
+        if head:
+            curr.next = head
+            head = head.next
+            curr = curr.next
+        if left:
+            curr.next = left
+            left = left.next
+            curr = curr.next
+
+    return dummy_head.next
