@@ -576,3 +576,24 @@ def removeStars(s: str) -> str:
         else:
             stack.append(c)
     return "".join(stack)
+
+
+# https://leetcode.com/problems/sum-of-nodes-with-even-valued-grandparent/ 
+def sumEvenGrandparent(root: TreeNode) -> int:
+    result = 0
+
+    # store a queue (node, parent)
+    dq = deque( [(root, None)] )
+    while dq:
+        (curr, parent) = dq.popleft()
+        if not curr:
+            continue
+        if parent:
+            if curr.left and parent % 2 == 0:
+                result += curr.left.val
+            if curr.right and parent % 2 == 0:
+                result += curr.right.val
+        dq.append((curr.left, curr.val))
+        dq.append((curr.right, curr.val))
+
+    return result
