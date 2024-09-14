@@ -597,3 +597,23 @@ def sumEvenGrandparent(root: TreeNode) -> int:
         dq.append((curr.right, curr.val))
 
     return result
+
+
+# https://leetcode.com/problems/deepest-leaves-sum/ 
+def deepestLeavesSum(root: Optional[TreeNode]) -> int:
+    max_depth, ans = 0, 0
+
+    def helper(root, curr_depth):
+        nonlocal max_depth, ans
+        if not root:
+            return 
+        if curr_depth > max_depth:
+            ans = root.val
+            max_depth = curr_depth
+        elif curr_depth == max_depth:
+            ans += root.val
+        helper(root.left, curr_depth + 1)
+        helper(root.right, curr_depth + 1)
+
+    helper(root, 0)
+    return ans
