@@ -617,3 +617,21 @@ def deepestLeavesSum(root: Optional[TreeNode]) -> int:
 
     helper(root, 0)
     return ans
+
+
+# https://leetcode.com/problems/binary-search-tree-to-greater-sum-tree/ 
+def bstToGst(root: TreeNode) -> TreeNode:
+    # The GST is essentially everything to the right + the GST of the parent
+    # Or the reverse of the in-order traversal
+    running_total = 0
+    def convertToGst(root):
+        nonlocal answer
+        if not root:
+            return
+        convertToGst(root.right)
+        running_total += root.val
+        root.val = running_total
+        convertToGst(root.left)
+    convertToGst(root)
+    return root 
+             
