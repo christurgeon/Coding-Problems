@@ -635,3 +635,24 @@ def bstToGst(root: TreeNode) -> TreeNode:
     convertToGst(root)
     return root 
              
+
+# https://leetcode.com/problems/asteroid-collision/
+def asteroidCollision(asteroids: List[int]) -> List[int]:
+    stack = []
+    for asteroid in asteroids:
+        add_value = True
+        while stack and asteroid < 0 and stack[-1] > 0:
+            diff = abs(stack[-1]) - abs(asteroid)
+            if diff == 0:
+                add_value = False
+                stack.pop()
+                break
+            elif diff > 0:
+                add_value = False
+                break
+            else:
+                add_value = True
+                stack.pop()
+        if add_value:
+            stack.append(asteroid)
+    return stack
