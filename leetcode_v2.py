@@ -656,3 +656,19 @@ def asteroidCollision(asteroids: List[int]) -> List[int]:
         if add_value:
             stack.append(asteroid)
     return stack
+
+
+# https://leetcode.com/problems/find-peak-element/
+def findPeakElement(nums: List[int]) -> int:
+    L, R = 0, len(nums) - 1
+    while L < R:
+        mid = (L + R) // 2
+        # remember: nums[i] != nums[i + 1] for all valid i
+        # so, if at a given value, if we found one that is less
+        # than the value to the right, then it means there must
+        # be a value to the right that is a peak element
+        if nums[mid] < nums[mid+1]:
+            L = mid + 1
+        else:
+            R = mid
+    return L
