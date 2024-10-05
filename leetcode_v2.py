@@ -672,3 +672,38 @@ def findPeakElement(nums: List[int]) -> int:
         else:
             R = mid
     return L
+
+
+# https://leetcode.com/problems/rotate-array/
+def rotatev1(nums: List[int], k: int) -> None:
+    """
+    Do not return anything, modify nums in-place instead.
+
+    This uses O(n) space
+    """
+    n = len(nums)
+    k = k % n
+    for idx, value in enumerate(nums[n-k:n] + nums[0:n-k]):
+        nums[idx] = value
+
+
+# https://leetcode.com/problems/rotate-array/
+def rotateV2(nums: List[int], k: int) -> None:
+    """
+    Do not return anything, modify nums in-place instead.
+
+    This uses O(1) space
+    """
+    n = len(nums)
+    k = k % n
+    def reverse(l, r):
+        while l < r:
+            nums[l], nums[r] = nums[r], nums[l]
+            l += 1
+            r -= 1
+    # Reverse the whole list
+    reverse(0, n-1)
+    # Reverse the first k elements
+    reverse(0, k-1)
+    # Reverse the second group et voila
+    reverse(k, n-1)
