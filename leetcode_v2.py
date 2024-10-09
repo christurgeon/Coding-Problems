@@ -745,3 +745,25 @@ def rightSideView(root: Optional[TreeNode]) -> List[int]:
                 next_stack.append(node.right)
         curr_stack, next_stack = next_stack, []
     return result
+
+
+# https://leetcode.com/problems/maximum-number-of-vowels-in-a-substring-of-given-length/
+def maxVowels(s: str, k: int) -> int:
+    vowels = {'a', 'e', 'i', 'o', 'u', 'A', 'E', 'I', 'O', 'U'}
+    i, j, total, max_so_far = 0, 0, 0, 0
+    # Advance j to setup the window
+    for idx in range(k):
+        if s[idx] in vowels:
+            total += 1
+        j += 1
+    max_so_far = total
+    # Advance to the end, keeping the window
+    for j in range(k, len(s)):
+        if s[i] in vowels:
+            total -= 1
+        if s[j] in vowels:
+            total += 1
+        max_so_far = max(max_so_far, total)
+        i += 1
+    return max_so_far
+        
