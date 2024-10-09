@@ -707,3 +707,22 @@ def rotateV2(nums: List[int], k: int) -> None:
     reverse(0, k-1)
     # Reverse the second group et voila
     reverse(k, n-1)
+
+
+# https://leetcode.com/problems/count-good-nodes-in-binary-tree/
+def goodNodes(root: TreeNode) -> int:
+    result = 0
+
+    def search(node, max_seen):
+        nonlocal result
+        if not node:
+            return
+        if max_seen <= node.val:
+            result += 1
+        curr_max = max(node.val, max_seen)
+        search(node.left, curr_max)
+        search(node.right, curr_max)
+        
+    search(root, float('-inf'))
+    return result
+        
