@@ -726,3 +726,22 @@ def goodNodes(root: TreeNode) -> int:
     search(root, float('-inf'))
     return result
         
+
+# https://leetcode.com/problems/binary-tree-right-side-view/ 
+def rightSideView(root: Optional[TreeNode]) -> List[int]:
+    result = []
+    if not root:
+        return result
+    curr_stack, next_stack = [root], []
+    while curr_stack:
+        # Add the rightmost value to the result
+        if not next_stack:
+            result.append(curr_stack[-1].val)
+        # Populate the next row to search
+        for node in curr_stack:
+            if node.left:
+                next_stack.append(node.left)
+            if node.right:
+                next_stack.append(node.right)
+        curr_stack, next_stack = next_stack, []
+    return result
