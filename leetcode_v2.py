@@ -768,7 +768,7 @@ def maxVowels(s: str, k: int) -> int:
     return max_so_far
         
 
-# https://leetcode.com/problems/search-in-a-binary-search-tree/ 
+# https://leetcode.com/problems/search-in-a-binary-search-tree/
 def searchBST(root: Optional[TreeNode], val: int) -> Optional[TreeNode]:
     if root:
         if root.val == val:
@@ -778,3 +778,37 @@ def searchBST(root: Optional[TreeNode], val: int) -> Optional[TreeNode]:
         else:
             return self.searchBST(root.right, val)
     return None
+
+
+# https://leetcode.com/problems/word-search/
+def exist(board: List[List[str]], word: str) -> bool:
+    m, n = len(board), len(board[0])
+
+    def generate_search_space(row, col):
+        space = []
+        for x, y in [(row+1, col), (row, col+1), (row-1, col), (row, col-1)]:
+            if x >= 0 and y >= 0 and x < m and y < n:
+                space.append((x, y))
+        return space
+    
+    def dfs(row, col, word_index):
+        if word_index == len(word):
+            return True
+        if board[row][col] == word[word_index]:
+            # Store the current value then set it to a garbage value so it isn't visited again
+            temp = board[row][col]
+            board[row][col] = ""
+            result = any([dfs(x, y, word_index+1) for x, y in generate_search_space(row, col)])
+            # After DFS let's reset it back, this is the backtracking idea...
+            board[row][col] = temp
+            return result
+        return False
+
+    for r in range(m):
+        for c in range(n):
+            if board[r][c] == word[0]:
+                if len(word) == 1:
+                    return True
+                if dfs(r, c, 0):
+                    return True
+    return False
