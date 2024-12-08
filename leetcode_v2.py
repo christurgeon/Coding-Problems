@@ -845,3 +845,23 @@ def totalCost(costs: List[int], k: int, candidates: int) -> int:
                 j -= 1
 
     return result 
+
+
+# https://leetcode.com/problems/maximum-level-sum-of-a-binary-tree/
+def maxLevelSum(root: Optional[TreeNode]) -> int:
+    result_level, curr_level, result_max_sum = 1, 1, float('-inf')
+    nodes_to_visit = [root]
+    while nodes_to_visit:
+        next_nodes_to_visit = []
+        curr_sum = 0
+        for node in nodes_to_visit:
+            curr_sum += node.val
+            if node.left:
+                next_nodes_to_visit.append(node.left)
+            if node.right:
+                next_nodes_to_visit.append(node.right)
+        if curr_sum > result_max_sum:
+            result_level, result_max_sum = curr_level, curr_sum
+        nodes_to_visit = next_nodes_to_visit
+        curr_level += 1
+    return result_level
