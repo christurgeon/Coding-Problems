@@ -812,3 +812,36 @@ def exist(board: List[List[str]], word: str) -> bool:
                 if dfs(r, c, 0):
                     return True
     return False
+
+
+# https://leetcode.com/problems/total-cost-to-hire-k-workers/
+def totalCost(costs: List[int], k: int, candidates: int) -> int:
+    n = len(costs)
+    i, j = 0, n - 1
+    heap = []
+
+    if n == 1:
+        return costs[0]
+
+    for _ in range(candidates):
+        if i >= j:
+            break
+        heap.append((costs[i], i))
+        i += 1
+        heap.append((costs[j], j))
+        j -= 1
+    heapq.heapify(heap)
+
+    result = 0
+    for _ in range(k):
+        value, idx = heapq.heappop(heap)
+        result += value
+        if i <= j:
+            if idx < i:
+                heapq.heappush(heap, (costs[i], i))
+                i += 1
+            elif idx > j:
+                heapq.heappush(heap, (costs[j], j))
+                j -= 1
+
+    return result 
