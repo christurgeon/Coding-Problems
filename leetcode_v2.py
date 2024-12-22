@@ -865,3 +865,8 @@ def maxLevelSum(root: Optional[TreeNode]) -> int:
         nodes_to_visit = next_nodes_to_visit
         curr_level += 1
     return result_level
+
+
+# https://leetcode.com/problems/root-equals-sum-of-children/
+def checkTree(root: Optional[TreeNode]) -> bool:
+    return root.val == root.left.val + root.right.val
