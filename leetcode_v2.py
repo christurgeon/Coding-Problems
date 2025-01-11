@@ -870,3 +870,20 @@ def maxLevelSum(root: Optional[TreeNode]) -> int:
 # https://leetcode.com/problems/root-equals-sum-of-children/
 def checkTree(root: Optional[TreeNode]) -> bool:
     return root.val == root.left.val + root.right.val
+
+
+# https://leetcode.com/problems/gas-station 
+# Greedily add the running total of gas consumption as we go.
+# If we drop below 0, then we can't make the jump to the next spot.
+# This means that we can try reset and try from the current spot.
+# Because if we got from A -> B but coult not get to C, then if 
+# we can go from C -> A then we can go from C -> B.
+def canCompleteCircuit(gas: List[int], cost: List[int]) -> int:
+    total = start = used = 0
+    for i in range(len(gas)):
+        used += gas[i] - cost[i]
+        total += gas[i] - cost[i]
+        if total < 0:
+            total = 0
+            start = i + 1
+    return -1 if used < 0 else start
