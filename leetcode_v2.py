@@ -917,3 +917,18 @@ def majorityElement(nums: List[int]) -> int:
                 majority_element = nums[i]
                 count = 1
     return majority_element
+
+
+# https://leetcode.com/problems/is-subsequence/submissions/
+def isSubsequence(s: str, t: str) -> bool:
+    if s is None or s == "":
+        return True
+    s_ptr = 0
+    t_ptr = 0
+    while t_ptr < len(t):
+        if s[s_ptr] == t[t_ptr]:
+            s_ptr += 1
+            if s_ptr == len(s):
+                return True
+        t_ptr += 1
+    return False
