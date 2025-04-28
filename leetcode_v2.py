@@ -902,3 +902,18 @@ def removeDuplicates(nums: List[int]) -> int:
             write_index += 1
         i += 1
     return write_index
+
+
+# https://leetcode.com/problems/majority-element/
+def majorityElement(nums: List[int]) -> int:
+    majority_element = nums[0]
+    count = 1
+    for i in range(1, len(nums)):
+        if nums[i] == majority_element:
+            count += 1
+        else:
+            count -= 1
+            if count == 0:
+                majority_element = nums[i]
+                count = 1
+    return majority_element
