@@ -932,3 +932,13 @@ def isSubsequence(s: str, t: str) -> bool:
                 return True
         t_ptr += 1
     return False
+
+
+# https://leetcode.com/problems/ransom-note/
+def canConstruct(ransomNote: str, magazine: str) -> bool:
+    d = Counter(magazine)
+    for c in ransomNote:
+        if c not in d or d[c] == 0:
+            return False
+        d[c] -= 1
+    return True
