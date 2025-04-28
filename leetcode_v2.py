@@ -887,3 +887,18 @@ def canCompleteCircuit(gas: List[int], cost: List[int]) -> int:
             total = 0
             start = i + 1
     return -1 if used < 0 else start
+
+
+# https://leetcode.com/problems/remove-duplicates-from-sorted-array-ii/
+def removeDuplicates(nums: List[int]) -> int:
+    n = len(nums)
+    if n <= 2:
+        return n
+    write_index = 2
+    i = 2
+    while i < n:
+        if nums[i] != nums[write_index-2]:
+            nums[write_index] = nums[i]
+            write_index += 1
+        i += 1
+    return write_index
