@@ -942,3 +942,23 @@ def canConstruct(ransomNote: str, magazine: str) -> bool:
             return False
         d[c] -= 1
     return True
+
+
+# https://leetcode.com/problems/isomorphic-strings/
+def isIsomorphic(s: str, t: str) -> bool:
+    """
+        Add the first index of this character if it is not in either s or t
+        Check the first index of the character and make sure it matches
+    """
+    s_len, t_len = len(s), len(t)
+    if s_len != t_len:
+        return False
+    s_map, t_map = {}, {}
+    for i in range(s_len):
+        if s[i] not in s_map:
+            s_map[s[i]] = i
+        if t[i] not in t_map:
+            t_map[t[i]]= i
+        if s_map[s[i]] != t_map[t[i]]:
+            return False
+    return True
