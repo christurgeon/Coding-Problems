@@ -962,3 +962,17 @@ def isIsomorphic(s: str, t: str) -> bool:
         if s_map[s[i]] != t_map[t[i]]:
             return False
     return True
+
+
+# https://leetcode.com/problems/word-pattern/
+def wordPattern(pattern: str, s: str) -> bool:
+    s = s.split()
+    if len(pattern) != len(s) or len(set(pattern)) != len(set(s)):
+        return False
+    d = {}
+    for i, word in enumerate(s):
+        if word not in d:
+            d[word] = pattern[i]
+        elif d[word] != pattern[i]:
+            return False
+    return True
