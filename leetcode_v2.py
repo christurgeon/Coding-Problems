@@ -976,3 +976,22 @@ def wordPattern(pattern: str, s: str) -> bool:
         elif d[word] != pattern[i]:
             return False
     return True
+
+
+# https://leetcode.com/problems/word-pattern/
+def wordPattern(pattern: str, s: str) -> bool:
+    s = s.split()
+    c_to_w = {}
+    w_to_c = {}
+    if len(pattern) != len(s):
+        return False
+    for char, word in zip(pattern, s):
+        if char not in c_to_w and word not in w_to_c:
+            c_to_w[char] = word
+            w_to_c[word] = char
+        elif char in c_to_w and c_to_w[char] != word:
+            return False 
+        elif word in w_to_c and w_to_c[word] != char:
+            return False
+    return True
+    
