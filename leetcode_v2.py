@@ -995,3 +995,18 @@ def wordPattern(pattern: str, s: str) -> bool:
             return False
     return True
     
+
+# https://leetcode.com/problems/palindrome-number/
+def isPalindrome(x: int) -> bool:
+    if x < 0:
+        return False
+
+    # keep adding a digit to the end of the reversed number 
+    y = x
+    x_reverse = 0
+    while y > 0:
+        lowest_digit = y % 10    
+        x_reverse = (x_reverse * 10) + lowest_digit
+        y //= 10
+
+    return x == x_reverse
