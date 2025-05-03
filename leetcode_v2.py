@@ -1010,3 +1010,37 @@ def isPalindrome(x: int) -> bool:
         y //= 10
 
     return x == x_reverse
+
+
+# https://leetcode.com/problems/evaluate-division/
+def calcEquation(equations: List[List[str]], values: List[float], queries: List[List[str]]) -> List[float]:
+
+    def bfs(start, end):
+        visited = set()
+        queue = deque([(start, 1)])
+        while queue:
+            node = queue.popleft()
+            equation_letter, total = node[0], node[1]
+            if equation_letter in visited:
+                continue
+            visited.add(equation_letter)
+            for neighbor in graph[equation_letter]:
+                if neighbor[0] == end:
+                    return total * neighbor[1]
+                queue.append((neighbor[0], total*neighbor[1]))
+        return -1
+
+    graph = defaultdict(list)
+    for equation, value in zip(equations, values):
+        fst, scd = equation[0], equation[1]
+        graph[fst].append((scd, value))
+        graph[scd].append((fst, 1/value))
+
+    result = []
+    for query in queries:
+        fst, scd = query[0], query[1]
+        if fst not in graph or scd not in graph:
+            result.append(-1)
+        else:
+            result.append(bfs(fst, scd))
+    return result
