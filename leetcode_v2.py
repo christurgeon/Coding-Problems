@@ -1059,3 +1059,21 @@ def minSubArrayLen(target: int, nums: List[int]) -> int:
                 subarray_running_total -= nums[left]
                 left += 1
     return 0 if subarray_minimum_length == float('inf') else subarray_minimum_length
+
+
+# https://leetcode.com/problems/binary-watch/
+def readBinaryWatch(turnedOn: int) -> List[str]:
+    def dfs(led, hour, minute, count):
+        if hour > 11 or minute > 59:
+            return
+        if count == turnedOn:
+            result.append(f"{hour}:{minute:02d}")
+            return
+        for i in range(led, 10):
+            if i < 4: # hours
+                dfs(i+1, hour + 2**i, minute, count+1)
+            else: # minutes
+                dfs(i+1, hour, minute + 2**(i-4), count+1)
+    result = []
+    dfs(0, 0, 0, 0)
+    return result
