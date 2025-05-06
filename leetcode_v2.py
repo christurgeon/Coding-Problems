@@ -1044,3 +1044,18 @@ def calcEquation(equations: List[List[str]], values: List[float], queries: List[
         else:
             result.append(bfs(fst, scd))
     return result
+
+
+# https://leetcode.com/problems/minimum-size-subarray-sum/
+def minSubArrayLen(target: int, nums: List[int]) -> int:
+    left = 0
+    subarray_running_total = 0
+    subarray_minimum_length = float('inf')
+    for right in range(len(nums)):
+        subarray_running_total += nums[right]
+        if subarray_running_total >= target:
+            while subarray_running_total >= target:
+                subarray_minimum_length = min(subarray_minimum_length, right - left + 1)
+                subarray_running_total -= nums[left]
+                left += 1
+    return 0 if subarray_minimum_length == float('inf') else subarray_minimum_length
