@@ -1077,3 +1077,30 @@ def readBinaryWatch(turnedOn: int) -> List[str]:
     result = []
     dfs(0, 0, 0, 0)
     return result
+
+
+# https://leetcode.com/problems/find-k-pairs-with-smallest-sums/
+def kSmallestPairs(nums1: List[int], nums2: List[int], k: int) -> List[List[int]]:
+    if not nums1 or not nums2 or k == 0:
+        return []
+    heap = []
+    result = []
+
+    # push up to k pairs of the smallest number in nums2 with smallest numbers of nums1
+    smallest_num_in_nums2 = nums2[0]
+    for i in range(min(k, len(nums1))):
+        # (sum, i, j) -> i in nums1, j in nums2
+        heapq.heappush(heap, (nums1[i] + smallest_num_in_nums2, i, 0))
+
+    # build the result by taking this minimum element and then adding the smallest
+    # pair using the smallest numbers in nums1
+    while heap and len(result) < k:
+        _, i, j = heapq.heappop(heap)
+        result.append([nums1[i], nums2[j]])
+        # if nums1[i] and nums[j+1] is currently the smallest,
+        # the next smallest using a value at j from nums2 would be
+        # the value at j+1
+        if j+1 < len(nums2):
+            heapq.heappush(heap, (nums1[i] + nums2[j+1], i, j+1))
+
+    return result
