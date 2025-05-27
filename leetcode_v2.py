@@ -1104,3 +1104,21 @@ def kSmallestPairs(nums1: List[int], nums2: List[int], k: int) -> List[List[int]
             heapq.heappush(heap, (nums1[i] + nums2[j+1], i, j+1))
 
     return result
+
+
+# https://leetcode.com/problems/beautiful-arrangement/
+def countArrangement(n: int) -> int:
+    def backtrack(pos: int, used: list[bool]):
+        if pos == n+1:
+            return 1
+        count = 0
+        for num in range(1, n+1):
+            if not used[num]:
+                if num % pos == 0 or pos % num == 0:
+                    used[num] = True
+                    count += backtrack(pos+1, used)
+                    used[num] = False
+        return count
+
+    used = [False] * (n+1)
+    return backtrack(1, used)
