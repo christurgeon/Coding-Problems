@@ -1122,3 +1122,20 @@ def countArrangement(n: int) -> int:
 
     used = [False] * (n+1)
     return backtrack(1, used)
+
+
+# https://leetcode.com/problems/find-unique-binary-string/
+def findDifferentBinaryString(nums: List[str]) -> str:
+    # Idea: Create a new binary string that differs from the i-th string at the i-th position.
+    # For each index i, the code looks at nums[i][i] — this is the diagonal element.
+    # It flips that bit:
+    #   - If it's '1', it becomes '0'
+    #   - If it's '0', it becomes '1'
+    result = []
+    for i in range(len(nums)):
+        digit = nums[i][i]
+        if digit == "1":
+            result.append("0")
+        else:
+            result.append("1")
+    return "".join(result)
