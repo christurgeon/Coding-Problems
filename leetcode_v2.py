@@ -1147,3 +1147,18 @@ def grayCode(n: int) -> List[int]:
     for i in range(2**n):
         result.append(i ^ (i >> 1))
     return result
+
+
+# https://leetcode.com/problems/letter-tile-possibilities/
+def numTilePossibilities(tiles: str) -> int:
+    def dfs(counter: Counter):
+        total = 0
+        for char, freq in counter.items():
+            if freq > 0:
+                total += 1
+                counter[char] -= 1
+                total += dfs(counter)
+                counter[char] += 1
+        return total
+    counter = Counter(tiles)
+    return dfs(counter)
