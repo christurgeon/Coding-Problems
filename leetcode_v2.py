@@ -1139,3 +1139,11 @@ def findDifferentBinaryString(nums: List[str]) -> str:
         else:
             result.append("1")
     return "".join(result)
+
+
+# https://leetcode.com/problems/gray-code/
+def grayCode(n: int) -> List[int]:
+    result = []
+    for i in range(2**n):
+        result.append(i ^ (i >> 1))
+    return result
