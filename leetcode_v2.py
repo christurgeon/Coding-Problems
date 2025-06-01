@@ -1162,3 +1162,28 @@ def numTilePossibilities(tiles: str) -> int:
         return total
     counter = Counter(tiles)
     return dfs(counter)
+
+
+# https://leetcode.com/problems/iterator-for-combination/
+class CombinationIterator:
+
+    def __init__(self, characters: str, localCombinationLength: int):
+        self.characters = characters
+        self.localCombinationLength = localCombinationLength
+        self.queue = deque()
+        self.combinations = self.generate_combinations(0, "", self.queue)
+
+    def generate_combinations(self, index, path, result) -> List[str]:
+        if len(path) == self.localCombinationLength:
+            result.append(path)
+            return
+        for i in range(index, len(self.characters)):
+            next_index = i + 1
+            next_path = path + self.characters[i]
+            self.generate_combinations(next_index, next_path, result)
+ 
+    def next(self) -> str:
+        return self.queue.popleft()
+
+    def hasNext(self) -> bool:
+        return len(self.queue) > 0
