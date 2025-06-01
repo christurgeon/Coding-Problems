@@ -1206,3 +1206,24 @@ def punishmentNumber(n: int) -> int:
         if satisfies_constraint(i, str(square), 0, 0):
             sum_of_squares += square
     return sum_of_squares
+
+
+# https://leetcode.com/problems/odd-even-linked-list/
+def oddEvenList(head: Optional[ListNode]) -> Optional[ListNode]:
+    if not head:
+        return None
+    dummy_even_head, dummy_odd_head = ListNode(), ListNode()
+    curr_even, curr_odd = dummy_even_head, dummy_odd_head
+    turn = 0
+    while head:
+        if turn:
+            curr_even.next = head
+            curr_even = curr_even.next
+        else:
+            curr_odd.next = head
+            curr_odd = curr_odd.next
+        head = head.next
+        turn ^= 1
+    curr_even.next = None
+    curr_odd.next = dummy_even_head.next
+    return dummy_odd_head.next
