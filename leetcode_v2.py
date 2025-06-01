@@ -1187,3 +1187,22 @@ class CombinationIterator:
 
     def hasNext(self) -> bool:
         return len(self.queue) > 0
+
+
+# https://leetcode.com/problems/find-the-punishment-number-of-an-integer/
+def punishmentNumber(n: int) -> int:
+    def satisfies_constraint(target: int, value: str, index: int, current_sum: int) -> bool:
+        if index == len(value):
+            return current_sum == target
+        for i in range(index, len(value) + 1):
+            num = int(value[index:i+1])
+            if satisfies_constraint(target, value, i+1, current_sum + num):
+                return True
+        return False
+
+    sum_of_squares = 0
+    for i in range(1, n + 1):
+        square = i * i
+        if satisfies_constraint(i, str(square), 0, 0):
+            sum_of_squares += square
+    return sum_of_squares
