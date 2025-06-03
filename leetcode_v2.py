@@ -1256,3 +1256,37 @@ def findOrderII(numCourses: int, prerequisites: List[List[int]]) -> List[int]:
         if cycle(course):
             return []
     return result
+
+
+# https://leetcode.com/problems/snakes-and-ladders/
+def snakesAndLadders(board: List[List[int]]) -> int:
+    n = len(board)
+
+    def get_next_placement(pos):
+        quotient, remainder = divmod(pos - 1, n)
+        row = n - 1 - quotient
+        if quotient % 2 == 0:
+            return row, remainder
+        else:
+            return row, n - 1 - remainder
+
+    visited = set()
+    queue = deque( [(1, 0)] ) # (current_place, move_count)
+    while queue:
+        current_place = queue.popleft()
+        move_count = current_place[1]
+        for i in range(1, 7):
+            next_pos = current_place[0] + i
+            if next_pos > n * n:
+                continue
+            r, c = get_next_placement(next_pos)
+            if board[r][c] != -1:
+                next_pos = board[r][c]
+            if next_pos == n * n:
+                return move_count + 1
+            if next_pos in visited:
+                continue
+            visited.add(next_pos)
+            queue.append((next_pos, move_count + 1))
+    return -1
+
