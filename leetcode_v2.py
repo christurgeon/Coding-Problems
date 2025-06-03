@@ -1227,3 +1227,32 @@ def oddEvenList(head: Optional[ListNode]) -> Optional[ListNode]:
     curr_even.next = None
     curr_odd.next = dummy_even_head.next
     return dummy_odd_head.next
+
+
+# https://leetcode.com/problems/course-schedule-ii/
+def findOrderII(numCourses: int, prerequisites: List[List[int]]) -> List[int]:
+    graph = defaultdict(set)
+    for course, prereq in prerequisites:
+        graph[course].add(prereq)
+
+    visited, visiting = set(), set()
+    result = []
+    
+    def cycle(course):
+        if course in visited:
+            return False
+        if course in visiting:
+            return True
+        visiting.add(course)
+        for prereq in graph[course]:
+            if cycle(prereq):
+                return True
+        visited.add(course)
+        visiting.remove(course)
+        result.append(course)
+        return False            
+            
+    for course in range(numCourses):
+        if cycle(course):
+            return []
+    return result
