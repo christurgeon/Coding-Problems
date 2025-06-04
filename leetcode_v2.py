@@ -1290,3 +1290,25 @@ def snakesAndLadders(board: List[List[int]]) -> int:
             queue.append((next_pos, move_count + 1))
     return -1
 
+
+# https://leetcode.com/problems/minimum-genetic-mutation/
+def minMutation(startGene: str, endGene: str, bank: List[str]) -> int:
+    choices = {"A","C","G","T"}
+    path_to_mutation = {}
+    for gene in bank:
+        path_to_mutation[gene] = float("inf")
+    path_to_mutation[startGene] = 0
+    if endGene not in path_to_mutation:
+        return -1
+
+    q = deque([(startGene, 0)]) # (gene, score)
+    while q:
+        gene, count = q.popleft()
+        for i in range(len(gene)):
+            for choice in choices:
+                mutation = gene[:i] + choice + gene[i+1:]
+                if mutation in path_to_mutation and path_to_mutation[mutation] > count + 1:
+                    path_to_mutation[mutation] = count + 1
+                    q.append((mutation, count + 1))
+    
+    return path_to_mutation[endGene] if path_to_mutation[endGene] != float("inf") else -1
