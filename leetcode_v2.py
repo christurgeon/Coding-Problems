@@ -1312,3 +1312,14 @@ def minMutation(startGene: str, endGene: str, bank: List[str]) -> int:
                     q.append((mutation, count + 1))
     
     return path_to_mutation[endGene] if path_to_mutation[endGene] != float("inf") else -1
+
+
+# https://leetcode.com/problems/house-robber/
+def rob(nums: List[int]) -> int:
+    n = len(nums)
+    if n == 1:
+        return nums[0]
+    A = [nums[0]] + ([0] * (n - 1))
+    for i in range(1, n):
+        A[i] = max(A[i-1], A[i-2] + nums[i])
+    return A[-1]
