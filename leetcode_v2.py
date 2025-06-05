@@ -1316,6 +1316,8 @@ def minMutation(startGene: str, endGene: str, bank: List[str]) -> int:
 
 # https://leetcode.com/problems/house-robber/
 def rob(nums: List[int]) -> int:
+    # Time - O(n)
+    # Space - O(n)
     n = len(nums)
     if n == 1:
         return nums[0]
@@ -1323,3 +1325,39 @@ def rob(nums: List[int]) -> int:
     for i in range(1, n):
         A[i] = max(A[i-1], A[i-2] + nums[i])
     return A[-1]
+
+
+# https://leetcode.com/problems/3sum/
+def threeSum(nums: List[int]) -> List[List[int]]:
+    # Time - O(n^2) sorting the array first: O(n log n) but 2-pointer for each value bumps it up
+    # (n - 1) + (n - 2) + (n - 3) + ... + 1 = n(n - 1)/2 = O(n^2)
+    # Space - O(1) (ignoring output)
+    nums.sort()
+    result = []
+    n = len(nums)
+    for i in range(n):
+        # because it's sorted, advance to the end of this sequence
+        # if i+1 < n and nums[i+1] == nums[i]:
+        #     continue
+        if i > 0 and nums[i] == nums[i-1]:
+            continue
+        value = nums[i]
+        # treat current value as the lowest
+        left, right = i+1, n-1
+        while left < right:
+            total = value + nums[left] + nums[right]
+            if total == 0:
+                result.append([value, nums[left], nums[right]])
+                # advance left and right to get away from duplicates
+                while left < right and nums[left] == nums[left+1]:
+                    left += 1
+                while left < right and nums[right] == nums[right-1]:
+                    right -= 1
+                # advance one more time to get new values
+                left += 1
+                right -= 1
+            elif total < 0: # get a larger number
+                left += 1
+            else: # get a smaller number
+                right -= 1
+    return result
