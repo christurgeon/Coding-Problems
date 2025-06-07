@@ -1381,3 +1381,15 @@ def wordBreak(s: str, wordDict: List[str]) -> bool:
                 dp[i] = True
                 break
     return dp[-1]
+
+
+# https://leetcode.com/problems/maximum-subarray/
+def maxSubArray(nums: List[int]) -> int:
+    max_sum = float('-inf')
+    curr_sum = float('-inf')
+    for num in nums:
+        # either add the new number or reset curr_sum
+        curr_sum = max(num + curr_sum, num)
+        # max_sum is just updated whenever curr_sum happens to be larger than what we've seen
+        max_sum = max(max_sum, curr_sum)
+    return max_sum
