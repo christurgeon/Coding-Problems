@@ -1361,3 +1361,23 @@ def threeSum(nums: List[int]) -> List[List[int]]:
             else: # get a smaller number
                 right -= 1
     return result
+
+
+# https://leetcode.com/problems/word-break/
+def wordBreak(s: str, wordDict: List[str]) -> bool:
+    # Time - O(n*m*k)
+    #  n in len(s)
+    #  m is len(wordDict)
+    #  k is avg size of substrings
+    # Space - O(n) 
+    dp = [False] * (len(s)+1)
+    dp[0] = True
+    for i in range(1, len(s)+1):
+        for word in wordDict:
+            word_start_idx = i - len(word)
+            if word_start_idx < 0:
+                continue
+            if dp[word_start_idx] and s[word_start_idx:i] == word:
+                dp[i] = True
+                break
+    return dp[-1]
