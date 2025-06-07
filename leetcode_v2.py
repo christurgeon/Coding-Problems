@@ -1393,3 +1393,24 @@ def maxSubArray(nums: List[int]) -> int:
         # max_sum is just updated whenever curr_sum happens to be larger than what we've seen
         max_sum = max(max_sum, curr_sum)
     return max_sum
+
+
+# https://leetcode.com/problems/maximum-sum-circular-subarray/
+def maxSubarraySumCircular(nums: List[int]) -> int:
+    # Time - O(n)
+    # Space - O(1)
+    curr_max_sum, max_sum = float("-inf"), float("-inf")
+    curr_min_sum, min_sum = float("inf"), float("inf")
+    total = 0
+    for num in nums:
+        curr_max_sum = max(num, num + curr_max_sum)
+        max_sum = max(max_sum, curr_max_sum)
+        curr_min_sum = min(num, num + curr_min_sum)
+        min_sum = min(min_sum, curr_min_sum)
+        total += num
+    # the max subarray could be circular, if this is the case it can be computed
+    # by taking the total sum and removing the minimum subarray
+    circular_sum = total - min_sum
+    # edge case: if all of the values are negative
+    # so, return the maximum value in the whole nums array
+    return max_sum if circular_sum == 0 else max(max_sum, circular_sum)
