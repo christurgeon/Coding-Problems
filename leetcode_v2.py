@@ -1440,3 +1440,42 @@ def kthSmallest(matrix: List[List[int]], k: int) -> int:
         k -= 1
         
     return heapq.heappop(min_heap)[0]
+
+
+# https://leetcode.com/problems/kth-smallest-element-in-a-sorted-matrix
+def kthSmallestMoreEfficient(matrix: List[List[int]], k: int) -> int:        
+    """
+    We can do this in O(1) space and O(2n * log(max-min)) time complexity
+    by binary searching through the values and moving up or down from the middle
+    depending on how many values are less than the middle value.
+
+    e.g.
+
+    If max = 50 and min = 10: 
+        * (max - min) = (40 // 2 + min) = 30
+        * We then find how many values are less than or equal to 30, if that value
+          is less than k than we must now look between 10 and 30; otherwise, 
+          between 30 and 50...
+    """
+    def countLessThanNumber(mid):
+        count = 0
+        row, col = 0, n - 1
+        while row < n and col >= 0:
+            if matrix[row][col] <= mid:
+                count += col + 1
+                row += 1
+            else:
+                col -= 1
+        return count
+
+    n = len(matrix)
+    low, high = matrix[0][0], matrix[-1][-1]
+    while low < high:
+        diff = (high - low) // 2
+        mid = diff + low
+        if countLessThanNumber(mid) < k:
+            low = mid + 1
+        else:
+            high = mid
+    return low
+        
