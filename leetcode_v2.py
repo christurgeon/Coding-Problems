@@ -1414,3 +1414,29 @@ def maxSubarraySumCircular(nums: List[int]) -> int:
     # edge case: if all of the values are negative
     # so, return the maximum value in the whole nums array
     return max_sum if circular_sum == 0 else max(max_sum, circular_sum)
+
+
+# https://leetcode.com/problems/kth-smallest-element-in-a-sorted-matrix
+def kthSmallest(matrix: List[List[int]], k: int) -> int:        
+    """
+    We want to use a min_heap to greedily explore the smallest number, and
+    then adding its neighbor to the right and neighbor below, both of which
+    are candidates for next smallest number.
+    """
+    n = len(matrix)
+    seen = set()
+    seen.add((0, 0)) # (row, col)
+    min_heap = [ [matrix[0][0], 0, 0] ] # [value, row, col]
+
+    while k > 1:
+        curr = heapq.heappop(min_heap) 
+        row, col = curr[1], curr[2]
+        if col+1 < n and (row, col+1) not in seen:
+            heapq.heappush(min_heap, [matrix[row][col+1], row, col+1])
+            seen.add((row, col+1))
+        if row+1 < n and (row+1, col) not in seen:
+            heapq.heappush(min_heap, [matrix[row+1][col], row+1, col])
+            seen.add((row+1, col))
+        k -= 1
+        
+    return heapq.heappop(min_heap)[0]
