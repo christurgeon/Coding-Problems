@@ -1416,7 +1416,7 @@ def maxSubarraySumCircular(nums: List[int]) -> int:
     return max_sum if circular_sum == 0 else max(max_sum, circular_sum)
 
 
-# https://leetcode.com/problems/kth-smallest-element-in-a-sorted-matrix
+# https://leetcode.com/problems/kth-smallest-element-in-a-sorted-matrix/
 def kthSmallest(matrix: List[List[int]], k: int) -> int:        
     """
     We want to use a min_heap to greedily explore the smallest number, and
@@ -1442,7 +1442,7 @@ def kthSmallest(matrix: List[List[int]], k: int) -> int:
     return heapq.heappop(min_heap)[0]
 
 
-# https://leetcode.com/problems/kth-smallest-element-in-a-sorted-matrix
+# https://leetcode.com/problems/kth-smallest-element-in-a-sorted-matrix/
 def kthSmallestMoreEfficient(matrix: List[List[int]], k: int) -> int:        
     """
     We can do this in O(1) space and O(2n * log(max-min)) time complexity
@@ -1479,3 +1479,40 @@ def kthSmallestMoreEfficient(matrix: List[List[int]], k: int) -> int:
             high = mid
     return low
         
+
+# https://leetcode.com/problems/maximum-gap/
+def maximumGap(nums: List[int]) -> int:
+    """
+    You want to divide the range [low, high] into n - 1 or n evenly spaced buckets, 
+    such that each number falls into one of them. Why?
+    Because if we have n elements, the maximum possible number of gaps between elements 
+    in sorted order is n - 1, and the minimum possible maximum gap is: high - low // n - 1
+    """
+    n = len(nums)
+    if n < 2:
+        return 0
+
+    # num - low: shifts the number to start from 0
+    # (num - low) / (high - low): normalizes the value to a range between 0 and 1
+    # Multiply by n - 1: scales it to an index in [0, n-1]
+    # Use integer division (//) to round down to a valid bucket index
+    low, high = min(nums), max(nums)
+    bucket = defaultdict(list)
+    for num in nums:
+        if num == high:
+            idx = n-1
+        else:
+            idx = (num-low) * (n-1) // (high-low)
+        bucket[idx].append(num)
+
+    # build bucket min/max summaries
+    buckets = []
+    for i in range(n):
+        if bucket[i]:
+            buckets.append( (min(bucket[i]), max(bucket[i])) )
+
+    # compare previous bucket max to current bucket min
+    result = 0
+    for i in range(1, len(buckets)):
+        result = max(result, buckets[i][0] - buckets[i-1][1])
+    return result
