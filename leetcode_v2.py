@@ -1516,3 +1516,9 @@ def maximumGap(nums: List[int]) -> int:
     for i in range(1, len(buckets)):
         result = max(result, buckets[i][0] - buckets[i-1][1])
     return result
+
+
+# https://leetcode.com/problems/array-partition/
+def arrayPairSum(nums: List[int]) -> int:
+    nums.sort()
+    return sum([ min(nums[i], nums[i-1]) for i in range(1, len(nums), 2)])
