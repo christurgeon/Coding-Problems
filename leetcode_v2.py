@@ -1572,3 +1572,21 @@ def connectV2(root: 'Optional[Node]') -> 'Optional[Node]':
             if node.right:
                 q.append(node.right)
     return root
+
+
+# https://leetcode.com/problems/construct-string-from-binary-tree/ 
+def tree2str(root: Optional[TreeNode]) -> str:
+    def dfs(node):
+        if not node:
+            return ""
+        if not node.left and not node.right:
+            return f"{node.val}"
+        left_result = f"({dfs(node.left)})"
+        right_result = f"({dfs(node.right)})"
+        if left_result == "()" and right_result != "()":
+            left_result = "()"
+        elif right_result == "()":
+            right_result = ""
+        return f"{node.val}{left_result}{right_result}"
+    return dfs(root)
+        
