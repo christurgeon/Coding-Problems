@@ -1522,3 +1522,53 @@ def maximumGap(nums: List[int]) -> int:
 def arrayPairSum(nums: List[int]) -> int:
     nums.sort()
     return sum([ min(nums[i], nums[i-1]) for i in range(1, len(nums), 2)])
+
+
+"""
+# Definition for a Node.
+class Node:
+    def __init__(self, val: int = 0, left: 'Node' = None, right: 'Node' = None, next: 'Node' = None):
+        self.val = val
+        self.left = left
+        self.right = right
+        self.next = next
+"""
+# https://leetcode.com/problems/populating-next-right-pointers-in-each-node/
+def connect(root: 'Optional[Node]') -> 'Optional[Node]':
+    if not root:
+        return None
+    level = deque([root])
+    while level:
+        next_queue = deque([])
+        while level:
+            node = level.popleft()
+            node.next = level[0] if level else None
+            if node.left:
+                next_queue.append(node.left)
+            if node.right:
+                next_queue.append(node.right)
+        level = next_queue
+    return root
+
+
+# https://leetcode.com/problems/populating-next-right-pointers-in-each-node/
+def connectV2(root: 'Optional[Node]') -> 'Optional[Node]':
+    """
+    This implementation is slightly more efficient because it doesn't have two queues.
+    """
+    if not root:
+        return None
+    q = deque([root])
+    while q:
+        size = len(q)
+        prev = None
+        for _ in range(size):
+            node = q.popleft()
+            if prev:
+                prev.next = node
+            prev = node
+            if node.left:
+                q.append(node.left)
+            if node.right:
+                q.append(node.right)
+    return root
