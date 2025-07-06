@@ -1601,3 +1601,21 @@ def findSubsequences(nums: List[int]) -> List[List[int]]:
         
     dfs(0, [])
     return [list(sequence) for sequence in result]
+
+
+# https://leetcode.com/problems/smallest-string-starting-from-leaf/
+def smallestFromLeaf(root: Optional[TreeNode]) -> str:
+    def itostr(value):
+        return chr(value + 97)
+
+    def backtrack(node, path):
+        if not node:
+            return "~" # lexicographically larger than any lowercase string
+        path = itostr(node.val) + path
+        if not node.left and not node.right:
+            return path
+        left = backtrack(node.left, path)
+        right = backtrack(node.right, path)
+        return min(left, right)
+
+    return backtrack(root, "")
