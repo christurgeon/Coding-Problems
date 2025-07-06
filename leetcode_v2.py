@@ -1586,3 +1586,18 @@ def tree2str(root: Optional[TreeNode]) -> str:
         return f"{node.val}({dfs(node.left)})({dfs(node.right)})"
     return dfs(root)
         
+
+# https://leetcode.com/problems/non-decreasing-subsequences/
+def findSubsequences(nums: List[int]) -> List[List[int]]:
+    n = len(nums)
+    result = set()
+
+    def dfs(index, path):
+        if len(path) >= 2:
+            result.add(tuple(path))
+        for i in range(index, n):
+            if not path or nums[i] >= path[-1]:
+                dfs(i + 1, path + [nums[i]])
+        
+    dfs(0, [])
+    return [list(sequence) for sequence in result]
