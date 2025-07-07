@@ -1644,3 +1644,31 @@ def beautifulSubsets(nums: List[int], k: int) -> int:
             total += backtrack(index + 1, subset + [nums[index]])
         return total
     return backtrack(0, []) - 1
+
+
+# https://leetcode.com/problems/the-number-of-beautiful-subsets/
+def beautifulSubsetsImprovedRuntime(nums: List[int], k: int) -> int:
+    """
+    How to build the result:
+    1) count the current subset at the end (including empty)
+    2) consider skipping the current value
+    3) consider taking the current value only if value - k is not present
+
+    TC:
+    Each recusion only does O(1) extra work instead of scanning the subset
+    Time: O(2^n) still exponential because you explore subsets, but no extra O(n) scanning per call.
+    Space: O(n) for recursion stack and O(n) for frequence map
+    """
+    nums.sort()
+    n = len(nums)
+    frequency = defaultdict(int)
+    def backtrack(index):
+        if index == n:
+            return 1
+        total = backtrack(index + 1)
+        if frequency[nums[index] - k] == 0:
+            frequency[nums[index]] += 1
+            total += backtrack(index + 1)
+            frequency[nums[index]] -= 1
+        return total
+    return backtrack(0) - 1
