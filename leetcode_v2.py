@@ -1619,3 +1619,28 @@ def smallestFromLeaf(root: Optional[TreeNode]) -> str:
         return min(left, right)
 
     return backtrack(root, "")
+
+
+# https://leetcode.com/problems/the-number-of-beautiful-subsets/
+def beautifulSubsets(nums: List[int], k: int) -> int:
+    """
+    How to build the result:
+    1) count the current subset at the end (including empty)
+    2) consider skipping the current value
+    3) consider taking the current value (if it is valid)
+
+    TC:
+    O(nlog(n)) for the initial sort
+    At each node in the recursion tree, you do an O(n) check over the current subset.
+    The recursion tree can have up to O(2^n) nodes.
+    """
+    nums.sort()
+    n = len(nums)
+    def backtrack(index, subset):
+        if index == n:
+            return 1
+        total = backtrack(index + 1, subset)
+        if all(abs(nums[index] - x) != k for x in subset):
+            total += backtrack(index + 1, subset + [nums[index]])
+        return total
+    return backtrack(0, []) - 1
