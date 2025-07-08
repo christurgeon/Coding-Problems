@@ -1672,3 +1672,22 @@ def beautifulSubsetsImprovedRuntime(nums: List[int], k: int) -> int:
             frequency[nums[index]] -= 1
         return total
     return backtrack(0) - 1
+
+
+# https://leetcode.com/problems/make-array-empty/
+# This solution is not excepted due to TLE. 
+# It needs to be optimized since it is O(n^2) and O(n) extra space.
+def countOperationsToEmptyArray(nums: List[int]) -> int:
+    operation_count = 0
+    minimum_heap = nums.copy()
+    heapq.heapify(minimum_heap)
+    nums = deque(nums)
+    while nums:
+        while nums and nums[0] != minimum_heap[0]:
+            nums.append(nums.popleft())
+            operation_count += 1
+        if nums:
+            nums.popleft()
+            heapq.heappop(minimum_heap)
+            operation_count += 1
+    return operation_count
