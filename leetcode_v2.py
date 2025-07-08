@@ -1708,6 +1708,7 @@ def countOperationsToEmptyArrayV2(nums: List[int]) -> int:
         # This implies a wrap-around (rotation is needed to bring the element to the front).
         # We need to do one full rotation over remaining elements which costs.
         if i > 0 and original_index < nums[i-1][0]:
+            # When a "rotation" is needed, the number of pops is n - i
             operation_count += n - i
     # Still need to account for the cost to pop each element (n in total).
     return operation_count + n
