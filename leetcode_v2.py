@@ -1696,24 +1696,18 @@ def countOperationsToEmptyArray(nums: List[int]) -> int:
 # https://leetcode.com/problems/make-array-empty/
 def countOperationsToEmptyArrayV2(nums: List[int]) -> int:
     """
-    We can solve this efficiently by sorting the list while also 
-    including the index of the number in the original list.
-    Then, when we iterate through we can calculate how many pops 
-    there must be before this element would be evicted from the 
-    original list.
+    We can solve this efficiently by sorting the list while also including the index of the number in the original list.
+    Then, when we iterate through we can calculate how many pops there must be before this element would be evicted from the original list.
     TC: O(nlogn)
     """
     nums = list(enumerate(nums)) # [(index, num)]
     nums.sort(key=lambda x: x[1]) # sort by num, not index
     operation_count = 0
     n = len(nums)
-    elements_removed_count = 0
     for i, (original_index, _) in enumerate(nums):
-        # If this new smallest element comes before the previous one in the original array, 
-        # it implies a wrap-around (rotation is needed to bring it to the front)
-        # We need to do one full rotation over remaining elements which costs
+        # This implies a wrap-around (rotation is needed to bring the element to the front).
+        # We need to do one full rotation over remaining elements which costs.
         if i > 0 and original_index < nums[i-1][0]:
-            operation_count += n - elements_removed_count
-            elements_removed_count = i
-    # Add the remaining cost to remove the last group of elements without requiring another rotation
-    return operation_count + n - elements_removed_count
+            operation_count += n - i
+    # Still need to account for the cost to pop each element (n in total).
+    return operation_count + n
