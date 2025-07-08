@@ -1701,6 +1701,7 @@ def countOperationsToEmptyArrayV2(nums: List[int]) -> int:
     Then, when we iterate through we can calculate how many pops 
     there must be before this element would be evicted from the 
     original list.
+    TC: O(nlogn)
     """
     nums = list(enumerate(nums)) # [(index, num)]
     nums.sort(key=lambda x: x[1]) # sort by num, not index
