@@ -1731,3 +1731,23 @@ def findTheDistanceValue(self, arr1: List[int], arr2: List[int], d: int) -> int:
             continue
         result += 1            
     return result 
+
+
+# https://leetcode.com/problems/count-and-say/
+def countAndSay(n: int) -> str:
+    def countAndSayHelper(iteration, string):
+        if iteration == n:
+            return string
+        new_string, count = "", 1
+        for i in range(1, len(string)):
+            if string[i] != string[i-1]:
+                new_string += f"{count}{string[i-1]}"
+                count = 1
+            else:
+                count += 1
+        new_string += f"{count}{string[-1]}"
+        return countAndSayHelper(iteration + 1, new_string)
+        
+    if n == 1:
+        return "1"
+    return countAndSayHelper(1, "1")
