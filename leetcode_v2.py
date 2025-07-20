@@ -1712,3 +1712,22 @@ def countOperationsToEmptyArrayV2(nums: List[int]) -> int:
             operation_count += n - i
     # Still need to account for the cost to pop each element (n in total).
     return operation_count + n
+
+
+# https://leetcode.com/problems/find-the-distance-value-between-two-arrays/ 
+def findTheDistanceValue(self, arr1: List[int], arr2: List[int], d: int) -> int:
+    # # O(n log m) where n = len(arr1)
+    arr2.sort()
+    result = 0
+    arr2_len = len(arr2)
+    for searchVal in arr1:
+        startingIdx = bisect.bisect_left(arr2, searchVal)
+        # If startingIdx < arr2_len then we've found it
+        # bisect_left(arr2, searchVal) returns the index of the first 
+        # element in arr2 that is not less than searchVal
+        if startingIdx < arr2_len and abs(arr2[startingIdx] - searchVal) <= d:
+            continue
+        if startingIdx > 0 and abs(arr2[startingIdx - 1] - searchVal) <= d:
+            continue
+        result += 1            
+    return result 
