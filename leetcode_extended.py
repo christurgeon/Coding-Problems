@@ -1751,3 +1751,25 @@ def countAndSay(n: int) -> str:
     if n == 1:
         return "1"
     return countAndSayHelper(1, "1")
+
+
+# https://leetcode.com/problems/sort-integers-by-the-power-value/
+def getKth(lo: int, hi: int, k: int) -> int:
+    memo = {1: 0}
+
+    def dfs(value):
+        if value in memo:
+            return memo[value]
+        if value % 2 == 0:
+            x = value // 2
+        else:
+            x = 3 * value + 1
+        memo[value] = 1 + dfs(x)
+        return memo[value]
+    
+    values = []
+    for i in range(lo, hi+1):
+        memo[i] = dfs(i)
+        values.append((memo[i], i))
+    values.sort()
+    return values[k-1][1]
