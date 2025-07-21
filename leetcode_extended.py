@@ -1773,3 +1773,35 @@ def getKth(lo: int, hi: int, k: int) -> int:
         values.append((memo[i], i))
     values.sort()
     return values[k-1][1]
+
+
+# https://leetcode.com/problems/minimum-number-of-operations-to-make-x-and-y-equal/
+def minimumOperationsToMakeEqual(x: int, y: int) -> int:
+    """
+    When you're looking for the minimum number of operations, 
+    you're essentially solving a shortest path problem in an implicit graph
+    Hence, a BFS approach is lends itself natually here because with DFS we may
+    geto on bad paths paths where we are just getting further and further away 
+    from the solution.
+    """
+    if x <= y:
+        return y - x
+    seen = set()
+    queue = deque([(x, 0)])
+    while queue:
+        value, steps = queue.popleft()
+        if value == y:
+            return steps
+        if value in seen:
+            continue
+        seen.add(value)
+        queue.append((value - 1, steps+1))
+        # optional bound to prevent exploring pointless paths
+        if value + 1 <= 2 * x: 
+            queue.append((value + 1, steps+1))
+        if value % 5 == 0:
+            queue.append((value // 5, steps+1))
+        if value % 11 == 0:
+            queue.append((value // 11, steps+1))
+
+    raise Exception("Failed to find a solution!")
