@@ -1805,3 +1805,32 @@ def minimumOperationsToMakeEqual(x: int, y: int) -> int:
             queue.append((value // 11, steps+1))
 
     raise Exception("Failed to find a solution!")
+
+
+# https://leetcode.com/problems/unique-binary-search-trees-ii/
+def generateTrees(n: int) -> List[Optional[TreeNode]]:
+    if n == 0:
+        return []
+    memo = {}
+
+    def generate(start, end):
+        if start > end:
+            return [None]
+        if (start, end) in memo:
+            return memo[(start, end)]
+
+        result = []
+        for i in range(start, end+1):
+            left = generate(start, i-1)
+            right = generate(i+1, end)
+            for left_node in left:
+                for right_node in right:
+                    node = TreeNode(i)
+                    node.left = left_node
+                    node.right = right_node
+                    result.append(node)
+        memo[(start, end)] = result
+        return result
+
+    return generate(1, n)
+
