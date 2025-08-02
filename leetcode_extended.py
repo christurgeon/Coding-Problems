@@ -1834,3 +1834,27 @@ def generateTrees(n: int) -> List[Optional[TreeNode]]:
 
     return generate(1, n)
 
+
+# https://leetcode.com/problems/binary-search-tree-iterator/
+#     next(): Amortized O(1) per operation.
+#     hasNext(): O(1)
+#     Space: O(h), where h is the height of the tree.
+class BSTIterator:
+
+    def __init__(self, root: Optional[TreeNode]):
+        self.stack = []
+        self._build_leftmost_inorder(root)
+
+    def _build_leftmost_inorder(self, node: TreeNode):
+        while node:
+            self.stack.append(node)
+            node = node.left
+
+    def next(self) -> int:
+        top = self.stack.pop()
+        if top.right:
+            self._build_leftmost_inorder(top.right)
+        return top.val
+
+    def hasNext(self) -> bool:
+        return len(self.stack) > 0
