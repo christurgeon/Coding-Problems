@@ -1858,3 +1858,31 @@ class BSTIterator:
 
     def hasNext(self) -> bool:
         return len(self.stack) > 0
+
+# https://leetcode.com/problems/unique-paths/
+# TC: O(n*m)
+# Space: O(n*m)
+def uniquePaths(m: int, n: int) -> int:
+    if m == 1 and n == 1:
+        return 1
+    dp = [[0 for _ in range(n)] for _ in range(m)]
+    # compute the bottom row
+    for i in range(n-2, -1, -1):
+        dp[m-1][i] = 1
+    # compute rightmost column
+    for i in range(m-2, -1, -1):
+        dp[i][n-1] = 1
+    # compute the middle        
+    for i in range(m-2, -1, -1):
+        for j in range(n-2, -1, -1):
+            dp[i][j] = dp[i+1][j] + dp[i][j+1]
+    return dp[0][0]
+
+# TC: O(n*m)
+# Space: O(n)
+def uniquePathsOptimized(m: int, n: int) -> int:
+    dp = [1] * n
+    for _ in range(m-1):
+        for j in range(n-2, -1, -1):
+            dp[j] += dp[j+1]
+    return dp[0]
