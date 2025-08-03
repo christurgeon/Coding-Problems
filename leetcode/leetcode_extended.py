@@ -1,6 +1,5 @@
 ##################################################
 # A collection of additional LeetCode problems 
-# since leetcode.py is getting a bit too large...
 ##################################################
 
 
@@ -1916,3 +1915,12 @@ def uniquePathsWithObstacles(obstacleGrid: List[List[int]]) -> int:
             else:
                 dp[i][j] = dp[i+1][j] + dp[i][j+1]
     return dp[0][0]
+
+
+# https://leetcode.com/problems/missing-number/
+def missingNumber(nums: List[int]) -> int:
+    n = len(nums)
+    value = n * (n + 1) // 2
+    for n in nums:
+        value -= n
+    return value
