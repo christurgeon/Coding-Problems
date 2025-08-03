@@ -1942,3 +1942,22 @@ def findDuplicate(nums: List[int]) -> int:
         slow = nums[slow]
         fast = nums[fast]
     return slow
+
+
+# https://leetcode.com/problems/first-missing-positive/
+def firstMissingPositive(nums: List[int]) -> int:
+    n = len(nums)
+    # replace numbers that are not candidates with a default value
+    for i in range(n):
+        if nums[i] <= 0 or nums[i] > n:
+            nums[i] = n + 1
+    # mark indices with a negative number
+    for num in nums:
+        val = abs(num)
+        if 1 <= val <= n and nums[val-1] > 0:
+            nums[val-1] *= -1
+    # loop through all valid values
+    for i in range(n):
+        if nums[i] > 0:
+            return i + 1
+    return n + 1
