@@ -1924,3 +1924,21 @@ def missingNumber(nums: List[int]) -> int:
     for n in nums:
         value -= n
     return value
+
+
+# https://leetcode.com/problems/find-the-duplicate-number/
+# TC: O(n)
+# Space: O(1)
+def findDuplicate(nums: List[int]) -> int:
+    slow, fast = nums[0], nums[0]
+    while True:
+        slow = nums[slow]
+        fast = nums[nums[fast]] # move two steps
+        if slow == fast:
+            break
+    # find the start of the cycle
+    slow = nums[0]
+    while slow != fast:
+        slow = nums[slow]
+        fast = nums[fast]
+    return slow
