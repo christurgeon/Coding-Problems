@@ -1961,3 +1961,32 @@ def firstMissingPositive(nums: List[int]) -> int:
         if nums[i] > 0:
             return i + 1
     return n + 1
+
+
+# https://leetcode.com/problems/insert-delete-getrandom-o1/
+class RandomizedSet:
+
+    def __init__(self):
+        self.map = dict()
+        self.list = []
+
+    def insert(self, val: int) -> bool:
+        if val in self.map:
+            return False
+        self.list.append(val)
+        self.map[val] = len(self.list) - 1
+        return True
+
+    def remove(self, val: int) -> bool:
+        if val not in self.map:
+            return False
+        index = self.map[val]
+        last_element = self.list[-1]
+        self.list[index] = last_element
+        self.map[last_element] = index
+        self.list.pop()
+        del self.map[val]
+        return True
+
+    def getRandom(self) -> int:
+        return random.choice(self.list)
