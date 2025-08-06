@@ -1990,3 +1990,16 @@ class RandomizedSet:
 
     def getRandom(self) -> int:
         return random.choice(self.list)
+
+
+# The rand7() API is already defined for you.
+# def rand7():
+# @return a random integer in the range 1 to 7
+def rand10():
+    while True:
+        # Generate a uniform distribution from [1, 49]
+        result = (rand7() - 1) * 7 + rand7()
+        # [1, 40] is also uniform and we can easily reduce it to [1, 10]
+        if result <= 40:
+            return (result - 1) % 10 + 1
+        
