@@ -2005,7 +2005,7 @@ def rand10():
         
 
 # https://leetcode.com/problems/course-schedule-iii/
-def scheduleCourse(self, courses: List[List[int]]) -> int:
+def scheduleCourse(courses: List[List[int]]) -> int:
     """
     1. Sort courses by deadlines to prioritize earlier deadlines
     2. Use a max-heap to keep track of durations of selected courses
@@ -2021,3 +2021,13 @@ def scheduleCourse(self, courses: List[List[int]]) -> int:
             longest_duration = -heapq.heappop(max_heap)
             total_time -= longest_duration
     return len(max_heap)
+
+
+# https://leetcode.com/problems/power-of-three/
+def isPowerOfThree(n: int) -> bool:
+    if n == 1:
+        return True
+    if n <= 0 or n % 3 != 0:
+        return False
+    return self.isPowerOfThree(n // 3)
+        
