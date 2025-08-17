@@ -2003,3 +2003,21 @@ def rand10():
         if result <= 40:
             return (result - 1) % 10 + 1
         
+
+# https://leetcode.com/problems/course-schedule-iii/
+def scheduleCourse(self, courses: List[List[int]]) -> int:
+    """
+    1. Sort courses by deadlines to prioritize earlier deadlines
+    2. Use a max-heap to keep track of durations of selected courses
+    Sorting: O(n log n)
+    """
+    courses.sort(key=lambda x: x[1])
+    total_time, max_heap = 0, []
+    for duration, lastDay in courses:
+        total_time += duration
+        heapq.heappush(max_heap, -duration)
+        # if we exceed deadline, drop the longest course
+        if total_time > lastDay:
+            longest_duration = -heapq.heappop(max_heap)
+            total_time -= longest_duration
+    return len(max_heap)
