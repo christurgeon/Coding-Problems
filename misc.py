@@ -703,7 +703,7 @@ def getMeetingTime(events, k):
             person_free.append((free_start, free_end))
         free_times.append(person_free)
     print(f"Free times: {free_times}")
-    shared_free_times = free_times[0]
+    shared_free_time = free_times[0]
     for person in free_times[1:]:
         result = []
         i, j = 0, 0
