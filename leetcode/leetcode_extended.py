@@ -2030,4 +2030,24 @@ def isPowerOfThree(n: int) -> bool:
     if n <= 0 or n % 3 != 0:
         return False
     return self.isPowerOfThree(n // 3)
+
+
+# https://leetcode.com/problems/minimum-path-sum/
+def minPathSum(grid: List[List[int]]) -> int:
+    n, m = len(grid), len(grid[0])
+    dp = [[0 for _ in range(m)] for _ in range(n)]
+    dp[-1][-1] = grid[-1][-1]
+    # Compute the bottom row
+    for i in range(m-2, -1, -1):
+        dp[-1][i] = dp[-1][i+1] + grid[-1][i]
+    # Compute the rightmost column
+    for i in range(n-2, -1, -1):
+        dp[i][-1] = dp[i+1][-1] + grid[i][-1]
+    # Work backwards to the beginning 
+    for row in range(n-2, -1, -1):
+        for col in range(m-2, -1, -1):
+            move_down_cost = dp[row+1][col]
+            move_right_cost = dp[row][col+1]
+            dp[row][col] = min(move_down_cost, move_right_cost) + grid[row][col]
+    return dp[0][0]
         
