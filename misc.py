@@ -649,3 +649,79 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+#######################################################################################
+###   RANDOM INTERVIEW QUESTION
+#######################################################################################
+
+# Given a list of `events` that consists of a <name, action, start_time, end_time> and an 
+# integer k. Find the first time in the day between "00:00" and "23:59", when all people
+# mentioned in at least one event are avilable for a meeting of k minutes. Return the answer
+# in the "HH:MM" format and return "-5" if it's not possible.
+
+# Convert "HH:MM" to an integer of minutes for ease of comparison
+def convertToMinutes(time):
+    hour, minute = time.split(":")
+    return int(hour)*60 + int(minute)
+
+def getMeetingTime(events, k):
+    # Map the event interval to the person (remember intervals here are inclusive)
+    interval_map = collections.defaultdict(list)
+    for event in events:
+        person_name, action, start, end = event.split()
+        interval_map[person_name].append((start, end))
+    # Sort the event intervals and merge them in case there are any that intersect
+    for person_name, interval in interval_map.items():
+        sorted_interval_time_range = sorted((convertToMinutes(start), convertToMinutes(end)) for start, end in interva)
+        merged_intervals = []
+        for start, end in sorted_interval_time_range:
+            if not merged_intervals or merged_intervals[-1][1] < start:
+                merged_intervals.append([start, end])
+            else:
+                # We sorted by starting range, so it's possible the current interval we are processing is within 
+                # the time range of the last interval added to `merged_intervals`
+                merged_intervals[-1][1] = max(merged_intervals[-1][1], end)
+        interval_map[person_name] = merged_intervals
+    print(f"Sorted interval map: {interval_map}")
+    # Locate the available free intervals
+    day_start = 0        # 00:00
+    day_end = 24*60 - 1  # 23:59
+    free_times = []
+    for person_name, interval in interval_map.items():
+        person_free = []
+        prev_end = day_start - 1
+        for start, end in interval:
+            free_start = prev_end + 1
+            free_end = start - 1
+            if free_end - free_start + 1 >= k:
+                person_free.append((free_start, free_end))
+            prev_end = end
+        # Check from last interval to the end of the day
+        free_start = prev_end + 1
+        free_end = day_end
+        if free_end - free_start + 1 >= k:
+            person_free.append((free_start, free_end))
+        free_times.append(person_free)
+    print(f"Free times: {free_times}")
+    shared_free_times = free_times[0]
+    for person in free_times[1:]:
+        result = []
+        i, j = 0, 0
+        while i < len(shared_free_time) and j < len(person):
+            start = max(shared_free_time[i][0], person[j][0])
+            end = min(shared_free_time[i][1], person[j][1])
+            if end - start >= k:
+                result.append((start, end))
+            if shared_free_time[i][1] < person[j][1]:
+                i += 1
+            else:
+                j += 1
+        shared_free_time = result
+        if not shared_free_time:
+            break
+    # Compute the intersection
+    if shared_free_time:
+        minutes = shared_free_time[0][0]
+        return f"{minutes // 60:02d}:{minutes % 60:02d}"
+    else:
+        return "-5"
