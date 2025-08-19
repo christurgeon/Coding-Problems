@@ -703,8 +703,8 @@ def getMeetingTime(events, k):
             person_free.append((free_start, free_end))
         free_times.append(person_free)
     print(f"Free times: {free_times}")
-    shared_free_time = free_times[0]
-    for person in free_times[1:]:
+    shared_free_time = free_times[0] # Start with the first person’s free times
+    for person in free_times[1:]:    # Intersect with each subsequent person
         result = []
         i, j = 0, 0
         while i < len(shared_free_time) and j < len(person):
