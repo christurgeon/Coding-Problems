@@ -672,7 +672,7 @@ def getMeetingTime(events, k):
         interval_map[person_name].append((start, end))
     # Sort the event intervals and merge them in case there are any that intersect
     for person_name, interval in interval_map.items():
-        sorted_interval_time_range = sorted((convertToMinutes(start), convertToMinutes(end)) for start, end in interva)
+        sorted_interval_time_range = sorted((convertToMinutes(start), convertToMinutes(end)) for start, end in interval)
         merged_intervals = []
         for start, end in sorted_interval_time_range:
             if not merged_intervals or merged_intervals[-1][1] < start:
