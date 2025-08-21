@@ -787,3 +787,46 @@ def computeNumberOfItemsToFillLeftoverSpace(A):
         remaining_weight -= heapq.heappop(A)
         result += 1
     return result
+
+def encodeHexSpeak(S):
+    """
+    Given a base-10 number as a string, from 1 to 1,000,000,000,000.
+    Convert it to hexadecimal and display its HexSpeak, if valid, 
+    otherwise return "ERROR"
+    """
+    hexspeak_mapping = {
+        "0": "O",
+        "1": "I",
+        "A": "A",
+        "B": "B",
+        "C": "C",
+        "D": "D",
+        "E": "E",
+        "F": "F"
+    }
+    hexadecimal_str = hex(int(S))[2:].upper() # omit 0x prefix
+    try:
+        "".join(hexspeak_mapping[c] for c in hexadecimal_str)
+    except KeyError:
+        return "ERROR"
+
+def getNumberOfUniqueSubarraysOfDistinctElements(S):
+    """
+    Given a string S, return an integer that represents the number of
+    ways we can select a non-empty substring of S in which all of the
+    characters are identical.
+
+    e.g. "zzzyz" == 8 bc 4x "z", 1x "y", 2x "zz", 1x "zzz"
+
+    We solve it in O(n) time and space complexity using a 2-pointer approach
+    using n * (n + 1) // 2 to find total number of subarrays which is also
+    the sum of natural numbers...
+    """
+    i = j = result = 0
+    while j < len(S):
+        while j < len(S) and S[j] == S[i]:
+            j += 1
+        diff = j - i
+        result += diff * (diff+1) // 2
+        i = j
+    return result    
