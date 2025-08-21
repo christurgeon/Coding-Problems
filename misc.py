@@ -725,3 +725,65 @@ def getMeetingTime(events, k):
         return f"{minutes // 60:02d}:{minutes % 60:02d}"
     else:
         return "-5"
+
+#######################################################################################
+###   RANDOM INTERVIEW QUESTIONS
+#######################################################################################
+
+def oddNumbers(l, r):
+    if l > r:
+        return
+    offset = 1 if l % 2 == 0 else 0
+    return [odd_number for odd_number in range(l+offset, r+1, 2)]
+
+# O(n) space complexity
+# O(max_neighbor-min_neighbor)
+def smoothArray(A):
+    while True:
+        edited = False
+        new_scores = A.copy()
+        for i in range(1, len(A) - 1):
+            if A[i] < A[i-1] and A[i] < A[i+1]:
+                new_scores[i] = A[i] + 1
+                edited = True
+            elif A[i] > A[i-1] and A[i] > A[i+1]:
+                new_scores[i] = A[i] - 1
+                edited = True
+        A = new_scores
+        if not edited:
+            break
+    return A
+
+def stepCountToNearestFibonacci(x):
+    """
+    Given a number x return the number of steps it takes to move to 
+    the nearest Fibonacci number if you can only add or subtract one
+    each move.
+    """
+    a, b = 0, 1
+    while b < x:
+        a, b = b, a + b
+    return min(b-x, x-a)
+
+def computeNumberOfItemsToFillLeftoverSpace(A):
+    """
+    First element of the array is the total weight of items in a box.
+    The maximum storage for the box is 5000.
+    If A[1:] has random items with weights, return the most number of
+    items we can fit.
+    """
+    result = 0
+    existing_weight = A[0]
+    if existing_weight >= 5000 or len(A) == 1:
+        return result
+    # Adjust the first value to a maximum value and heapify the input array
+    A[0] = float('inf')
+    heapq.heapify(A)
+    remaining_weight = 5000 - k
+    for _ in range(len(A) - 1):
+        # We can't take the item, break here
+        if remaining_weight - A[0] < 0:
+            break
+        remaining_weight -= heapq.heappop(A)
+        result += 1
+    return result
