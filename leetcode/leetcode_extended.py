@@ -2103,3 +2103,51 @@ class Solution:
                 hi = mid
         return lo
         
+# https://leetcode.com/problems/sort-list/
+class Solution:
+    def sortList_nsquared(self, head: Optional[ListNode]) -> Optional[ListNode]:
+        dummy_head = ListNode(0)
+        curr = head
+        while curr:
+            # At each step, remove curr and insert it into the sorted list
+            prev = dummy_head
+            while prev.next and prev.next.val < curr.val:
+                prev = prev.next
+            temp = curr.next
+            curr.next = prev.next
+            prev.next = curr
+            curr = temp
+        return dummy_head.next
+
+    def sortList_nlogn(self, head: Optional[ListNode]) -> Optional[ListNode]:
+        if not head or not head.next:
+            return head
+        # Split list into two halves
+        mid = self.getMiddleNode(head)
+        left, right = head, mid.next
+        mid.next = None
+        # Sort the two sublits and merge them
+        sorted_left, sorted_right = self.sortList(left), self.sortList(right)
+        return self.mergeTwoLists(sorted_left, sorted_right)
+
+    def getMiddleNode(self, node):
+        slow, fast = node, node.next
+        while fast and fast.next:
+            slow = slow.next
+            fast = fast.next.next
+        return slow
+
+    def mergeTwoLists(self, l1, l2):
+        dummy_head = ListNode()
+        tail = dummy_head
+        while l1 and l2:
+            if l1.val < l2.val:
+                tail.next = l1
+                l1 = l1.next
+            else:
+                tail.next = l2
+                l2 = l2.next
+            tail = tail.next
+        tail.next = l1 if l1 else l2
+        return dummy_head.next
+        
