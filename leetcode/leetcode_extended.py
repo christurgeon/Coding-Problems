@@ -2078,3 +2078,28 @@ def findMaxLength(nums: List[int]) -> int:
             tracker[balance] = i
         return result
 
+
+# https://leetcode.com/problems/random-pick-with-weight/
+class Solution:
+    
+    def __init__(self, w: List[int]):
+        self._total = 0
+        self._running_sum = []
+        for weight in w:
+            self._total += weight
+            self._running_sum.append(self._total)
+
+    def pickIndex(self) -> int:
+        choice = random.randint(1, self._total)
+        return self._bisect_left(choice)
+
+    def _bisect_left(self, choice):
+        lo, hi = 0, len(self._running_sum)
+        while lo < hi:
+            mid = (lo + hi) // 2
+            if self._running_sum[mid] < choice:
+                lo = mid + 1
+            else:
+                hi = mid
+        return lo
+        
