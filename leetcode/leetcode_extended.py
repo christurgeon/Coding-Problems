@@ -2051,3 +2051,30 @@ def minPathSum(grid: List[List[int]]) -> int:
             dp[row][col] = min(move_down_cost, move_right_cost) + grid[row][col]
     return dp[0][0]
         
+
+# https://leetcode.com/problems/contiguous-array/
+def findMaxLength(nums: List[int]) -> int:
+    """
+    Treat 0 as -1 and 1 as 1, whenever the balance is 0 
+    then there are an equal number of 0s and 1s. Balance 
+    tracks the cumulative count of 0s and 1s encountered.
+
+    Initialize the tracker map with a balance of 0 mapped to 
+    the index -1 to special case where the valid subarray
+    starts at index 0.
+
+    @returns result, the longest contiguous subarray w/ an equal number
+             of 0s and 1s
+    TC - O(n)
+    Space - O(n)
+    """
+    result = balance = 0
+    tracker = {0: -1}
+    for i, num in enumerate(nums):
+        balance = balance+1 if num == 1 else balance-1
+        if balance in tracker:
+            result = max(result, i - tracker[balance])
+        else:
+            tracker[balance] = i
+        return result
+
