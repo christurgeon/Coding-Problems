@@ -2264,3 +2264,44 @@ def findSubstring(s: str, words: List[str]) -> List[int]:
         if valid:
             result.append(i)
     return result
+
+
+# https://leetcode.com/problems/text-justification/
+def fullJustify(words: List[str], maxWidth: int) -> List[str]:
+    result = []
+    wordHolder = []
+    aggWordLength = 0
+
+    def writeLine(wordHolder, aggWordLength, result, isLastLine=False):
+        availableSpaces = maxWidth - aggWordLength
+        # Left-justify if we have one word or we are the last line
+        if len(wordHolder) == 1 or isLastLine:
+            newLine = " ".join(wordHolder)
+            newLine += " " * (maxWidth - len(newLine))
+        else:
+            numGaps = len(wordHolder) - 1
+            spacesPerLine = availableSpaces // numGaps
+            extraSpaces = availableSpaces % numGaps
+            newLine = ""
+            for i, word in enumerate(wordHolder):
+                newLine += word
+                if i < numGaps:
+                    newLine += " " * (spacesPerLine + (1 if i < extraSpaces else 0))
+        result.append(newLine)
+
+    for i, w in enumerate(words):
+        newWordSize = len(w)
+        newAggSize = aggWordLength + newWordSize + len(wordHolder)
+        if newAggSize <= maxWidth:
+            wordHolder.append(w)
+            aggWordLength += newWordSize
+        else:
+            writeLine(wordHolder, aggWordLength, result)
+            wordHolder = [w]
+            aggWordLength = newWordSize
+
+    # Handle the last line
+    if wordHolder:
+        writeLine(wordHolder, aggWordLength, result, isLastLine=True)
+
+    return result
