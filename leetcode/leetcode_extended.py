@@ -2345,11 +2345,11 @@ def countDigitOne(n: int) -> int:
     # if n is 234: then leftmost_digit == 2 so count([100, 199]) == 100
     high_contribution = rem + 1 if leftmost_digit == 1 else div
     # count of '1's contributed by lower digits for all numbers with high digit set
-    # if n is 134: then mult 1 by recursive on 99
-    # if n is 234: then mult 2 (bc we need to account 100s and 200s) by recursive result of 99
+    # if n is 134: then mult 1 by recursive result of 99
+    # if n is 234: then mult 2 (bc we need to get 100s and 200s) by recursive result of 99
     lower_contribution = leftmost_digit * self.countDigitOne(div-1)
     # count of '1's contributed by the remainder
-    # if n is 134: then we recuse on 34
-    # if n is 234: then we recurse on 34
+    # if n is 134:  134 % 100 == 34
+    # if n is 1134: 1234 % 1000 == 134
     remainder_contribution = self.countDigitOne(rem)
     return high_contribution + lower_contribution + remainder_contribution
