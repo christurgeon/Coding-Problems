@@ -2184,3 +2184,43 @@ def minFlips(mat: List[List[int]]) -> int:
 
     result = dfs(0, 0, 0)
     return result if result != float('inf') else -1
+
+# Ensures we never recompute the same thing because we're using BFS
+def minFlipsWithBitMask(self, mat: list[list[int]]) -> int:
+    """
+    Space: O(2^mn)
+    """
+    n, m = len(mat), len(mat[0])
+    
+    # Convert matrix to initial bitmask
+    start = 0
+    for i in range(n):
+        for j in range(m):
+            if mat[i][j]:
+                start |= 1 << (i*m + j)
+    if start == 0:
+        return 0
+    
+    # Precompute flip masks for each cell
+    flip_masks = []
+    for i in range(n):
+        for j in range(m):
+            mask = 0
+            for x, y in [(i,j), (i+1,j), (i-1,j), (i,j+1), (i,j-1)]:
+                if 0 <= x < n and 0 <= y < m:
+                    mask |= 1 << (x*m + y)
+            flip_masks.append(mask)
+    
+    # BFS
+    queue = deque([(start, 0)]) # (matrix state, steps)
+    visited = {start}
+    while queue:
+        state, steps = queue.popleft()
+        if state == 0:
+            return steps
+        for mask in flip_masks:
+            new_state = state ^ mask
+            if new_state not in visited:
+                visited.add(new_state)
+                queue.append((new_state, steps + 1))
+    return -1
