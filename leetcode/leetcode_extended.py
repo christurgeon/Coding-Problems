@@ -2151,3 +2151,36 @@ class Solution:
         tail.next = l1 if l1 else l2
         return dummy_head.next
         
+
+# https://leetcode.com/problems/minimum-number-of-flips-to-convert-binary-matrix-to-zero-matrix/
+def minFlips(mat: List[List[int]]) -> int:
+    """
+    TC: O(2^(n*m)) because DFS is trying trying every combination of flips for each cell: and there are 2 combinations
+    Space: O(mn), for the depth of the DFS recursion.
+    """
+    n, m = len(mat), len(mat[0])
+    INFINITE = float('inf')
+    
+    def flip(x, y) -> None:
+        for i, j in ((x,y), (x+1,y), (x-1,y), (x,y+1), (x,y-1)):
+            if 0 <= i < n and 0 <= j < m: 
+                mat[i][j] ^= 1
+
+    def isZeroMatrix() -> bool:
+        return all(sum(row) == 0 for row in mat)
+
+    def dfs(x, y, step_count):
+        if x == n:
+            return step_count if isZeroMatrix() else INFINITE
+        if y == m:
+            return dfs(x+1, 0, step_count)
+
+        # Explore flipping and not flipping
+        no_flip_count = dfs(x, y+1, step_count)
+        flip(x, y) # flip
+        yes_flip_count = dfs(x, y+1, step_count + 1)
+        flip(x, y) # flip back to reset the matrix
+        return min(no_flip_count, yes_flip_count)
+
+    result = dfs(0, 0, 0)
+    return result if result != float('inf') else -1
