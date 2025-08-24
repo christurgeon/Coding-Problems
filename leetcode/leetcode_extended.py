@@ -2319,3 +2319,37 @@ def candy(ratings: List[int]) -> int:
         if ratings[i] > ratings[i+1]:
             candies[i] = max(candies[i], candies[i+1] + 1)
     return sum(candies)
+
+
+# https://leetcode.com/problems/number-of-digit-one
+@lru_cache(maxsize=None) # cache results for all inputs
+def countDigitOne(n: int) -> int:
+    """
+    Time: O(log n)
+    Space: O(log n) (recursion depth + cache).
+    """
+    if n <= 0:
+        return 0
+    if n < 10:
+        return 1
+
+    # Find the largest power of 10 <= n (i.e., div)
+    div = 1
+    while div * 10 <= n:
+        div *= 10
+    leftmost_digit = n // div   # most significant digit
+    rem = n % div               # remainder after removing high digit
+
+    # count of '1's contributed by the most significant digit
+    # if n is 134: then leftmost_digit == 1 so count([100, 134]) == 35
+    # if n is 234: then leftmost_digit == 2 so count([100, 199]) == 100
+    high_contribution = rem + 1 if leftmost_digit == 1 else div
+    # count of '1's contributed by lower digits for all numbers with high digit set
+    # if n is 134: then mult 1 by recursive on 99
+    # if n is 234: then mult 2 (bc we need to account 100s and 200s) by recursive result of 99
+    lower_contribution = leftmost_digit * self.countDigitOne(div-1)
+    # count of '1's contributed by the remainder
+    # if n is 134: then we recuse on 34
+    # if n is 234: then we recurse on 34
+    remainder_contribution = self.countDigitOne(rem)
+    return high_contribution + lower_contribution + remainder_contribution
