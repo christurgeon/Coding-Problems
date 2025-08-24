@@ -2224,3 +2224,43 @@ def minFlipsWithBitMask(self, mat: list[list[int]]) -> int:
                 visited.add(new_state)
                 queue.append((new_state, steps + 1))
     return -1
+
+
+# https://leetcode.com/problems/substring-with-concatenation-of-all-words/
+def findSubstring(s: str, words: List[str]) -> List[int]:
+    """
+    This solution works, but it has O(N*M*L) time complexity in the worst case, where:
+        N = len(s)
+        M = len(words)
+        L = len(words[0])
+    """
+    result = []
+    if not s or not words:
+        return result
+
+    # Count the occurrences of each word
+    lookup = defaultdict(int)
+    for w in words:
+        lookup[w] += 1
+
+    # All words are the same length
+    word_len = len(words[0])
+    substr_len = word_len * len(words)
+
+    # The words has to start from the beginning of the substring
+    # "abcde" and substr_len = 2
+    #     ^ start here 
+    for i in range(len(s) - substr_len + 1):
+        used = defaultdict(int)
+        valid = True
+        for j in range(i, i + substr_len, word_len):
+            word = s[j:j+word_len]
+            used[word] += 1
+            # Either this word doesn't exist in our words list 
+            # or we've used a word from the words list too many times...
+            if word not in lookup or used[word] > lookup[word]:
+                valid = False
+                break
+        if valid:
+            result.append(i)
+    return result
