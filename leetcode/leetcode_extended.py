@@ -2303,5 +2303,19 @@ def fullJustify(words: List[str], maxWidth: int) -> List[str]:
     # Handle the last line
     if wordHolder:
         writeLine(wordHolder, aggWordLength, result, isLastLine=True)
-
     return result
+
+
+# https://leetcode.com/problems/candy/
+def candy(ratings: List[int]) -> int:
+    n = len(ratings)
+    candies = [1] * n    
+    # Pass 1: left to right, if we are higher than previous, increase candy
+    for i in range(1, n):
+        if ratings[i] > ratings[i-1]:
+            candies[i] = candies[i-1] + 1
+    # Pass 2: right to left, if we are higher than previous, increase candy
+    for i in range(n-2, -1, -1):
+        if ratings[i] > ratings[i+1]:
+            candies[i] = max(candies[i], candies[i+1] + 1)
+    return sum(candies)
