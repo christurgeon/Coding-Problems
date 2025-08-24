@@ -1,8 +1,30 @@
+#!/bin/python3
+
 import math
+import os
+import random
+import re
+import sys
 import collections
 from typing import List 
 import numpy as np
 import pandas as pd
+
+
+# Complete the 'fizzBuzz' function below.
+# The function accepts INTEGER n as parameter.
+def FizzBuzz(n: int):
+    for i in range(1, n + 1):
+        mod3 = (i % 3 == 0)
+        mod5 = (i % 5 == 0)
+        if mod3 and mod5:
+            print("FizzBuzz")
+        elif mod3:
+            print("Fizz")
+        elif mod5:
+            print("Buzz")
+        else:
+            print(i)
 
 
 # A method to swap two variables without using a temp
