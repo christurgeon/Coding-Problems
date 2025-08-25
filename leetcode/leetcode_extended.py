@@ -2353,3 +2353,27 @@ def countDigitOne(n: int) -> int:
     # if n is 1134: 1234 % 1000 == 134
     remainder_contribution = self.countDigitOne(rem)
     return high_contribution + lower_contribution + remainder_contribution
+
+
+# https://leetcode.com/problems/perfect-rectangle/
+def isRectangleCover(rectangles: List[List[int]]) -> bool:
+    # Each corner should appear 1 time, so 4 in total.
+    # Other corners should apear an even number of times, meaning
+    # it has a match, if it's an odd number of times.
+    #
+    # But we still have the issue of overlaps to deal with.
+    # Another insight is that the sum of all small rectangles should equal big rectangle.
+    # If this isn't this case, then there are gaps or an overlap...
+    subrectangle_total_area = 0
+    corners = set()
+    for x, y, X, Y in rectangles:
+        corners ^= {(x, y), (x, Y), (X, y), (X, Y)}
+        subrectangle_total_area += (X-x) * (Y-y)
+    if len(corners) != 4:
+        return False
+    min_x = min(c[0] for c in corners)
+    min_y = min(c[1] for c in corners)
+    max_x = max(c[0] for c in corners)
+    max_y = max(c[1] for c in corners)
+    global_rectangle_area = (max_x-min_x) * (max_y-min_y)
+    return subrectangle_total_area == global_rectangle_area
