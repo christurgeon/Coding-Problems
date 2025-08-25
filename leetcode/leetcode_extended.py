@@ -2377,3 +2377,42 @@ def isRectangleCover(rectangles: List[List[int]]) -> bool:
     max_y = max(c[1] for c in corners)
     global_rectangle_area = (max_x-min_x) * (max_y-min_y)
     return subrectangle_total_area == global_rectangle_area
+
+
+# https://leetcode.com/problems/frog-jump/
+def canCross(stones: List[int]) -> bool:
+    if not stones or len(stones) == 1:
+        return True
+    # It always requires 1 jump to get to the second stone
+    if len(stones) > 1 and stones[1] > 1:
+        return False
+
+    n = len(stones)
+    dp = dict()
+
+    def dfs(i, k):
+        if (i, k) in dp:
+            return dp[(i, k)]
+        if k == 0:
+            return False
+        if i == n - 1:
+            return True
+        start = i+1
+        end = i+k+1
+        for j in range(start, end+1):
+            # We've gone too far
+            if j >= n:
+                break
+            cost_to_jump = stones[j] - stones[i]
+            # Next k is not valid, end the loop here
+            if cost_to_jump > k+1:
+                break
+            # Recurse on the next valid move
+            if cost_to_jump in (k-1, k, k+1):
+                if dfs(j, cost_to_jump):
+                    return True
+        # Record the result for the index and k
+        dp[(i, k)] = False
+        return False
+
+    return dfs(1, 1)
