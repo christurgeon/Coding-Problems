@@ -2416,3 +2416,31 @@ def canCross(stones: List[int]) -> bool:
         return False
 
     return dfs(1, 1)
+
+
+# https://leetcode.com/problems/longest-increasing-path-in-a-matrix/
+def longestIncreasingPath(matrix: List[List[int]]) -> int:
+    n, m, memo = len(matrix), len(matrix[0]), dict()
+
+    def getNextMoves(x, y):
+        result = []
+        for nx, ny in ((x+1,y), (x-1,y), (x,y+1), (x,y-1)):
+            if 0 <= nx < n and 0 <= ny < m:
+                result.append((nx, ny))
+        return result
+    
+    def dfs(x, y):
+        if (x, y) in memo:
+            return memo[(x, y)]
+        longest_path = 0
+        for nx, ny in getNextMoves(x, y):
+            if matrix[nx][ny] > matrix[x][y]:
+                longest_path = max(longest_path, dfs(nx, ny))
+        memo[(x, y)] = longest_path + 1
+        return longest_path + 1
+
+    result = 0
+    for x in range(n):
+        for y in range(m):
+            result = max(result, dfs(x, y))
+        return result
