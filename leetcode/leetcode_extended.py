@@ -2489,3 +2489,22 @@ def medianSlidingWindow(nums: List[int], k: int) -> List[float]:
         if len(L) == k:
             result.append(L[k//2] if isMiddle else (L[k//2-1] + L[k//2]) / 2)
     return result
+
+
+# https://leetcode.com/problems/patching-array/
+def minPatches(nums: List[int], n: int) -> int:
+    result = 0
+    nextNumberToForm = 1
+    i = 0
+    while nextNumberToForm <= n:
+        # If the number we are on is less than the number we can form.
+        # Advance by the number itself.
+        if i < len(nums) and nums[i] <= nextNumberToForm:
+            nextNumberToForm += nums[i]
+            i += 1
+        # Add this number. 
+        # Therefore the next value we can reach is now double.
+        else:
+            nextNumberToForm += nextNumberToForm
+            result += 1
+    return result
