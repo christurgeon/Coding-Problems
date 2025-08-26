@@ -2470,3 +2470,22 @@ def maxProfit(prices: List[int]) -> int:
         return profit
 
     return dfs(0, 2, False)
+
+
+# https://leetcode.com/problems/sliding-window-median/
+def medianSlidingWindow(nums: List[int], k: int) -> List[float]:
+    """
+    O(nlogk) solution
+    O(k) space complexity
+    """
+    from sortedcontainers import SortedList
+    L = SortedList()
+    result = []
+    isMiddle = k % 2 == 1
+    for i in range(len(nums)):
+        L.add(nums[i]) # O(logk) bc uses binary search to insert
+        if len(L) > k:
+            L.remove(nums[i-k]) # O(logk) removal
+        if len(L) == k:
+            result.append(L[k//2] if isMiddle else (L[k//2-1] + L[k//2]) / 2)
+    return result
