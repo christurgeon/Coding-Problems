@@ -2444,3 +2444,29 @@ def longestIncreasingPath(matrix: List[List[int]]) -> int:
         for y in range(m):
             result = max(result, dfs(x, y))
         return result
+
+
+# https://leetcode.com/problems/best-time-to-buy-and-sell-stock-iii
+def maxProfit(prices: List[int]) -> int:
+    n = len(prices)
+    if n == 0:
+        return 0
+
+    @lru_cache(None)
+    def dfs(i, transactions_left, holding):
+        """
+        We have 3 options:
+        1. Do nothing
+        2. Sell today
+        3. Buy today (if transactions allow it)
+        """
+        if i == n or transactions_left == 0:
+            return 0
+        profit = dfs(i+1, transactions_left, holding)
+        if holding:
+            profit = max(profit, prices[i] + dfs(i+1, transactions_left-1, False))
+        else:
+            profit = max(profit, -prices[i] + dfs(i+1, transactions_left, True))
+        return profit
+
+    return dfs(0, 2, False)
