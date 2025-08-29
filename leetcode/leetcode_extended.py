@@ -2508,3 +2508,24 @@ def minPatches(nums: List[int], n: int) -> int:
             nextNumberToForm += nextNumberToForm
             result += 1
     return result
+
+
+# https://leetcode.com/problems/sort-an-array/
+def sortArray(nums: List[int]) -> List[int]:
+    """
+    Perform a bucket sort
+    TC O(n)
+    SC O(max - min + 1)
+    """
+    NINF = float('-inf')
+    maximum, minimum = max(nums), min(nums)
+    bucket = [(NINF, 0) for _ in range(maximum - minimum + 1)]
+    offset = 0
+    bucket = [0] * (maximum - minimum + 1)
+    for num in nums:
+        bucket[num - minimum] += 1
+    result = []
+    for i, count in enumerate(bucket):
+        if count > 0:
+            result += [i + minimum] * count
+    return result
