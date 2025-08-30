@@ -2548,3 +2548,28 @@ def containsNearbyAlmostDuplicate(nums: List[int], indexDiff: int, valueDiff: in
             if abs(lookup[j][1] - lookup[k][1]) <= indexDiff:
                 return True
         return False
+
+def containsNearbyAlmostDuplicate(nums: List[int], indexDiff: int, valueDiff: int) -> bool:
+    """
+    This solution exceeds the timeout...
+    TC: O(n*valueDiff)
+    SC: O(n)
+    """
+    n = len(nums)
+    if n <= 1:
+        return False
+    lookup = {} # value -> latest index
+    for i, num in enumerate(nums):
+        # Check num itself (duplicate value case)
+        if num in lookup and i - lookup[num] <= indexDiff:
+            return True
+       # Check neighbors within valueDiff
+        for diff in range(1, valueDiff+1):
+            if num+diff in lookup and i-lookup[num+diff] <= indexDiff:
+                return True
+            if num-diff in lookup and i-lookup[num-diff] <= indexDiff:
+                return True
+        lookup[num] = i
+    return False
+
+            
