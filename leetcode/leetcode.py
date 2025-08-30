@@ -4626,3 +4626,23 @@ class FooBar:
                 time.sleep(0.001)
             printBar()
             self.semaphore = 0
+
+
+# https://leetcode.com/problems/binary-tree-level-order-traversal-ii/
+def levelOrderBottom(root: Optional[TreeNode]) -> List[List[int]]:
+    result = []
+    if not root:
+        return result
+
+    def dfs(node, level):
+        if not node:
+            return
+        if len(result) < level + 1:
+            result.extend([[] for _ in range(level + 1 - len(result))])
+        result[level].append(node.val)
+        dfs(node.left, level + 1)
+        dfs(node.right, level + 1)
+        
+    result = [[]]
+    dfs(root, 0)
+    return result[::-1]
