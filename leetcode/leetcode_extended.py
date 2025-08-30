@@ -2572,4 +2572,35 @@ def containsNearbyAlmostDuplicate(nums: List[int], indexDiff: int, valueDiff: in
         lookup[num] = i
     return False
 
-            
+def containsNearbyAlmostDuplicate(nums: List[int], indexDiff: int, valueDiff: int) -> bool:
+    """
+    Optimal solution for TC:
+    TC: O(n)
+    SC: O(indexDiff)
+
+    valueDiff = 2
+    indexDiff = 2
+     
+    -1 => {-1,-2,-3}
+    0  => {0,1,2}
+    1  => {3,4,5}
+    """
+    bucket = dict()
+    bucketSize = valueDiff + 1
+    for i, num in enumerate(nums):
+        bucketId = num // bucketSize
+        # Check the current and neighboring buckets
+        if bucketId in bucket and abs(num - bucket[bucketId]) <= valueDiff:
+            return True
+        if bucketId + 1 in bucket and abs(num - bucket[bucketId + 1]) <= valueDiff:
+            return True
+        if bucketId - 1 in bucket and abs(num - bucket[bucketId - 1]) <= valueDiff:
+            return True
+        # Insert current num into its bucket
+        bucket[bucketId] = num
+        # Delete a bucket that is outside of our range
+        if i >= indexDiff:
+            valueToRemove = nums[i - indexDiff]
+            oldBucketId = valueToRemove // bucketSize
+            del bucket[oldBucketId]
+    return False
