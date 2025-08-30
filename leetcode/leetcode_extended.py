@@ -2529,3 +2529,22 @@ def sortArray(nums: List[int]) -> List[int]:
         if count > 0:
             result += [i + minimum] * count
     return result
+
+
+# https://leetcode.com/problems/contains-duplicate-iii/
+def containsNearbyAlmostDuplicate(nums: List[int], indexDiff: int, valueDiff: int) -> bool:
+    """
+    This solution exceeds the timeout...
+    TC: O(nlogn) - this solution times out
+    SC: O(n)
+    """
+    lookup = sorted((val, i) for i, val in enumerate(nums))
+    n = len(lookup)
+    i = 0
+    for j in range(n):
+        while i < j and lookup[j][0] - lookup[i][0] > valueDiff:
+            i += 1
+        for k in range(i, j):
+            if abs(lookup[j][1] - lookup[k][1]) <= indexDiff:
+                return True
+        return False
