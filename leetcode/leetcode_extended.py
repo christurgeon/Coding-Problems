@@ -2696,3 +2696,21 @@ def pathSum(root: Optional[TreeNode], targetSum: int) -> List[List[int]]:
     helper(root, 0, [])
     return solutions
 
+
+# https://leetcode.com/problems/triangle/ 
+def minimumTotal(triangle: List[List[int]]) -> int:
+    # compute the solution in place using the triangle list
+    #
+    # [[2],
+    #  [3,4],
+    #  [6,5,7], <- we start here and loop through every digit in
+    #  [4,1,8,3]]  the column and then we set it to the minimum of the  
+    #              sum of the value below and the value below and to the right...
+    #              therefore, by the time we reach the top, voila that's out answer
+    size = len(triangle)
+    for row in range(size - 2, -1, -1):
+        for col in range(len(triangle[row])):
+            triangle[row][col] = min(triangle[row][col] + triangle[row + 1][col], triangle[row][col] + triangle[row + 1][col + 1])
+    return triangle[0][0]
+
+
