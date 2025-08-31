@@ -2676,3 +2676,23 @@ def findSmallestSetOfVertices(n: int, edges: List[List[int]]) -> List[int]:
     return result
 
 
+# https://leetcode.com/problems/path-sum-ii/description/ 
+def pathSum(root: Optional[TreeNode], targetSum: int) -> List[List[int]]:
+    solutions = []
+
+    def helper(root: Optional[TreeNode], currSum: int, currSolution: []):
+        if not root:
+            return
+        newCurrSum = currSum + root.val
+        currSolution.append(root.val)
+        if not root.left and not root.right:
+            if newCurrSum == targetSum:
+                solutions.append(currSolution)
+        if root.left:
+            helper(root.left, newCurrSum, currSolution.copy())
+        if root.right:
+            helper(root.right, newCurrSum, currSolution.copy())
+
+    helper(root, 0, [])
+    return solutions
+
