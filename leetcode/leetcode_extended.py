@@ -2714,3 +2714,24 @@ def minimumTotal(triangle: List[List[int]]) -> int:
     return triangle[0][0]
 
 
+# https://leetcode.com/problems/bulls-and-cows/
+def getHint(secret: str, guess: str) -> str:
+    guess_map = defaultdict(set)
+    for i, ch in enumerate(guess):
+        guess_map[ch].add(i)
+    bulls, cows = 0, 0
+    used = set() 
+    # Bulls: count any digit that's in the expected location
+    for i, digit in enumerate(secret):
+        if digit in guess_map and i in guess_map[digit]:
+            bulls += 1
+            guess_map[digit].remove(i)
+            used.add(i)
+    # Cows: count cows only from remaining unmatched indices
+    for i, digit in enumerate(secret):
+        if i in used:
+            continue
+        if digit in guess_map and len(guess_map[digit]) > 0:
+            cows += 1
+            guess_map[digit].pop()
+    return f"{bulls}A{cows}B"
