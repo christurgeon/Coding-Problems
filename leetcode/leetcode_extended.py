@@ -2657,3 +2657,22 @@ def numberToWords(num: int) -> str:
         placeholder += 1
 
     return " ".join(result)
+
+
+# https://leetcode.com/problems/minimum-number-of-vertices-to-reach-all-nodes/
+def findSmallestSetOfVertices(n: int, edges: List[List[int]]) -> List[int]:
+    degree = [0] * n
+    for u, v in edges:
+        degree[v] += 1
+    # A node will have degree 0 if it has no edges to it.
+    # Therefore, in order for all nodes to be reachable, it
+    # must be included. For any node with an edge to it, 
+    # we can just include the "from node" if we wish to include
+    # the smallest set of vertices...
+    result = []
+    for node in range(n):
+        if degree[node] == 0:
+            result.append(node)
+    return result
+
+
