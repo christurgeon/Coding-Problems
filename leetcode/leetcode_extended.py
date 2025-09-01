@@ -2735,3 +2735,36 @@ def getHint(secret: str, guess: str) -> str:
             cows += 1
             guess_map[digit].pop()
     return f"{bulls}A{cows}B"
+
+
+# https://leetcode.com/problems/k-closest-points-to-origin/
+def kClosest(points: List[List[int]], k: int) -> List[List[int]]:
+    result = []
+    if not points or k <= 0:
+        return result
+
+    def getDistance(point):
+        return point[0]**2 + point[1]**2
+
+    less, equal, greater = [], [], []
+    pivot_distance = getDistance(random.choice(points))
+    for point in points:
+        distance = getDistance(point)
+        if distance < pivot_distance:
+            less.append(point)
+        elif distance > pivot_distance:
+            greater.append(point)
+        else:
+            equal.append(point)
+
+    if len(less) >= k:
+        return self.kClosest(less, k)
+    if len(less) + len(equal) >= k:
+        result.extend(less)
+        result.extend(equal)
+        return result
+    else:
+        result.extend(less)
+        result.extend(equal)
+        result.extend(self.kClosest(greater, k - len(less) - len(equal)))
+        return result
