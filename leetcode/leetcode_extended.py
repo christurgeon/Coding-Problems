@@ -2814,3 +2814,37 @@ def fourSum(nums: List[int], target: int) -> List[List[int]]:
 
     kSum(4, 0, target)
     return result
+
+
+# https://leetcode.com/problems/battleships-in-a-board/
+def countBattleships(board: List[List[str]]) -> int:
+    total_ships = 0
+    n, m = len(board), len(board[0])
+
+    def computeNext(x, y, dir):
+        if dir == "U":
+            return (x+1, y, dir)
+        if dir == "D":
+            return (x-1, y, dir)
+        if dir == "L":
+            return (x, y-1, dir)
+        if dir == "R":
+            return (x, y+1, dir)
+    
+    def clearShip(x, y):
+        board[x][y] = "."
+        search_space = [(x+1,y, "U"), (x-1,x, "D"), (x,y+1, "R"), (x,y-1, "L")]
+        while search_space:
+            x, y, dir = search_space.pop()
+            if 0 <= x < n and 0 <= y < m:
+                if board[x][y] == ".":
+                    continue
+                board[x][y] = "."
+                search_space.append(computeNext(x, y, dir))
+    
+    for i in range(n):
+        for j in range(m):
+            if board[i][j] == "X":
+                clearShip(i, j)
+                total_ships += 1
+    return total_ships
