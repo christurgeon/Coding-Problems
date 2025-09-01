@@ -2768,3 +2768,49 @@ def kClosest(points: List[List[int]], k: int) -> List[List[int]]:
         result.extend(equal)
         result.extend(self.kClosest(greater, k - len(less) - len(equal)))
         return result
+
+
+# https://leetcode.com/problems/4sum/
+def fourSum(nums: List[int], target: int) -> List[List[int]]:
+    """
+    [1,2,3,4,5], k = 4
+      [2,3,4,5], can only start from 0 and 1 index which we calculate
+                 using 5 - 4 + 1 means stop at 2
+
+    Basically, pick a first number and then solve 3Sum.
+    3Sum will pick a number and recurse to solve 2Sum.
+    Whenever we are on 2Sum, we just look for two numbers
+    that sum to a target. If we find it, we add it to the solution
+    then advance out of the current `left` value that we are looking
+    at to avoid the duplicates.
+    """
+    n = len(nums)
+    result, quadruplet = [], []
+    nums.sort()
+
+    def kSum(k, start, target):
+        if k != 2:
+            # Ignore the last k values
+            for i in range(start, n-k+1):
+                # Ignore duplicates
+                if i > start and nums[i] == nums[i-1]:
+                    continue
+                quadruplet.append(nums[i])
+                kSum(k-1, i+1, target-nums[i])
+                quadruplet.pop()
+            return 
+        # base case: two sum II
+        left, right = start, n-1
+        while left < right:
+            if nums[left] + nums[right] < target:
+                left += 1
+            elif nums[left] + nums[right] > target:
+                right -= 1
+            else:
+                result.append(quadruplet + [nums[left], nums[right]])
+                left += 1
+                while left < right and nums[left] == nums[left-1]:
+                    left += 1
+
+    kSum(4, 0, target)
+    return result
