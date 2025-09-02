@@ -2868,3 +2868,46 @@ def levelOrder(root: 'Node') -> List[List[int]]:
         q = next_q
         result.append(subresult)
         return result
+
+
+"""
+# Definition for a Node.
+class Node:
+    def __init__(self, val, prev, next, child):
+        self.val = val
+        self.prev = prev
+        self.next = next
+        self.child = child
+"""
+# https://leetcode.com/problems/flatten-a-multilevel-doubly-linked-list/
+# Note, this solution can be improved by returning the last node in the recursion, this way
+# we don't have to perform the movement of `last` to the end...
+def flatten(head: 'Optional[Node]') -> 'Optional[Node]':
+    if not head:
+        return None
+
+    dummy_head = Node(None, None, head, None)
+    while head:
+        if head.child:
+            # We need to recurse and flatten the below list
+            temp = head.next
+            first = head.child
+            # Flatten the child list and then advance to the end of the list we just flattened
+            flattened_child_head = self.flatten(head.child)
+            last = flattened_child_head
+            while last and last.next:
+                last = last.next
+            # Update the pointers
+            if temp:
+                temp.prev = last
+            head.next = first
+            first.prev = head
+            last.next = temp
+            head.child = None
+            head = last
+        else:
+            # Advance the current node.
+            # Assume the next node's prev pointer points to our current node.
+            head = head.next
+
+    return dummy_head.next
