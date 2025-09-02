@@ -2883,16 +2883,15 @@ class Node:
 # Note, this solution can be improved by returning the last node in the recursion, this way
 # we don't have to perform the movement of `last` to the end...
 def flatten(head: 'Optional[Node]') -> 'Optional[Node]':
-    if not head:
-        return None
-
     dummy_head = Node(None, None, head, None)
     while head:
-        if head.child:
-            # We need to recurse and flatten the below list
+        if not head.child:
+            # Advance the current node. Assume the next node's prev pointer points to our current node.
+            head = head.next
+        else:
+            # Flatten the child list and then advance to the end of the list we just flattened
             temp = head.next
             first = head.child
-            # Flatten the child list and then advance to the end of the list we just flattened
             flattened_child_head = self.flatten(head.child)
             last = flattened_child_head
             while last and last.next:
@@ -2900,14 +2899,8 @@ def flatten(head: 'Optional[Node]') -> 'Optional[Node]':
             # Update the pointers
             if temp:
                 temp.prev = last
-            head.next = first
-            first.prev = head
+            head.next, head.child = first, None
             last.next = temp
-            head.child = None
+            first.prev = head
             head = last
-        else:
-            # Advance the current node.
-            # Assume the next node's prev pointer points to our current node.
-            head = head.next
-
     return dummy_head.next
