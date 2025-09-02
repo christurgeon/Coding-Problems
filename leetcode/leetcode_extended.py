@@ -2848,3 +2848,23 @@ def countBattleships(board: List[List[str]]) -> int:
                 clearShip(i, j)
                 total_ships += 1
     return total_ships
+
+
+# https://leetcode.com/problems/n-ary-tree-level-order-traversal/
+def levelOrder(root: 'Node') -> List[List[int]]:
+    result = []
+    if not root:
+        return result
+    q = deque([root])
+    while q:
+        next_q = deque([])
+        subresult = []
+        while q:
+            node = q.pop()
+            subresult.append(node.val)
+            for child in node.children:
+                if child:
+                    next_q.appendleft(child)
+        q = next_q
+        result.append(subresult)
+        return result
