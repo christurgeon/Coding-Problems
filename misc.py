@@ -852,3 +852,41 @@ def getNumberOfUniqueSubarraysOfDistinctElements(S):
         result += diff * (diff+1) // 2
         i = j
     return result    
+
+
+##################################################
+##################################################
+##################################################
+
+def findKthLargestInFile(file_path, k):
+    """
+    Best for small files!
+    TC: O(nlogn)
+    SC: O(n)
+    """
+    if k < 1:
+        raise ValueError(f"Illegal argument: k because {k} < 1")
+    with open(file_path, "r") as file:
+        values = [int(line.strip()) for line in file.readlines()]
+        values.sort()
+    if k > len(values):
+        raise ValueError(f"Illegal argument: k because {k} > number of digits in the file")
+    return values[-k]
+
+def findKthLargestInFileBetter(file_path, k):
+    """
+    Best for larger files and a smaller value of k!
+    TC: O(nlogk)
+    SC: O(k)
+    """
+    if k < 1:
+        raise ValueError(f"Illegal argument: k because {k} < 1")
+    heap = []
+    with open(file_path, "r") as file:
+        for line in file:
+            heapq.heappush(heap, int(line.strip())
+            if len(heap) > k:
+                heapq.heappop(heap)
+    if k > len(heap):
+        raise ValueError(f"Illegal argument: k because {k} > number of values in the file")
+    return values[0] # smallest in the heap, k-th largest overall
