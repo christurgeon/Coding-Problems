@@ -890,3 +890,43 @@ def findKthLargestInFileBetter(file_path, k):
     if k > len(heap):
         raise ValueError(f"Illegal argument: k because {k} > number of values in the file")
     return values[0] # smallest in the heap, k-th largest overall
+
+# For files that are simply too large to fit into memory... we can sort chunks and then merge sort.
+def findKthLargestInFile_MassiveFile(file_path, k):
+    """
+    If k is close to n, or if the file is too big even for a heap, you can do an external sort:
+    - Split file into chunks, sort each chunk, write to disk.
+    - Merge them (like merge sort).
+    - Stop when you reach the k-th largest element.
+    """
+    if k < 1:
+        raise ValueError(f"Illegal argument: k because {k} < 1")
+    
+    digits_per_file = 1000*1000 # roughly 8 MB assuming 8 bytes per digit (also factor in newline)
+    file_names, file_index, total_digits = [], 0, 0
+    
+    with open(file_path, "r") as file_in:
+        while True:
+            # Aggregate our digits into a list
+            values = []
+            for _ in range(digits_per_file):
+                line = file_in.readline()
+                if not line:
+                    break
+                values.append(int(line.strip()))
+                total_digits += 1
+            # Sort what we have in memory, then write it to the chunk file
+            values.sort(reverse=True)
+            file_path_out = f"{file_path}.{file_index}"
+            with open(file_path_out, "w") as file_out:
+                for value in values:
+                    file_out.write(f"{value}\n")
+            file_names.append(file_path_out)
+            file_index += 1
+    
+    # Merge sort each file that is currently reverse-sorted
+    readers = [open(path, "r") for path in file_names]
+
+    # TODO
+            
+    
