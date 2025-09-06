@@ -2997,3 +2997,35 @@ def findMinHeightTrees(n: int, edges: List[List[int]]) -> List[int]:
             del graph[leaf]
         leaves = new_leaves
     return leaves
+
+
+# https://leetcode.com/problems/number-of-ways-to-arrive-at-destination/
+def countPaths(n: int, roads: List[List[int]]) -> int:
+    graph = [[] for _ in range(n)]
+    for u, v, time in roads:
+        graph[u].append((v, time))
+        graph[v].append((u, time))
+        
+    distance = [float('inf')] * n
+    distance[0] = 0
+    ways = [0] * n
+    ways[0] = 1
+
+    min_heap = [(0, 0)]
+    while min_heap:
+        path_cost, node = heapq.heappop(min_heap)
+        # This path is not a solution
+        if path_cost > distance[node]:
+            continue
+        for neighbor, cost in graph[node]:
+            new_cost = path_cost + cost
+            # We've just found a better path
+            if new_cost < distance[neighbor]:
+                distance[neighbor] = path_cost + cost
+                ways[neighbor] = ways[node]
+                heapq.heappush(min_heap, (new_cost, neighbor))
+            # Another solution of the same minimum path cost
+            elif new_cost == distance[neighbor]:
+                ways[neighbor] += ways[node]
+
+        return ways[n-1] % (10**9 + 7)
