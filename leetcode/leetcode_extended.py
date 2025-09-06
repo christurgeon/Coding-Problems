@@ -3029,3 +3029,23 @@ def countPaths(n: int, roads: List[List[int]]) -> int:
                 ways[neighbor] += ways[node]
 
         return ways[n-1] % (10**9 + 7)
+
+
+# https://leetcode.com/problems/node-with-highest-edge-score/
+def edgeScore(edges: List[int]) -> int:
+    """
+    Can we inverse it so that nodes in are nodes out and then just
+    determine which node has the highest total cost of edges out?
+    """
+    graph = defaultdict(int)
+    result, max_value = None, float('-inf')
+    for i in range(len(edges)):
+        graph[edges[i]] += i
+        # We found a new candidate
+        if graph[edges[i]] > max_value:
+            result = edges[i]
+            max_value = graph[edges[i]]
+        # Check if our node is a smaller one
+        elif graph[edges[i]] == max_value:
+            result = min(result, edges[i])
+    return result
