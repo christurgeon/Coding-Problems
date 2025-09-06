@@ -2928,4 +2928,37 @@ def canReach(s: str, minJump: int, maxJump: int) -> bool:
                 q.append(j)
         farthest = end
     return False
-        
+
+
+# https://leetcode.com/problems/course-schedule-iv/
+def checkIfPrerequisite(numCourses: int, prerequisites: List[List[int]], queries: List[List[int]]) -> List[bool]:
+    """
+    Ideally, by the time we get to queries, we should be able to take our course and query for it.
+    Then, using a hashset and w/o traversal, we can just provide True if the prereq is in the hash
+    set and False otherwise.
+
+    This involves first building the graph and then condensing it.
+        - Step 1: Build a basic graph
+        - Step 2: Starting from each node, DFS out, and aggregate the nodes that are seen
+        - Step 3: Use this new memoized dp object to determine whether a given node is a 
+                  prereq of another
+    """
+    graph = defaultdict(set)
+    for a, b in prerequisites:
+        graph[b].add(a) # a is a prerequisite of b
+
+    dp = defaultdict(set) # memo: course -> set of all reachable courses
+    def flatten(course):
+        if course in dp:
+            return dp[course]
+        reachable = set()
+        for prereq in graph[course]:
+            reachable.add(prereq)
+            reachable |= flatten(prereq)
+        dp[course] = reachable
+        return reachable
+
+    for course in range(numCourses):
+        flatten(course)
+
+    return [u in dp[v] for u, v in queries]
