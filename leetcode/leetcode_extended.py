@@ -2962,3 +2962,38 @@ def checkIfPrerequisite(numCourses: int, prerequisites: List[List[int]], queries
         flatten(course)
 
     return [u in dp[v] for u, v in queries]
+
+
+# https://leetcode.com/problems/minimum-height-trees/
+def findMinHeightTrees(n: int, edges: List[List[int]]) -> List[int]:
+    """
+    A tree-structured graph can have at most two Minimum Height Trees (MHTs). 
+    This is because the roots of the MHTs are located at the center of the tree, 
+    which is either the single middle node of the longest path (if the path has an odd number of nodes) 
+    or the two adjacent middle nodes (if the path has an even number of nodes).
+
+    The approach for MHTs is to peel away leaf nodes at each iteration.
+    """
+    if n <= 2:
+        return list(range(n))
+
+    # Build adjacency list
+    graph = defaultdict(set)
+    for u, v in edges:
+        graph[u].add(v)
+        graph[v].add(u)
+
+    # Initialize leaves
+    remaining = n
+    leaves = [u for u in graph if len(graph[u]) == 1]
+    while remaining > 2:
+        remaining -= len(leaves)
+        new_leaves = []
+        for leaf in leaves:
+            neighbor = graph[leaf].pop()
+            graph[neighbor].remove(leaf)
+            if len(graph[neighbor]) == 1:
+                new_leaves.append(neighbor)
+            del graph[leaf]
+        leaves = new_leaves
+    return leaves
