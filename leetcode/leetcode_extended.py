@@ -2904,3 +2904,28 @@ def flatten(head: 'Optional[Node]') -> 'Optional[Node]':
             first.prev = head
             head = last
     return dummy_head.next
+
+
+# https://leetcode.com/problems/jump-game-vii/
+def canReach(s: str, minJump: int, maxJump: int) -> bool:
+    """
+    Each index is visited at most once → O(n) time, O(n) space.
+    Avoids recursion depth errors by using BFS.
+    """
+    if not s or s[-1] != '0':
+        return False
+    n = len(s)
+    q = deque([0]) # start at index 0
+    farthest = 0   # farthest index we've expanded, ensures each index is visited once
+    while q:
+        i = q.popleft()
+        start = max(i + minJump, farthest + 1)
+        end = min(n - 1, i + maxJump)
+        for j in range(start, end + 1):
+            if s[j] == '0':
+                if j == n - 1:
+                    return True
+                q.append(j)
+        farthest = end
+    return False
+        
