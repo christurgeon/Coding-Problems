@@ -3049,3 +3049,32 @@ def edgeScore(edges: List[int]) -> int:
         elif graph[edges[i]] == max_value:
             result = min(result, edges[i])
     return result
+
+
+# https://leetcode.com/problems/path-with-maximum-probability/
+def maxProbability(n: int, edges: List[List[int]], succProb: List[float], start_node: int, end_node: int) -> float:
+    """
+    Probabilities should be multilied together when calculating the total probabiilty 
+    given a probability of each leap. We also use a max heap here and make a modified
+    Dijkstras. Because the graph is undirected, we need to add two edges and 
+    use a visited set to make sure there are no duplicates.
+    """
+    graph = defaultdict(list)
+    for i, (u, v) in enumerate(edges):
+        graph[u].append((v, succProb[i]))
+        graph[v].append((u, succProb[i]))
+
+    visited = set()
+    pq = [(-1.0, start_node)] # max heap containing (probability, node)
+    while pq:
+        neg_prob, node = heapq.heappop(pq)
+        prob = -neg_prob
+        if node == end_node:
+            return prob
+        if node in visited:
+            continue
+        visited.add(node)
+        for neighbor, neighbor_prob in graph[node]:
+            if neighbor not in visited:
+                heapq.heappush(pq, (-prob * neighbor_prob, neighbor))
+        return 0
