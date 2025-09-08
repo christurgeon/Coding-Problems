@@ -858,6 +858,7 @@ def getNumberOfUniqueSubarraysOfDistinctElements(S):
 ##################################################
 ##################################################
 
+
 def findKthLargestInFile(file_path, k):
     """
     Best for small files!
@@ -928,5 +929,29 @@ def findKthLargestInFile_MassiveFile(file_path, k):
     readers = [open(path, "r") for path in file_names]
 
     # TODO
-            
+
+
+##################################################
+##################################################
+##################################################
+
+# Key data structures to know and use!
+
+from collections import OrderedDict
+
+key = 5
+od = OrderedDict()
+od[5] = True
+od[6] = True
+od[7] = True
+
+od.move_to_end(5) # moves to the end
+od.popitem(last=True) # pops the rightmost item
+od.popitem(last=False) # pops the leftmost item
+od[8] = True
+od.move_to_end(8, last=False) # moves to the front
+
+# Iterates through in a certain order!
+for key, value in od.items():
+    print(f"Key={key}, Value={value}")
     
