@@ -3113,3 +3113,45 @@ def replaceWords(dictionary: List[str], sentence: str) -> str:
     if running_word:
         result.append(running_word)
     return " ".join(result)
+
+
+# https://leetcode.com/problems/longest-word-in-dictionary/
+class TrieNode:
+    def __init__(self):
+        self.children = {}
+        self.isWord = False
+
+class Solution:
+    def __init__(self):
+        self.trie = TrieNode()
+
+    def addWord(self, word: str):
+        node = self.trie
+        for ch in word:
+            if ch not in node.children:
+                node.children[ch] = TrieNode()
+            node = node.children[ch]
+        node.isWord = True
+
+    def canWordBeBuilt(self, word: str) -> bool:
+        """
+        A word can be built if **all prefixes** (of length 1 to len(word)-1)
+        exist as words in the trie.
+        """
+        node = self.trie
+        for i, ch in enumerate(word):
+            if ch not in node.children or not node.children[ch].isWord:
+                return False
+            node = node.children[ch]
+        return True
+        
+    def longestWord(self, words: List[str]) -> str:
+        for word in words:
+            self.addWord(word)
+        longestWord = ""
+        for word in words:
+            if self.canWordBeBuilt(word):
+                if len(word) > len(longestWord) or (len(word) == len(longestWord) and word < longestWord):
+                    longestWord = word
+        return longestWord
+        
