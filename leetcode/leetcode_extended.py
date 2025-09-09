@@ -3078,3 +3078,38 @@ def maxProbability(n: int, edges: List[List[int]], succProb: List[float], start_
             if neighbor not in visited:
                 heapq.heappush(pq, (-prob * neighbor_prob, neighbor))
         return 0
+
+
+# https://leetcode.com/problems/replace-words/
+def replaceWordsPythonic(dictionary: List[str], sentence: str) -> str:
+    result = []
+    for word in sentence.split(" "):
+        lookup = ""
+        for i, ch in enumerate(word):
+            lookup += ch
+            if lookup in dictionary:
+                break
+        result.append(lookup)
+    return " ".join(result)
+
+# https://leetcode.com/problems/replace-words/
+def replaceWords(dictionary: List[str], sentence: str) -> str:
+    result = []
+    running_word, skip_to_space = "", False
+    for ch in sentence:
+        if ch == " ":
+            if running_word:
+                result.append(running_word)
+                running_word = ""
+            skip_to_space = False
+        elif skip_to_space:
+            continue
+        else:
+            running_word += ch
+            if running_word in dictionary:
+                result.append(running_word)
+                running_word = ""
+                skip_to_space = True
+    if running_word:
+        result.append(running_word)
+    return " ".join(result)
