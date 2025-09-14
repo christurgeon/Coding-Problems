@@ -2447,7 +2447,7 @@ def longestIncreasingPath(matrix: List[List[int]]) -> int:
 
 
 # https://leetcode.com/problems/best-time-to-buy-and-sell-stock-iii
-def maxProfit(prices: List[int]) -> int:
+def maxProfitv1(prices: List[int]) -> int:
     n = len(prices)
     if n == 0:
         return 0
@@ -2470,6 +2470,20 @@ def maxProfit(prices: List[int]) -> int:
         return profit
 
     return dfs(0, 2, False)
+
+def maxProfitv2(self, prices: List[int]) -> int:
+    if not prices:
+        return 0
+    first_buy = float('-inf')
+    first_sell = 0
+    second_buy = float('-inf')
+    second_sell = 0
+    for price in prices:
+        first_buy = max(first_buy, -price)                  # Buy first time
+        first_sell = max(first_sell, first_buy + price)     # Sell first time
+        second_buy = max(second_buy, first_sell - price)    # Buy second time
+        second_sell = max(second_sell, second_buy + price)  # Sell second time
+    return second_sell
 
 
 # https://leetcode.com/problems/sliding-window-median/
