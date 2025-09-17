@@ -3190,3 +3190,31 @@ def countAndSay(n: int) -> str:
         result = "".join(sequence)
     return result
 
+
+# https://leetcode.com/problems/map-sum-pairs/
+class TrieNode:
+    def __init__(self, value=None):
+        self.children = defaultdict(TrieNode)
+        self.sum = 0 # Sum of all nodes below
+
+class MapSum:
+    def __init__(self):
+        self.trie = TrieNode()
+        self.map = defaultdict(int)
+
+    def insert(self, key: str, val: int) -> None:
+        diff = val - self.map[key] # Either positive or negative
+        current_node = self.trie
+        for c in key:
+            # Every node before our "key" will have "val" included in the sum 
+            current_node = current_node.children[c]
+            current_node.sum += diff
+        self.map[key] = val
+
+    def sum(self, prefix: str) -> int:
+        current_node = self.trie
+        for c in prefix:
+            if c not in current_node.children: 
+                return 0
+            current_node = current_node.children[c]
+        return current_node.sum
