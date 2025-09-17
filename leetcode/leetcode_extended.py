@@ -3169,3 +3169,24 @@ class Solution:
                     longestWord = word
         return longestWord
         
+
+# https://leetcode.com/problems/count-and-say/
+def countAndSay(n: int) -> str:
+    result = "1"
+    for _ in range(n - 1):
+        sequence = []
+        previous = result[0]
+        count = 1
+        for c in result[1:]:
+            if c == previous:
+                count += 1
+            else:
+                sequence.append(str(count))
+                sequence.append(previous)
+                previous = c
+                count = 1
+        sequence.append(str(count))
+        sequence.append(previous)
+        result = "".join(sequence)
+    return result
+
