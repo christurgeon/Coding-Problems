@@ -3218,3 +3218,82 @@ class MapSum:
                 return 0
             current_node = current_node.children[c]
         return current_node.sum
+
+
+# https://leetcode.com/problems/rearrange-words-in-a-sentence 
+# Note this can also be solved with a heap / priority queue
+def arrangeWords(text: str) -> str:
+    index_size_store = []
+
+    word_size = 0
+    starting_word_idx = 0
+    for idx, c in enumerate(text):
+        if c != " ":
+            word_size += 1
+        else:
+            index_size_store.append((word_size, starting_word_idx)) 
+            starting_word_idx = idx + 1
+            word_size = 0
+    if word_size > 0:
+        index_size_store.append((word_size, starting_word_idx)) 
+
+    buffer = []
+    if starting_word_idx == 0:
+        return text
+    else:
+        index_size_store.sort()
+        (size, starting_idx) = index_size_store[0]
+        buffer.append(text[starting_idx:starting_idx+1].upper() + text[starting_idx+1:starting_idx+size])
+
+    for i in range(1, len(index_size_store)):
+        (size, starting_idx) = index_size_store[i]
+        buffer.append(text[starting_idx:starting_idx+size].lower())
+    return " ".join(buffer)
+
+
+# https://leetcode.com/problems/zigzag-conversion/ 
+def convert(s: str, numRows: int) -> str:     
+    # input: convert(“PAYPALISHIRING”, 4)
+    # result: P    I    N   +1
+    #         A  L S  I G
+    #         Y A  H R
+    #         P    I        +1  (these two +1 are why we subtract two)
+    # intermediate transform:
+    #  P   I   N
+    #  A   S   G
+    #  Y   H
+    #  P   I     <- num rows
+    #  A   R
+    #  L   I     <- num rows * 2 - 2
+    #
+    if numRows == 1:
+        return s
+    result = []
+    skip = numRows + (numRows - 2)
+    size = len(s)
+    for i in range(numRows):
+        j = i
+        while j < size:
+            result.append(s[j])
+            j += skip
+            # if not the first or last then we have a zig
+            if i > 0 and i < numRows - 1 and (j - 2*i) < size:
+                result.append(s[j - 2*i])
+        return "".join(result)
+
+
+# https://leetcode.com/problems/longest-palindrome/
+def longestPalindrome(s: str) -> int:
+    counter = defaultdict(int)
+    for ch in s:
+        counter[ch] += 1
+    size = 0
+    has_odd = False
+    for value in counter.values():
+        # Take the longest even portion.
+        # Then, if there's an odd leftover, just add 1.
+        size += value // 2 * 2
+        if value % 2 == 1:
+            has_odd = True
+    return size + (1 if has_odd else 0)
+
