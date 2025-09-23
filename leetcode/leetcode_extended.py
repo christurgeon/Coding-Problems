@@ -3297,3 +3297,9 @@ def longestPalindrome(s: str) -> int:
             has_odd = True
     return size + (1 if has_odd else 0)
 
+
+# https://leetcode.com/problems/longest-uncommon-subsequence-i/ 
+def findLUSlength(a: str, b: str) -> int:
+    if a == b:
+        return -1
+    return max(len(a), len(b))
